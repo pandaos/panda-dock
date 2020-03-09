@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="/">
+        <file>resources/launcher.svg</file>
+        <file>resources/desktop.svg</file>
+    </qresource>
+</RCC>
