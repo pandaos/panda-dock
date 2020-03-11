@@ -263,7 +263,7 @@ void AppWindowManager::onWindowAdded(quint64 id)
 
     KWindowInfo info(id, windowInfoFlags, windowInfoFlags2);
 
-    const QString &className = QString::fromUtf8(info.windowClassName());
+    const QString &className = QString::fromUtf8(info.windowClassClass().toLower());
     if (classNameContains(className)) {
         DockEntry *entry = nullptr;
         for (DockEntry *e : m_dockList) {
@@ -285,7 +285,7 @@ void AppWindowManager::onWindowAdded(quint64 id)
     } else {
         DockEntry *entry = new DockEntry;
         entry->WIdList.append(id);
-        entry->className = QString::fromUtf8(info.windowClassName());
+        entry->className = QString::fromUtf8(info.windowClassClass().toLower());
         entry->id = QCryptographicHash::hash(entry->className.toUtf8(), QCryptographicHash::Md5).toHex();
         entry->isActive = KWindowSystem::activeWindow() == id;
         entry->name = info.visibleName();
