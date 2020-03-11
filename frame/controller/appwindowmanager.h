@@ -13,9 +13,9 @@ struct DockEntry
 {
     bool isActive = false;
     bool isDocked = false;
-    QString icon;
-    QString name;
+    QString className;
     QString exec;
+    QString name;
     QString id;
     int current = 0;
 
@@ -32,7 +32,7 @@ public:
 
     QList<DockEntry *> dockList() const { return m_dockList; }
     DockEntry *find(quint64 id);
-    bool iconNameContains(const QString &iconName);
+    bool classNameContains(const QString &className);
     bool isAcceptWindow(quint64 id) const;
 
     void triggerWindow(quint64 id);

@@ -124,7 +124,7 @@ void MainPanel::itemUpdated(DockItem *item)
 
 void MainPanel::init()
 {
-    //m_mainLayout->addStretch();
+    m_mainLayout->addStretch();
     m_mainLayout->addWidget(m_fixedAreaWidget);
     m_mainLayout->addSpacing(10);
     m_mainLayout->addWidget(m_appAreaWidget);

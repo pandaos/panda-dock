@@ -52,10 +52,10 @@ DockEntry *AppWindowManager::find(quint64 id)
     return nullptr;
 }
 
-bool AppWindowManager::iconNameContains(const QString &iconName)
+bool AppWindowManager::classNameContains(const QString &className)
 {
     for (DockEntry *entry : m_dockList) {
-        if (entry->icon == iconName)
+        if (entry->className == className)
             return true;
     }
 
@@ -179,7 +179,7 @@ void AppWindowManager::save()
     QStringList exec;
     for (DockEntry *entry : m_dockList) {
         if (entry->isDocked) {
-            docked.append(entry->icon);
+            docked.append(entry->className);
             exec.append(entry->exec);
         }
     }
@@ -198,7 +198,7 @@ void AppWindowManager::refreshWindowList()
     for (QString &var : dockedList) {
         qDebug() << var << " init";
         DockEntry *entry = new DockEntry;
-        entry->icon = var;
+        entry->className = var;
         entry->isDocked = true;
         entry->exec = execList.at(dockedList.indexOf(var));
         m_dockList.append(entry);
@@ -263,11 +263,11 @@ void AppWindowManager::onWindowAdded(quint64 id)
 
     KWindowInfo info(id, windowInfoFlags, windowInfoFlags2);
 
-    const QString &iconName = QString::fromUtf8(info.windowClassClass().toLower());
-    if (iconNameContains(iconName)) {
+    const QString &className = QString::fromUtf8(info.windowClassName());
+    if (classNameContains(className)) {
         DockEntry *entry = nullptr;
         for (DockEntry *e : m_dockList) {
-            if (e->icon == iconName) {
+            if (e->className == className) {
                 entry = e;
             }
         }
@@ -280,20 +280,20 @@ void AppWindowManager::onWindowAdded(quint64 id)
             entry->current = 0;
         }
 
-        qDebug() << "added: " << id << entry->icon << entry->isActive << entry->exec;
+        qDebug() << "added: " << id << entry->className << entry->isActive << entry->exec;
 
     } else {
         DockEntry *entry = new DockEntry;
         entry->WIdList.append(id);
-        entry->icon = QString::fromUtf8(info.windowClassClass().toLower());
-        entry->id = QCryptographicHash::hash(entry->icon.toUtf8(), QCryptographicHash::Md5).toHex();
+        entry->className = QString::fromUtf8(info.windowClassName());
+        entry->id = QCryptographicHash::hash(entry->className.toUtf8(), QCryptographicHash::Md5).toHex();
         entry->isActive = KWindowSystem::activeWindow() == id;
         entry->name = info.visibleName();
         entry->exec = getExec(id);
 
         m_dockList.append(entry);
 
-        qDebug() << "added: " << id << entry->icon << entry->isActive << entry->exec;
+        qDebug() << "added: " << id << entry->className << entry->isActive << entry->exec;
 
     //    KWindowInfo info(mWindow, NET::WMVisibleName | NET::WMName);
     //    QString title = info.visibleName().isEmpty() ? info.name() : info.visibleName();

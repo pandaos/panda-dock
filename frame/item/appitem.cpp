@@ -30,7 +30,7 @@ AppItem::AppItem(DockEntry *entry, QWidget *parent)
     connect(closeAction, &QAction::triggered, this, &AppItem::closeWindow);
     connect(m_dockAction, &QAction::triggered, this, &AppItem::dockActionTriggered);
     connect(m_openAction, &QAction::triggered, this, [=] {
-        AppWindowManager::instance()->openApp(m_entry->icon);
+        AppWindowManager::instance()->openApp(m_entry->className);
     });
 }
 
@@ -74,7 +74,7 @@ void AppItem::dockActionTriggered()
 void AppItem::refreshIcon()
 {
     const int iconSize = qMin(width(), height());
-    const QString iconName = m_entry->icon;
+    const QString iconName = m_entry->className;
 
     if (m_entry->WIdList.isEmpty()) {
         m_iconPixmap = ThemeAppIcon::getIcon(iconName, 0, iconSize * 0.8, devicePixelRatioF());

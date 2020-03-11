@@ -9,6 +9,12 @@
 #define MAINWINDOW_PADDING (1)
 #define DRAG_AREA_SIZE (5)
 
+#include <QX11Info>
+#include <X11/Xatom.h>
+#include <X11/Xlib.h>
+#include <X11/Xlib-xcb.h>
+#include <fixx11h.h>
+
 const QPoint rawXPosition(const QPoint &scaledPos)
 {
     QScreen const *screen = Utils::screenAtByScaled(scaledPos);
@@ -51,6 +57,8 @@ MainWindow::MainWindow(QWidget *parent)
     // windowColor.setAlpha(140);
     pal.setColor(QPalette::Window, windowColor);
     setPalette(pal);
+
+
 
     KWindowSystem::setOnDesktop(effectiveWinId(), NET::OnAllDesktops);
     KWindowSystem::setType(winId(), NET::Dock);
