@@ -14,5 +14,5 @@ HEADERS += \
 SOURCES += \
     datetimeplugin.cpp
 
-target.path = $${PREFIX}/lib/ibyte-dock/plugins/
+target.path = $${PREFIX}/lib/flyma-taskbar/plugins/
 INSTALLS += target

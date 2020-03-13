@@ -73,7 +73,7 @@ void PluginsManager::requestContextMenu(PluginsItemInterface * const itemInter, 
 
 void PluginsManager::loadLocalPlugins()
 {
-    QString pluginsDirPath = QString("%1/.local/lib/ibyte-dock/plugins/").arg(QDir::homePath());
+    QString pluginsDirPath = QString("%1/.local/lib/flyma-taskbar/plugins/").arg(QDir::homePath());
     QDir pluginsDir(pluginsDirPath);
 
     if (!pluginsDir.exists())
@@ -94,7 +94,7 @@ void PluginsManager::loadSystemPlugins()
     QString pluginsDir(qApp->applicationDirPath() + "/../plugins");
 
 //    if (!QDir(pluginsDir).exists()) {
-//        pluginsDir = "/usr/lib/ibyte-dock/plugins";
+//        pluginsDir = "/usr/lib/flyma-taskbar/plugins";
 //    }
 
     qDebug() << "load plugins: " << pluginsDir;

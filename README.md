@@ -1,6 +1,6 @@
-# iByteOS Dock
+# FlymaOS TaskBar
 
-dock for iByteOS.
+TaskBar for FlymaOS.
 
 ## Dependencies
 
@@ -19,4 +19,4 @@ dock for iByteOS.
 
 ## License
 
-ibyte-dock is licensed under GPLv3.
+flyma-taskbar is licensed under GPLv3.
