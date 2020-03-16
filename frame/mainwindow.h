@@ -26,6 +26,7 @@ private:
 
     void resizeEvent(QResizeEvent *e);
     void showEvent(QShowEvent *e);
+    void paintEvent(QPaintEvent *e);
 
 private:
     MainPanel *m_mainPanel;
@@ -33,6 +34,7 @@ private:
     DockItemManager *m_itemManager;
     DockSettings *m_settings;
     XcbMisc *m_xcbMisc;
+    QWidget *m_fakeWidget;
     QSize m_size;
 };
 

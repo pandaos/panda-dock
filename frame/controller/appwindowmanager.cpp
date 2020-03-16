@@ -73,7 +73,11 @@ bool AppWindowManager::isAcceptWindow(quint64 id) const
     ignoreList |= NET::PopupMenuMask;
     ignoreList |= NET::NotificationMask;
 
-    KWindowInfo info(id, NET::WMWindowType | NET::WMState, NET::WM2TransientFor);
+    KWindowInfo info(id, NET::WMWindowType | NET::WMState, NET::WM2TransientFor | NET::WM2WindowClass);
+
+    // 过滤自身
+    if (info.windowClassClass().toLower() == "flyma-taskbar")
+        return false;
 
     if (!info.valid())
         return false;

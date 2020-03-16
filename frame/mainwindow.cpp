@@ -1,7 +1,10 @@
 #include "mainwindow.h"
 #include "utils/utils.h"
 #include <QApplication>
+#include <QHBoxLayout>
 #include <QScreen>
+#include <QPainter>
+
 #include <KF5/KWindowSystem/KWindowEffects>
 
 #define MAINWINDOW_MAX_SIZE       100
@@ -27,18 +30,27 @@ const QPoint rawXPosition(const QPoint &scaledPos)
 
 MainWindow::MainWindow(QWidget *parent)
     : QWidget(parent),
-      m_mainPanel(new MainPanel(this)),
+      m_mainPanel(new MainPanel),
       m_dragWidget(new DragWidget(this)),
       m_itemManager(DockItemManager::instance()),
       m_settings(DockSettings::instance()),
-      m_xcbMisc(XcbMisc::instance())
+      m_xcbMisc(XcbMisc::instance()),
+      m_fakeWidget(new QWidget(nullptr))
 {
+    QHBoxLayout *layout = new QHBoxLayout;
+    layout->setMargin(0);
+    layout->setSpacing(0);
+    layout->addWidget(m_mainPanel);
+    setLayout(layout);
+
     m_dragWidget->setMouseTracking(true);
     m_dragWidget->setFocusPolicy(Qt::NoFocus);
+    m_dragWidget->raise();
 
     m_dragWidget->setCursor(Qt::SizeVerCursor);
     // m_dragWidget->setCursor(Qt::SizeHorCursor);
 
+    m_fakeWidget->setWindowFlags(Qt::FramelessWindowHint);
 
 //    m_xcbMisc->set_window_type(winId(), XcbMisc::Dock);
 
@@ -49,18 +61,11 @@ MainWindow::MainWindow(QWidget *parent)
     resizeMainPanelWindow();
 
     // blur
-    setAttribute(Qt::WA_TranslucentBackground);
     setAttribute(Qt::WA_NoSystemBackground, false);
-
-    QPalette pal = this->palette();
-    QColor windowColor("#EEEEEE");
-    // windowColor.setAlpha(140);
-    pal.setColor(QPalette::Window, windowColor);
-    setPalette(pal);
-
-
+    setAttribute(Qt::WA_TranslucentBackground);
 
     KWindowSystem::setOnDesktop(effectiveWinId(), NET::OnAllDesktops);
+    XcbMisc::instance()->enableBlurBehind(winId(), true);
     KWindowSystem::setType(winId(), NET::Dock);
     // KWindowEffects::slideWindow(winId(), KWindowEffects::BottomEdge);
 
@@ -85,9 +90,6 @@ void MainWindow::initSize()
 
     m_size = windowRect.size();
 
-    m_mainPanel->move(0, 0);
-    m_mainPanel->setFixedSize(QWidget::size());
-
     resizeMainPanelWindow();
 
     setStrutPartial();
@@ -95,27 +97,18 @@ void MainWindow::initSize()
 
 void MainWindow::setStrutPartial()
 {
-//    NETExtendedStrut strut;
-//    strut.bottom_width = height();
-//    strut.bottom_start = x();
-//    strut.bottom_end = x() + width() - 1;
+    // 不清真的作法，kwin设置blur后设置程序支撑导致模糊无效
+    QRect rect(geometry());
+    rect.setHeight(1);
+    rect.setWidth(1);
+    m_fakeWidget->setGeometry(rect);
+    m_fakeWidget->setVisible(true);
+    KWindowSystem::setState(m_fakeWidget->winId(), NET::SkipTaskbar);
 
-//    KWindowSystem::setExtendedStrut(winId(), strut.left_width,
-//                                             strut.left_start,
-//                                             strut.left_end,
-//                                             strut.right_width,
-//                                             strut.right_start,
-//                                             strut.right_end,
-//                                             strut.top_width,
-//                                             strut.top_start,
-//                                             strut.top_end,
-//                                             strut.bottom_width,
-//                                             strut.bottom_start,
-//                                             strut.bottom_end);
     const auto ratio = devicePixelRatioF();
     const QRect windowRect = m_settings->windowRect();
-    m_xcbMisc->clear_strut_partial(winId());
-    m_xcbMisc->set_strut_partial(winId(), XcbMisc::OrientationBottom, windowRect.height() * ratio + MAINWINDOW_PADDING, windowRect.top(), windowRect.bottom());
+    m_xcbMisc->clear_strut_partial(m_fakeWidget->winId());
+    m_xcbMisc->set_strut_partial(m_fakeWidget->winId(), XcbMisc::OrientationBottom, windowRect.height() * ratio + MAINWINDOW_PADDING, windowRect.top(), windowRect.bottom());
 }
 
 void MainWindow::resizeMainPanelWindow()
@@ -131,8 +124,6 @@ void MainWindow::onMainWindowSizeChanged(QPoint offset)
     m_settings->setWindowSize(QWidget::size());
     QRect windowRect = m_settings->windowRect();
     QWidget::move(windowRect.left(), windowRect.top());
-
-    m_mainPanel->setFixedSize(QWidget::size());
 
     // bottom
     m_dragWidget->setGeometry(0, 0, width(), DRAG_AREA_SIZE);
@@ -157,4 +148,13 @@ void MainWindow::showEvent(QShowEvent *e)
     QWidget::showEvent(e);
 
     XcbMisc::instance()->enableBlurBehind(winId(), true);
+}
+
+void MainWindow::paintEvent(QPaintEvent *e)
+{
+    QWidget::paintEvent(e);
+    QPainter painter(this);
+    QColor color("#EEEEEE");
+    color.setAlpha(80);
+    painter.fillRect(rect(), color);
 }

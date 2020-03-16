@@ -43,6 +43,6 @@ void LauncherItem::resizeEvent(QResizeEvent *e)
 
 void LauncherItem::mouseReleaseEvent(QMouseEvent *e)
 {
-    QProcess::startDetached("pandaos-launcher");
+    QProcess::startDetached("flyma-launcher");
     QWidget::mouseReleaseEvent(e);
 }
