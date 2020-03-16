@@ -9,7 +9,7 @@
 
 #define MAINWINDOW_MAX_SIZE       100
 #define MAINWINDOW_MIN_SIZE       (45)
-#define MAINWINDOW_PADDING (1)
+#define MAINWINDOW_PADDING (0)
 #define DRAG_AREA_SIZE (5)
 
 #include <QX11Info>
@@ -44,12 +44,12 @@ MainWindow::MainWindow(QWidget *parent)
     setLayout(layout);
 
     m_dragWidget->setMouseTracking(true);
-    m_dragWidget->setFocusPolicy(Qt::NoFocus);
     m_dragWidget->raise();
 
     m_dragWidget->setCursor(Qt::SizeVerCursor);
     // m_dragWidget->setCursor(Qt::SizeHorCursor);
 
+    m_fakeWidget->setFocusPolicy(Qt::NoFocus);
     m_fakeWidget->setWindowFlags(Qt::FramelessWindowHint);
 
 //    m_xcbMisc->set_window_type(winId(), XcbMisc::Dock);
@@ -154,7 +154,7 @@ void MainWindow::paintEvent(QPaintEvent *e)
 {
     QWidget::paintEvent(e);
     QPainter painter(this);
-    QColor color("#EEEEEE");
-    color.setAlpha(80);
+    QColor color("#FFFFFF");
+    color.setAlpha(55);
     painter.fillRect(rect(), color);
 }
