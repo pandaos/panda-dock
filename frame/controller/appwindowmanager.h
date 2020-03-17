@@ -13,6 +13,7 @@ struct DockEntry
 {
     bool isActive = false;
     bool isDocked = false;
+    QString desktopPath;
     QString className;
     QString exec;
     QString name;

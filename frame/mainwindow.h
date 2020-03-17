@@ -23,10 +23,12 @@ private:
     void resizeMainPanelWindow();
     void onMainWindowSizeChanged(QPoint offset);
     void onDragFinished();
+    void onPositionChanged();
 
-    void resizeEvent(QResizeEvent *e);
-    void showEvent(QShowEvent *e);
-    void paintEvent(QPaintEvent *e);
+    void resizeEvent(QResizeEvent *e) override;
+    void showEvent(QShowEvent *e) override;
+    void paintEvent(QPaintEvent *e) override;
+    void mousePressEvent(QMouseEvent *e) override;
 
 private:
     MainPanel *m_mainPanel;

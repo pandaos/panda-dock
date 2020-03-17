@@ -13,7 +13,8 @@ MainPanel::MainPanel(QWidget *parent)
       m_appAreaWidget(new QWidget),
       m_trayAreaWidget(new QWidget),
       m_pluginAreaWidget(new QWidget),
-      m_dockItemmanager(DockItemManager::instance())
+      m_dockItemmanager(DockItemManager::instance()),
+      m_settings(DockSettings::instance())
 {
     setAttribute(Qt::WA_TranslucentBackground);
 
@@ -23,6 +24,7 @@ MainPanel::MainPanel(QWidget *parent)
     connect(m_dockItemmanager, &DockItemManager::itemInserted, this, &MainPanel::insertItem, Qt::QueuedConnection);
     connect(m_dockItemmanager, &DockItemManager::itemRemoved, this, &MainPanel::removeItem, Qt::QueuedConnection);
     connect(m_dockItemmanager, &DockItemManager::itemUpdated, this, &MainPanel::itemUpdated, Qt::QueuedConnection);
+    connect(m_settings, &DockSettings::positionChanged, this, &MainPanel::onPositionChanged);
 }
 
 void MainPanel::addFixedAreaItem(int index, QWidget *wdg)
@@ -138,9 +140,6 @@ void MainPanel::init()
     m_mainLayout->setContentsMargins(10, 0, 10, 0);
     m_mainLayout->setSpacing(0);
 
-    // bottom
-    m_mainLayout->setAlignment(m_appAreaWidget, Qt::AlignLeft);
-
     m_fixedAreaWidget->setLayout(m_fixedAreaLayout);
     m_fixedAreaLayout->setMargin(0);
     m_fixedAreaLayout->setContentsMargins(0, 0, 0, 0);
@@ -166,21 +165,37 @@ void MainPanel::init()
 
 void MainPanel::updateLayout()
 {
-    m_fixedAreaWidget->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Expanding);
-    m_appAreaWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-    m_pluginAreaWidget->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Expanding);
-    m_trayAreaWidget->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Expanding);
-    m_mainLayout->setDirection(QBoxLayout::LeftToRight);
-    m_fixedAreaLayout->setDirection(QBoxLayout::LeftToRight);
-    m_mainLayout->setDirection(QBoxLayout::LeftToRight);
-    m_trayAreaLayout->setDirection(QBoxLayout::LeftToRight);
-    m_mainLayout->setDirection(QBoxLayout::LeftToRight);
-    m_trayAreaLayout->setContentsMargins(0, 10, 0, 10);
+    switch (m_settings->position()) {
+    case DockSettings::Left:
+    case DockSettings::Right:
+        m_fixedAreaWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+        m_appAreaWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+        m_pluginAreaWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+        m_trayAreaWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+        m_mainLayout->setAlignment(m_appAreaWidget, Qt::AlignTop);
+        m_mainLayout->setDirection(QBoxLayout::TopToBottom);
+        m_fixedAreaLayout->setDirection(QBoxLayout::TopToBottom);
+        m_appAreaLayout->setDirection(QBoxLayout::TopToBottom);
+        m_trayAreaLayout->setContentsMargins(0, 10, 0, 10);
+        break;
+    case DockSettings::Bottom:
+        m_fixedAreaWidget->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Expanding);
+        m_appAreaWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+        m_pluginAreaWidget->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Expanding);
+        m_trayAreaWidget->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Expanding);
+        m_mainLayout->setAlignment(m_appAreaWidget, Qt::AlignLeft);
+        m_mainLayout->setDirection(QBoxLayout::LeftToRight);
+        m_fixedAreaLayout->setDirection(QBoxLayout::LeftToRight);
+        m_appAreaLayout->setDirection(QBoxLayout::LeftToRight);
+        m_trayAreaLayout->setContentsMargins(0, 10, 0, 10);
+        break;
+    }
 }
 
 void MainPanel::resizeDockIcon()
 {
-    int totalLength = width();
+    DockSettings::Position pos = m_settings->position();
+    int totalLength = (pos == DockSettings::Bottom) ? width() : height();
 
     if (totalLength < 0)
         return;
@@ -204,23 +219,54 @@ void MainPanel::resizeDockIcon()
         iconSize = (totalLength - yu) / iconCount;
     }
 
-    if (iconSize >= height()) {
-        calcuDockIconSize(height(), height());
+    if (pos == DockSettings::Bottom) {
+        if (iconSize >= height()) {
+            calcuDockIconSize(height(), height());
+        } else {
+            calcuDockIconSize(iconSize, height());
+        }
     } else {
-        calcuDockIconSize(iconSize, height());
+        if (iconSize >= width()) {
+            calcuDockIconSize(width(), width());
+        } else {
+            calcuDockIconSize(width(), iconSize);
+        }
     }
 }
 
 void MainPanel::calcuDockIconSize(int w, int h)
 {
-    for (int i = 0; i < m_fixedAreaLayout->count(); ++ i) {
-        m_fixedAreaLayout->itemAt(i)->widget()->setFixedSize(w, h);
-    }
+//    for (int i = 0; i < m_fixedAreaLayout->count(); ++ i) {
+//        m_fixedAreaLayout->itemAt(i)->widget()->setFixedSize(w, h);
+//    }
 
-    for (int i = 0; i < m_appAreaLayout->count(); ++ i) {
-        m_appAreaLayout->itemAt(i)->widget()->setMaximumWidth(h);
-        m_appAreaLayout->itemAt(i)->widget()->setMaximumHeight(QWIDGETSIZE_MAX);
+    DockSettings::Position pos = m_settings->position();
+    if (pos == DockSettings::Bottom) {
+        for (int i = 0; i < m_appAreaLayout->count(); ++ i) {
+            m_appAreaLayout->itemAt(i)->widget()->setMaximumWidth(h);
+            m_appAreaLayout->itemAt(i)->widget()->setMaximumHeight(QWIDGETSIZE_MAX);
+        }
+
+        for (int i = 0; i < m_fixedAreaLayout->count(); ++ i) {
+            m_fixedAreaLayout->itemAt(i)->widget()->setMaximumWidth(h);
+            m_fixedAreaLayout->itemAt(i)->widget()->setMaximumHeight(QWIDGETSIZE_MAX);
+        }
+    } else {
+        for (int i = 0; i < m_appAreaLayout->count(); ++ i) {
+            m_appAreaLayout->itemAt(i)->widget()->setMaximumHeight(w);
+            m_appAreaLayout->itemAt(i)->widget()->setMaximumWidth(QWIDGETSIZE_MAX);
+        }
+
+        for (int i = 0; i < m_fixedAreaLayout->count(); ++ i) {
+            m_fixedAreaLayout->itemAt(i)->widget()->setMaximumHeight(w);
+            m_fixedAreaLayout->itemAt(i)->widget()->setMaximumWidth(QWIDGETSIZE_MAX);
+        }
     }
+}
+
+void MainPanel::onPositionChanged()
+{
+    updateLayout();
 }
 
 void MainPanel::resizeEvent(QResizeEvent *event)

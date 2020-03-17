@@ -4,6 +4,7 @@
 #include <QWidget>
 #include <QBoxLayout>
 #include "item/dockitem.h"
+#include "controller/docksettings.h"
 #include "controller/dockitemmanager.h"
 
 class MainPanel : public QWidget
@@ -32,6 +33,7 @@ private:
     void updateLayout();
     void resizeDockIcon();
     void calcuDockIconSize(int w, int h);
+    void onPositionChanged();
 
 protected:
     void resizeEvent(QResizeEvent *event) override;
@@ -49,6 +51,7 @@ private:
     QWidget *m_pluginAreaWidget;
 
     DockItemManager *m_dockItemmanager;
+    DockSettings *m_settings;
 };
 
 #endif // MAINPANEL_H

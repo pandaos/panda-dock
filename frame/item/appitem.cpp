@@ -2,6 +2,7 @@
 #include "utils/utils.h"
 #include "utils/themeappicon.h"
 #include "controller/appwindowmanager.h"
+#include "controller/docksettings.h"
 #include "xcb/xcbmisc.h"
 #include <QPainter>
 #include <QMouseEvent>
@@ -125,12 +126,27 @@ void AppItem::paintEvent(QPaintEvent *e)
     const int lineHeight = 2;
 
     if (!m_entry->WIdList.isEmpty()) {
+        QRect activeRect;
+        if (DockSettings::instance()->position() == DockSettings::Left) {
+            activeRect = QRect(0,
+                               (itemRect.height() - lineWidth) / 2,
+                               lineHeight, lineWidth);
+        } else if (DockSettings::instance()->position() == DockSettings::Right) {
+            activeRect = QRect(itemRect.width() - lineHeight,
+                               (itemRect.height() - lineWidth) / 2,
+                               lineHeight, lineWidth);
+        } else {
+            activeRect = QRect((itemRect.width() - lineWidth) / 2,
+                               itemRect.height() - lineHeight - 1,
+                               lineWidth, lineHeight);
+        }
+
         if (m_entry->isActive) {
             painter.setBrush(QColor("#1974FF"));
-            painter.drawRect(QRect((itemRect.width() - lineWidth) / 2, itemRect.height() - lineHeight - 1, lineWidth, lineHeight));
+            painter.drawRect(activeRect);
         } else {
             painter.setBrush(QColor("#0F0F0F"));
-            painter.drawRect(QRect((itemRect.width() - lineWidth) / 2, itemRect.height() - lineHeight - 1, lineWidth, lineHeight));
+            painter.drawRect(activeRect);
         }
     }
 
