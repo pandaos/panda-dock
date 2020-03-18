@@ -89,8 +89,10 @@ void MainPanel::itemUpdated(DockItem *item)
 
 void MainPanel::init()
 {
+    m_mainLayout->addStretch();
     m_mainLayout->addWidget(m_fixedAreaWidget);
     m_mainLayout->addWidget(m_appAreaWidget);
+    m_mainLayout->addStretch();
 
     m_mainLayout->setMargin(0);
     m_mainLayout->setContentsMargins(10, 0, 10, 0);
@@ -116,7 +118,6 @@ void MainPanel::updateLayout()
     case DockSettings::Right:
         m_fixedAreaWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
         m_appAreaWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-        m_mainLayout->setAlignment(m_appAreaWidget, Qt::AlignTop);
         m_mainLayout->setDirection(QBoxLayout::TopToBottom);
         m_fixedAreaLayout->setDirection(QBoxLayout::TopToBottom);
         m_appAreaLayout->setDirection(QBoxLayout::TopToBottom);
@@ -124,7 +125,6 @@ void MainPanel::updateLayout()
     case DockSettings::Bottom:
         m_fixedAreaWidget->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Expanding);
         m_appAreaWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-        m_mainLayout->setAlignment(m_appAreaWidget, Qt::AlignLeft);
         m_mainLayout->setDirection(QBoxLayout::LeftToRight);
         m_fixedAreaLayout->setDirection(QBoxLayout::LeftToRight);
         m_appAreaLayout->setDirection(QBoxLayout::LeftToRight);
