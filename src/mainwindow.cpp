@@ -154,7 +154,7 @@ void MainWindow::paintEvent(QPaintEvent *e)
 //    QColor color("#000000");
 //    color.setAlpha(60);
     QColor color("#FFFFFF");
-    color.setAlpha(84);
+    color.setAlpha(85);
     painter.setPen(Qt::NoPen);
     painter.setBrush(color);
 

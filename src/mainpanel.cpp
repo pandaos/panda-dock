@@ -7,12 +7,8 @@ MainPanel::MainPanel(QWidget *parent)
       m_mainLayout(new QBoxLayout(QBoxLayout::LeftToRight)),
       m_fixedAreaLayout(new QBoxLayout(QBoxLayout::LeftToRight)),
       m_appAreaLayout(new QBoxLayout(QBoxLayout::LeftToRight)),
-      m_trayAreaLayout(new QBoxLayout(QBoxLayout::LeftToRight)),
-      m_pluginAreaLayout(new QBoxLayout(QBoxLayout::LeftToRight)),
       m_fixedAreaWidget(new QWidget),
       m_appAreaWidget(new QWidget),
-      m_trayAreaWidget(new QWidget),
-      m_pluginAreaWidget(new QWidget),
       m_dockItemmanager(DockItemManager::instance()),
       m_settings(DockSettings::instance())
 {
@@ -39,19 +35,6 @@ void MainPanel::addAppAreaItem(int index, QWidget *wdg)
     resizeDockIcon();
 }
 
-void MainPanel::addTrayAreaItem(int index, QWidget *wdg)
-{
-    m_trayAreaLayout->insertWidget(index, wdg);
-    resizeDockIcon();
-}
-
-void MainPanel::addPluginAreaItem(int index, QWidget *wdg)
-{
-    m_pluginAreaLayout->insertWidget(index, wdg, 0, Qt::AlignCenter);
-    resizeDockIcon();
-    m_pluginAreaWidget->adjustSize();
-}
-
 void MainPanel::removeFixedAreaItem(QWidget *wdg)
 {
     m_fixedAreaLayout->removeWidget(wdg);
@@ -62,16 +45,6 @@ void MainPanel::removeAppAreaItem(QWidget *wdg)
     m_appAreaLayout->removeWidget(wdg);
 
     emit requestResized();
-}
-
-void MainPanel::removeTrayAreaItem(QWidget *wdg)
-{
-    m_trayAreaLayout->removeWidget(wdg);
-}
-
-void MainPanel::removePluginAreaItem(QWidget *wdg)
-{
-    m_pluginAreaLayout->removeWidget(wdg);
 }
 
 void MainPanel::insertItem(const int index, DockItem *item)
@@ -86,14 +59,7 @@ void MainPanel::insertItem(const int index, DockItem *item)
         addFixedAreaItem(index, item);
         break;
     case DockItem::App:
-    case DockItem::Placeholder:
         addAppAreaItem(index, item);
-        break;
-    case DockItem::TrayPlugin:
-        addTrayAreaItem(index, item);
-        break;
-    case DockItem::Plugins:
-        addPluginAreaItem(index, item);
         break;
     default:
         break;
@@ -108,14 +74,7 @@ void MainPanel::removeItem(DockItem *item)
         removeFixedAreaItem(item);
         break;
     case DockItem::App:
-    case DockItem::Placeholder:
         removeAppAreaItem(item);
-        break;
-    case DockItem::TrayPlugin:
-        removeTrayAreaItem(item);
-        break;
-    case DockItem::Plugins:
-        removePluginAreaItem(item);
         break;
     default:
         break;
@@ -131,10 +90,7 @@ void MainPanel::itemUpdated(DockItem *item)
 void MainPanel::init()
 {
     m_mainLayout->addWidget(m_fixedAreaWidget);
-    m_mainLayout->addSpacing(5);
     m_mainLayout->addWidget(m_appAreaWidget);
-    m_mainLayout->addWidget(m_trayAreaWidget);
-    m_mainLayout->addWidget(m_pluginAreaWidget);
 
     m_mainLayout->setMargin(0);
     m_mainLayout->setContentsMargins(10, 0, 10, 0);
@@ -150,16 +106,6 @@ void MainPanel::init()
     m_appAreaLayout->setContentsMargins(0, 0, 0, 0);
     m_appAreaLayout->setSpacing(0);
 
-    m_trayAreaWidget->setLayout(m_trayAreaLayout);
-    m_trayAreaLayout->setMargin(0);
-    m_trayAreaLayout->setContentsMargins(0, 0, 0, 0);
-    m_trayAreaLayout->setSpacing(0);
-
-    m_pluginAreaWidget->setLayout(m_pluginAreaLayout);
-    m_pluginAreaLayout->setMargin(0);
-    m_pluginAreaLayout->setContentsMargins(0, 0, 0, 0);
-    m_pluginAreaLayout->setSpacing(0);
-
     setLayout(m_mainLayout);
 }
 
@@ -170,24 +116,18 @@ void MainPanel::updateLayout()
     case DockSettings::Right:
         m_fixedAreaWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
         m_appAreaWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-        m_pluginAreaWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
-        m_trayAreaWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
         m_mainLayout->setAlignment(m_appAreaWidget, Qt::AlignTop);
         m_mainLayout->setDirection(QBoxLayout::TopToBottom);
         m_fixedAreaLayout->setDirection(QBoxLayout::TopToBottom);
         m_appAreaLayout->setDirection(QBoxLayout::TopToBottom);
-        m_trayAreaLayout->setContentsMargins(0, 10, 0, 10);
         break;
     case DockSettings::Bottom:
         m_fixedAreaWidget->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Expanding);
         m_appAreaWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-        m_pluginAreaWidget->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Expanding);
-        m_trayAreaWidget->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Expanding);
         m_mainLayout->setAlignment(m_appAreaWidget, Qt::AlignLeft);
         m_mainLayout->setDirection(QBoxLayout::LeftToRight);
         m_fixedAreaLayout->setDirection(QBoxLayout::LeftToRight);
         m_appAreaLayout->setDirection(QBoxLayout::LeftToRight);
-        m_trayAreaLayout->setContentsMargins(0, 10, 0, 10);
         break;
     }
 }

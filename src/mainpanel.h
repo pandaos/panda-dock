@@ -16,12 +16,8 @@ public:
 
     void addFixedAreaItem(int index, QWidget *wdg);
     void addAppAreaItem(int index, QWidget *wdg);
-    void addTrayAreaItem(int index, QWidget *wdg);
-    void addPluginAreaItem(int index, QWidget *wdg);
     void removeFixedAreaItem(QWidget *wdg);
     void removeAppAreaItem(QWidget *wdg);
-    void removeTrayAreaItem(QWidget *wdg);
-    void removePluginAreaItem(QWidget *wdg);
 
 signals:
     void requestResized();
@@ -44,13 +40,9 @@ private:
     QBoxLayout *m_mainLayout;
     QBoxLayout *m_fixedAreaLayout;
     QBoxLayout *m_appAreaLayout;
-    QBoxLayout *m_trayAreaLayout;
-    QBoxLayout *m_pluginAreaLayout;
 
     QWidget *m_fixedAreaWidget;
     QWidget *m_appAreaWidget;
-    QWidget *m_trayAreaWidget;
-    QWidget *m_pluginAreaWidget;
 
     DockItemManager *m_dockItemmanager;
     DockSettings *m_settings;

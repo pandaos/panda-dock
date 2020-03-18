@@ -4,8 +4,6 @@
 #
 #-------------------------------------------------
 
-include(../interfaces/interfaces.pri)
-
 QT       += core gui svg x11extras KWindowSystem
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
@@ -43,10 +41,7 @@ SOURCES += \
     item/appitem.cpp \
     controller/docksettings.cpp \
     utils/dockpopupwindow.cpp \
-    item/pluginitem.cpp \
-    item/showdesktopitem.cpp \
-    utils/pluginloader.cpp \
-    controller/pluginsmanager.cpp
+    item/showdesktopitem.cpp
 
 HEADERS += \
         mainwindow.h \
@@ -64,10 +59,7 @@ HEADERS += \
     item/appitem.h \
     controller/docksettings.h \
     utils/dockpopupwindow.h \
-    item/pluginitem.h \
-    item/showdesktopitem.h \
-    utils/pluginloader.h \
-    controller/pluginsmanager.h
+    item/showdesktopitem.h
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

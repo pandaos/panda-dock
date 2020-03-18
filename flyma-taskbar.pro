@@ -1,3 +1,2 @@
 TEMPLATE = subdirs
-SUBDIRS = frame \
-          plugins
+SUBDIRS = src

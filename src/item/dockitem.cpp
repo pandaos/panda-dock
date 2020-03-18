@@ -37,14 +37,9 @@ const QRect DockItem::perfectIconRect() const
     const QRect itemRect = rect();
     QRect iconRect;
 
-    if (itemType() == Plugins) {
-        iconRect.setWidth(itemRect.width() * 0.9);
-        iconRect.setHeight(itemRect.height() * 0.9);
-    } else {
-        const int iconSize = std::min(itemRect.width(), itemRect.height()) * 0.8;
-        iconRect.setWidth(iconSize);
-        iconRect.setHeight(iconSize);
-    }
+    const int iconSize = std::min(itemRect.width(), itemRect.height()) * 0.8;
+    iconRect.setWidth(iconSize);
+    iconRect.setHeight(iconSize);
 
     iconRect.moveTopLeft(itemRect.center() - iconRect.center());
     return iconRect;

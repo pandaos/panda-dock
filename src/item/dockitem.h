@@ -15,10 +15,7 @@ public:
     enum ItemType {
         Launcher,
         App,
-        Plugins,
-        FixedPlugin,
-        Placeholder,
-        TrayPlugin,
+        FixedPlugin
     };
 
     explicit DockItem(QWidget *parent = nullptr);

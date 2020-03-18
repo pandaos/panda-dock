@@ -93,12 +93,12 @@ const QRect DockSettings::windowRect() const
     // calculate window size.
     switch (m_position) {
     case Bottom:
-        size.setHeight(iconSize + PADDING * 2);
-        size.setWidth(iconCount * iconSize + (PADDING * 4));
+        size.setHeight(iconSize + PADDING * 4);
+        size.setWidth(iconCount * iconSize + (PADDING * 6));
         break;
     case Left: case Right:
-        size.setHeight(iconCount * iconSize + (PADDING * 4));
-        size.setWidth(iconSize + PADDING * 2);
+        size.setHeight(iconCount * iconSize + (PADDING * 6));
+        size.setWidth(iconSize + PADDING * 4);
         break;
     }
 
