@@ -26,7 +26,6 @@ const QPoint rawXPosition(const QPoint &scaledPos)
 MainWindow::MainWindow(QWidget *parent)
     : QWidget(parent),
       m_mainPanel(new MainPanel),
-      m_dragWidget(new DragWidget(this)),
       m_itemManager(DockItemManager::instance()),
       m_settings(DockSettings::instance()),
       m_xcbMisc(XcbMisc::instance()),
@@ -38,9 +37,6 @@ MainWindow::MainWindow(QWidget *parent)
     layout->addWidget(m_mainPanel);
     setLayout(layout);
 
-    m_dragWidget->setMouseTracking(true);
-    m_dragWidget->raise();
-
     m_fakeWidget->setFocusPolicy(Qt::NoFocus);
     m_fakeWidget->setWindowFlags(Qt::FramelessWindowHint);
     m_fakeWidget->setAttribute(Qt::WA_TranslucentBackground);
@@ -49,7 +45,6 @@ MainWindow::MainWindow(QWidget *parent)
         m_mainPanel->insertItem(-1, item);
 
     initSize();
-    resizeMainPanelWindow();
 
     // blur
     setAttribute(Qt::WA_NoSystemBackground, false);
@@ -60,10 +55,10 @@ MainWindow::MainWindow(QWidget *parent)
     KWindowSystem::setType(winId(), NET::Dock);
     // KWindowEffects::slideWindow(winId(), KWindowEffects::BottomEdge);
 
-    connect(m_dragWidget, &DragWidget::dragPointOffset, this, &MainWindow::onMainWindowSizeChanged);
-    connect(m_dragWidget, &DragWidget::dragFinished, this, &MainWindow::onDragFinished);
     connect(m_settings, &DockSettings::positionChanged, this, &MainWindow::onPositionChanged);
     connect(qApp->primaryScreen(), &QScreen::geometryChanged, this, &MainWindow::initSize, Qt::QueuedConnection);
+
+    connect(m_mainPanel, &MainPanel::requestResized, this, &MainWindow::initSize);
 }
 
 MainWindow::~MainWindow()
@@ -81,8 +76,6 @@ void MainWindow::initSize()
 
     m_size = windowRect.size();
 
-    resizeMainPanelWindow();
-
     setStrutPartial();
 }
 
@@ -98,22 +91,23 @@ void MainWindow::setStrutPartial()
 
     const auto ratio = devicePixelRatioF();
     const QRect windowRect = m_settings->windowRect();
+    const int margin = 10;
 
     NETExtendedStrut strut;
 
     switch (m_settings->position()) {
     case DockSettings::Left:
-        strut.left_width = width();
+        strut.left_width = width() + margin * 2;
         strut.left_start = y();
         strut.left_end = y() + height() - 1;
         break;
     case DockSettings::Right:
-        strut.right_width = width();
+        strut.right_width = width() + margin * 2;
         strut.right_start = y();
         strut.right_end = y() + height() - 1;
         break;
     case DockSettings::Bottom:
-        strut.bottom_width = height();
+        strut.bottom_width = height() + margin * 2;
         strut.bottom_start = x();
         strut.bottom_end = x() + width();
         break;
@@ -134,54 +128,9 @@ void MainWindow::setStrutPartial()
                                      strut.bottom_end);
 }
 
-void MainWindow::resizeMainPanelWindow()
-{
-    if (m_settings->position() == DockSettings::Bottom) {
-        m_dragWidget->setGeometry(0, 0, width(), DRAG_AREA_SIZE);
-        m_dragWidget->setCursor(Qt::SizeVerCursor);
-    } else if (m_settings->position() == DockSettings::Left) {
-        m_dragWidget->setGeometry(width() - DRAG_AREA_SIZE, 0, DRAG_AREA_SIZE, height());
-        m_dragWidget->setCursor(Qt::SizeHorCursor);
-    } else {
-        m_dragWidget->setGeometry(0, 0, DRAG_AREA_SIZE, height());
-        m_dragWidget->setCursor(Qt::SizeHorCursor);
-    }
-}
-
-void MainWindow::onMainWindowSizeChanged(QPoint offset)
-{
-    switch (m_settings->position()) {
-    case DockSettings::Left:
-    case DockSettings::Right:
-        setFixedHeight(height());
-        setFixedWidth(qBound(MAINWINDOW_MIN_SIZE, m_size.width() + offset.x(), MAINWINDOW_MAX_SIZE));
-        m_settings->setWindowLeftSize(QWidget::size());
-        break;
-    case DockSettings::Bottom:
-        setFixedHeight(qBound(MAINWINDOW_MIN_SIZE, m_size.height() - offset.y(), MAINWINDOW_MAX_SIZE));
-        setFixedWidth(width());
-        m_settings->setWindowBottomSize(QWidget::size());
-        break;
-    }
-
-    QRect windowRect = m_settings->windowRect();
-    QWidget::move(windowRect.left(), windowRect.top());
-
-    resizeMainPanelWindow();
-}
-
-void MainWindow::onDragFinished()
-{
-    m_size = m_settings->windowSize();
-
-
-    setStrutPartial();
-}
-
 void MainWindow::onPositionChanged()
 {
     initSize();
-    resizeMainPanelWindow();
 }
 
 void MainWindow::resizeEvent(QResizeEvent *e)
@@ -202,9 +151,22 @@ void MainWindow::paintEvent(QPaintEvent *e)
     QPainter painter(this);
     painter.setRenderHint(QPainter::Antialiasing, true);
     painter.setRenderHint(QPainter::SmoothPixmapTransform, true);
-    QColor color("#000000");
-    color.setAlpha(60);
-    painter.fillRect(rect(), color);
+//    QColor color("#000000");
+//    color.setAlpha(60);
+    QColor color("#FFFFFF");
+    color.setAlpha(84);
+    painter.setPen(Qt::NoPen);
+    painter.setBrush(color);
+
+    int radius;
+
+    if (m_settings->position() == DockSettings::Bottom) {
+        radius = rect().height() * 0.3;
+    } else {
+        radius = rect().width() * 0.3;
+    }
+
+    painter.drawRoundedRect(rect(), radius, radius);
 }
 
 void MainWindow::mousePressEvent(QMouseEvent *e)

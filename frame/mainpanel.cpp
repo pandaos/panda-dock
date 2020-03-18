@@ -60,6 +60,8 @@ void MainPanel::removeFixedAreaItem(QWidget *wdg)
 void MainPanel::removeAppAreaItem(QWidget *wdg)
 {
     m_appAreaLayout->removeWidget(wdg);
+
+    emit requestResized();
 }
 
 void MainPanel::removeTrayAreaItem(QWidget *wdg)
@@ -128,11 +130,9 @@ void MainPanel::itemUpdated(DockItem *item)
 
 void MainPanel::init()
 {
-    m_mainLayout->addStretch();
     m_mainLayout->addWidget(m_fixedAreaWidget);
     m_mainLayout->addSpacing(5);
     m_mainLayout->addWidget(m_appAreaWidget);
-    m_mainLayout->addStretch();
     m_mainLayout->addWidget(m_trayAreaWidget);
     m_mainLayout->addWidget(m_pluginAreaWidget);
 
@@ -194,74 +194,17 @@ void MainPanel::updateLayout()
 
 void MainPanel::resizeDockIcon()
 {
-    DockSettings::Position pos = m_settings->position();
-    int totalLength = (pos == DockSettings::Bottom) ? height() : width();
+    const int iconSize = m_settings->iconSize();
 
-    if (totalLength < 0)
-        return;
-
-    int iconCount = m_fixedAreaLayout->count() + m_appAreaLayout->count();
-    int pluginCount = 0;
-    int iconSize = 0;
-
-    int yu = (totalLength % iconCount);
-    iconSize = (totalLength - yu) / iconCount;
-
-    if (iconSize < 20 || iconSize > 40) {
-        if (iconSize < 20)
-            totalLength -= 20 * pluginCount;
-        else
-            totalLength -= 40 * pluginCount;
-
-        iconCount -= pluginCount;
-
-        int yu = (totalLength % iconCount);
-        iconSize = (totalLength - yu) / iconCount;
+    for (int i = 0; i < m_appAreaLayout->count(); ++ i) {
+        m_appAreaLayout->itemAt(i)->widget()->setFixedSize(iconSize, iconSize);
     }
 
-    if (pos == DockSettings::Bottom) {
-        if (iconSize >= height()) {
-            calcuDockIconSize(height(), height());
-        } else {
-            calcuDockIconSize(iconSize, height());
-        }
-    } else {
-        if (iconSize >= width()) {
-            calcuDockIconSize(width(), width());
-        } else {
-            calcuDockIconSize(width(), iconSize);
-        }
+    for (int i = 0; i < m_fixedAreaLayout->count(); ++ i) {
+        m_fixedAreaLayout->itemAt(i)->widget()->setFixedSize(iconSize, iconSize);
     }
-}
 
-void MainPanel::calcuDockIconSize(int w, int h)
-{
-//    for (int i = 0; i < m_fixedAreaLayout->count(); ++ i) {
-//        m_fixedAreaLayout->itemAt(i)->widget()->setFixedSize(w, h);
-//    }
-
-    DockSettings::Position pos = m_settings->position();
-    if (pos == DockSettings::Bottom) {
-        for (int i = 0; i < m_appAreaLayout->count(); ++ i) {
-            m_appAreaLayout->itemAt(i)->widget()->setMaximumWidth(h);
-            m_appAreaLayout->itemAt(i)->widget()->setMaximumHeight(QWIDGETSIZE_MAX);
-        }
-
-        for (int i = 0; i < m_fixedAreaLayout->count(); ++ i) {
-            m_fixedAreaLayout->itemAt(i)->widget()->setMaximumWidth(h);
-            m_fixedAreaLayout->itemAt(i)->widget()->setMaximumHeight(QWIDGETSIZE_MAX);
-        }
-    } else {
-        for (int i = 0; i < m_appAreaLayout->count(); ++ i) {
-            m_appAreaLayout->itemAt(i)->widget()->setMaximumHeight(w);
-            m_appAreaLayout->itemAt(i)->widget()->setMaximumWidth(QWIDGETSIZE_MAX);
-        }
-
-        for (int i = 0; i < m_fixedAreaLayout->count(); ++ i) {
-            m_fixedAreaLayout->itemAt(i)->widget()->setMaximumHeight(w);
-            m_fixedAreaLayout->itemAt(i)->widget()->setMaximumWidth(QWIDGETSIZE_MAX);
-        }
-    }
+    emit requestResized();
 }
 
 void MainPanel::onPositionChanged()

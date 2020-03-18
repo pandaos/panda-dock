@@ -29,20 +29,14 @@ DockSettings::DockSettings(QObject *parent)
                 .arg(qApp->organizationName())
                 .arg(qApp->applicationName());
 
-    if (!m_settings->contains("window_bottom_size")) {
-        m_settings->setValue("window_bottom_size", QSize(50, 50));
-    }
-
-    if (!m_settings->contains("window_left_size")) {
-        m_settings->setValue("window_left_size", QSize(50, 50));
+    if (!m_settings->contains("icon_size")) {
+        m_settings->setValue("icon_size", 64);
     }
 
     if (!m_settings->contains("position")) {
         m_settings->setValue("position", Bottom);
     }
 
-    m_bottomSize = m_settings->value("window_bottom_size").toSize();
-    m_leftSize = m_settings->value("window_left_size").toSize();
     m_position = static_cast<Position>(m_settings->value("position").toInt());
 
     m_leftPosAction->setCheckable(true);
@@ -89,17 +83,22 @@ const QRect DockSettings::windowRect() const
     qreal scale = qApp->primaryScreen()->devicePixelRatio();
     QSize size;
 
+    int iconSize = m_settings->value("icon_size").toInt();
+    int iconCount = 0;
+
+    for (auto item : DockItemManager::instance()->itemList()) {
+        iconCount++;
+    }
+
     // calculate window size.
     switch (m_position) {
     case Bottom:
-        size.setHeight(m_bottomSize.height());
-        size.setWidth(primaryRect.width());
+        size.setHeight(iconSize + PADDING * 2);
+        size.setWidth(iconCount * iconSize + (PADDING * 4));
         break;
     case Left: case Right:
-        size.setHeight(primaryRect.height());
-        size.setWidth(m_leftSize.width());
-        primaryRect.setY(40);
-        primaryRect.setHeight(primaryRect.height() - 41);
+        size.setHeight(iconCount * iconSize + (PADDING * 4));
+        size.setWidth(iconSize + PADDING * 2);
         break;
     }
 
@@ -108,12 +107,12 @@ const QRect DockSettings::windowRect() const
 
     const int offsetX = (primaryRect.width() - size.width()) / 2;
     const int offsetY = (primaryRect.height() - size.height()) / 2;
-    int margin = 0;
+    int margin = 10;
     QPoint p(0, 0);
 
     switch (m_position) {
     case Bottom:
-        p = QPoint(offsetX, primaryRect.height() - size.height());
+        p = QPoint(offsetX, primaryRect.height() - size.height() - margin);
         break;
     case Left:
         p = QPoint(margin, offsetY);
@@ -131,25 +130,9 @@ void DockSettings::setValue(const QString &key, const QVariant &variant)
     m_settings->setValue(key, variant);
 }
 
-void DockSettings::setWindowBottomSize(const QSize &size)
+int DockSettings::iconSize() const
 {
-    m_settings->setValue("window_bottom_size", size);
-    m_bottomSize = size;
-}
-
-void DockSettings::setWindowLeftSize(const QSize &size)
-{
-    m_settings->setValue("window_left_size", size);
-    m_leftSize = size;
-}
-
-QSize DockSettings::windowSize() const
-{
-    if (m_position == Bottom) {
-        return m_settings->value("window_bottom_size").toSize();
-    } else {
-        return m_settings->value("window_left_size").toSize();
-    }
+    return m_settings->value("icon_size").toInt();
 }
 
 void DockSettings::showSettingsMenu()

@@ -6,6 +6,8 @@
 #include <QRect>
 #include <QMenu>
 
+#include "dockitemmanager.h"
+
 class DockSettings : public QObject
 {
     Q_OBJECT
@@ -15,6 +17,9 @@ public:
         Bottom = 0, Left = 1, Right = 2
     };
 
+    const int PADDING = 5;
+    const int MARGIN = 10;
+
     static DockSettings *instance();
     explicit DockSettings(QObject *parent = nullptr);
 
@@ -22,9 +27,8 @@ public:
     const QRect windowRect() const;
 
     void setValue(const QString &key, const QVariant &variant);
-    void setWindowBottomSize(const QSize &size);
-    void setWindowLeftSize(const QSize &size);
-    QSize windowSize() const;
+
+    int iconSize() const;
 
     void showSettingsMenu();
 
@@ -35,8 +39,6 @@ signals:
 
 private:
     QSettings *m_settings;
-    QSize m_bottomSize;
-    QSize m_leftSize;
     Position m_position;
     QMenu *m_settingsMenu;
     QAction *m_leftPosAction;

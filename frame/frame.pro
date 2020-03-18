@@ -42,7 +42,6 @@ SOURCES += \
     controller/appwindowmanager.cpp \
     item/appitem.cpp \
     controller/docksettings.cpp \
-    dragwidget.cpp \
     utils/dockpopupwindow.cpp \
     item/pluginitem.cpp \
     item/showdesktopitem.cpp \
@@ -64,7 +63,6 @@ HEADERS += \
     controller/appwindowmanager.h \
     item/appitem.h \
     controller/docksettings.h \
-    dragwidget.h \
     utils/dockpopupwindow.h \
     item/pluginitem.h \
     item/showdesktopitem.h \

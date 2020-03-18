@@ -2,7 +2,6 @@
 #define MAINWINDOW_H
 
 #include <QWidget>
-#include "dragwidget.h"
 #include "mainpanel.h"
 #include "controller/dockitemmanager.h"
 #include "controller/docksettings.h"
@@ -20,9 +19,6 @@ public:
 
 private:
     void setStrutPartial();
-    void resizeMainPanelWindow();
-    void onMainWindowSizeChanged(QPoint offset);
-    void onDragFinished();
     void onPositionChanged();
 
     void resizeEvent(QResizeEvent *e) override;
@@ -32,7 +28,6 @@ private:
 
 private:
     MainPanel *m_mainPanel;
-    DragWidget *m_dragWidget;
     DockItemManager *m_itemManager;
     DockSettings *m_settings;
     XcbMisc *m_xcbMisc;

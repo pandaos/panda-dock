@@ -23,6 +23,9 @@ public:
     void removeTrayAreaItem(QWidget *wdg);
     void removePluginAreaItem(QWidget *wdg);
 
+signals:
+    void requestResized();
+
 public slots:
     void insertItem(const int index, DockItem *item);
     void removeItem(DockItem *item);
@@ -32,7 +35,6 @@ private:
     void init();
     void updateLayout();
     void resizeDockIcon();
-    void calcuDockIconSize(int w, int h);
     void onPositionChanged();
 
 protected:
