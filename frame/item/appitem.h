@@ -36,6 +36,7 @@ private:
     DockEntry *m_entry;
     QMenu m_contextMenu;
     QAction *m_openAction;
+    QAction *m_closeAction;
     QAction *m_dockAction;
     QTimer *m_updateIconGeometryTimer;
 };

@@ -195,7 +195,7 @@ void MainPanel::updateLayout()
 void MainPanel::resizeDockIcon()
 {
     DockSettings::Position pos = m_settings->position();
-    int totalLength = (pos == DockSettings::Bottom) ? width() : height();
+    int totalLength = (pos == DockSettings::Bottom) ? height() : width();
 
     if (totalLength < 0)
         return;

@@ -13,12 +13,6 @@
 #define MAINWINDOW_PADDING (0)
 #define DRAG_AREA_SIZE (5)
 
-#include <QX11Info>
-#include <X11/Xatom.h>
-#include <X11/Xlib.h>
-#include <X11/Xlib-xcb.h>
-#include <fixx11h.h>
-
 const QPoint rawXPosition(const QPoint &scaledPos)
 {
     QScreen const *screen = Utils::screenAtByScaled(scaledPos);
@@ -49,6 +43,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     m_fakeWidget->setFocusPolicy(Qt::NoFocus);
     m_fakeWidget->setWindowFlags(Qt::FramelessWindowHint);
+    m_fakeWidget->setAttribute(Qt::WA_TranslucentBackground);
 
     for (auto item : m_itemManager->itemList())
         m_mainPanel->insertItem(-1, item);
@@ -207,8 +202,8 @@ void MainWindow::paintEvent(QPaintEvent *e)
     QPainter painter(this);
     painter.setRenderHint(QPainter::Antialiasing, true);
     painter.setRenderHint(QPainter::SmoothPixmapTransform, true);
-    QColor color("#FFFFFF");
-    color.setAlpha(55);
+    QColor color("#000000");
+    color.setAlpha(60);
     painter.fillRect(rect(), color);
 }
 

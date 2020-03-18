@@ -15,6 +15,7 @@ struct DockEntry
     bool isDocked = false;
     QString desktopPath;
     QString className;
+    QString iconName;
     QString exec;
     QString name;
     QString id;
@@ -55,6 +56,8 @@ private:
     void refreshWindowList();
     QString getExec(quint64 id);
     QString whichCmd(const QString &cmd);
+    QString getDesktop(const QString &keyword);
+    QString getIcon(const QString &exec);
     void onWindowAdded(quint64 id);
     void onWindowRemoved(quint64 id);
     void onActiveWindowChanged(quint64 id);

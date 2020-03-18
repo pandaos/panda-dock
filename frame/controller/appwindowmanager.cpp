@@ -7,6 +7,8 @@
 #include <QDebug>
 #include <QTimer>
 #include <QFile>
+#include <QDir>
+#include <QFileInfo>
 
 static const NET::Properties windowInfoFlags = NET::WMState | NET::XAWMState | NET::WMDesktop |
              NET::WMVisibleName | NET::WMGeometry | NET::WMWindowType;
@@ -36,6 +38,7 @@ AppWindowManager::AppWindowManager(QObject *parent)
     connect(KWindowSystem::self(), &KWindowSystem::currentDesktopChanged, this, [&](int desktop) {
         m_currentDesktop = desktop;
     });
+
     //    connect(KWindowSystem::self(), &KWindowSystem::windowChanged, this, &AppWindowManager::onWindowChanged);
 }
 
@@ -180,31 +183,28 @@ void AppWindowManager::undock(DockEntry *entry)
 void AppWindowManager::save()
 {
     QStringList docked;
-    QStringList exec;
     for (DockEntry *entry : m_dockList) {
         if (entry->isDocked) {
             docked.append(entry->className);
-            exec.append(entry->exec);
         }
     }
 
     qDebug() << "saved: " << docked;
 
     m_settings->setValue("appname", QVariant::fromValue(docked));
-    m_settings->setValue("appexec", QVariant::fromValue(exec));
 }
 
 void AppWindowManager::refreshWindowList()
 {
     QStringList dockedList = m_settings->value("appname").value<QStringList>();
-    QStringList execList = m_settings->value("appexec").value<QStringList>();
 
     for (QString &var : dockedList) {
         qDebug() << var << " init";
         DockEntry *entry = new DockEntry;
         entry->className = var;
         entry->isDocked = true;
-        entry->exec = execList.at(dockedList.indexOf(var));
+        entry->exec = var;
+        entry->iconName = getIcon(var);
         m_dockList.append(entry);
 
         emit entryAdded(entry);
@@ -260,6 +260,36 @@ QString AppWindowManager::whichCmd(const QString &cmd)
     return bin;
 }
 
+QString AppWindowManager::getDesktop(const QString &keyword)
+{
+    QDir dir("/usr/share/applications");
+    QFileInfoList list = dir.entryInfoList(QStringList() << "*.desktop", QDir::Files);
+
+    for (const QFileInfo &info : list) {
+        if (info.fileName().contains(keyword, Qt::CaseInsensitive)) {
+            return info.filePath();
+        }
+    }
+
+    return QString();
+}
+
+QString AppWindowManager::getIcon(const QString &exec)
+{
+    const QString &desktopPath = getDesktop(exec);
+
+    if (desktopPath.isEmpty())
+        return QString();
+
+    QSettings settings(desktopPath, QSettings::IniFormat);
+    QString iconName;
+    settings.beginGroup("Desktop Entry");
+    iconName = settings.value("Icon").toString();
+    settings.endGroup();
+
+    return iconName;
+}
+
 void AppWindowManager::onWindowAdded(quint64 id)
 {
     if (!isAcceptWindow(id))
@@ -277,9 +307,6 @@ void AppWindowManager::onWindowAdded(quint64 id)
         }
 
         if (entry) {
-            if (entry->exec.isEmpty()) {
-                entry->exec = getExec(id);
-            }
             entry->WIdList.append(id);
             entry->current = 0;
         }
@@ -293,7 +320,8 @@ void AppWindowManager::onWindowAdded(quint64 id)
         entry->id = QCryptographicHash::hash(entry->className.toUtf8(), QCryptographicHash::Md5).toHex();
         entry->isActive = KWindowSystem::activeWindow() == id;
         entry->name = info.visibleName();
-        entry->exec = getExec(id);
+        entry->exec = entry->className;
+        entry->iconName = getIcon(entry->className);
 
         m_dockList.append(entry);
 

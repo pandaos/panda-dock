@@ -14,21 +14,21 @@ AppItem::AppItem(DockEntry *entry, QWidget *parent)
       m_entry(entry),
       m_updateIconGeometryTimer(new QTimer(this)),
       m_openAction(new QAction(tr("Open"))),
+      m_closeAction(new QAction(tr("Close All"))),
       m_dockAction(new QAction(""))
 {
     m_updateIconGeometryTimer->setInterval(500);
     m_updateIconGeometryTimer->setSingleShot(true);
 
-    QAction *closeAction = new QAction("Close All");
     m_contextMenu.addAction(m_openAction);
     m_contextMenu.addAction(m_dockAction);
-    m_contextMenu.addAction(closeAction);
+    m_contextMenu.addAction(m_closeAction);
 
     initDockAction();
     refreshIcon();
 
     connect(m_updateIconGeometryTimer, &QTimer::timeout, this, &AppItem::updateWindowIconGeometries, Qt::QueuedConnection);
-    connect(closeAction, &QAction::triggered, this, &AppItem::closeWindow);
+    connect(m_closeAction, &QAction::triggered, this, &AppItem::closeWindow);
     connect(m_dockAction, &QAction::triggered, this, &AppItem::dockActionTriggered);
     connect(m_openAction, &QAction::triggered, this, [=] {
         AppWindowManager::instance()->openApp(m_entry->className);
@@ -52,6 +52,7 @@ void AppItem::update()
 void AppItem::initDockAction()
 {
     m_openAction->setVisible(m_entry->WIdList.isEmpty());
+    m_closeAction->setVisible(!m_entry->WIdList.isEmpty());
 
     if (m_entry->isDocked) {
         m_dockAction->setText(tr("UnDock"));
@@ -75,13 +76,15 @@ void AppItem::dockActionTriggered()
 void AppItem::refreshIcon()
 {
     const int iconSize = qMin(width(), height());
-    const QString iconName = m_entry->className;
+    const QString iconName = m_entry->iconName;
 
-    if (m_entry->WIdList.isEmpty()) {
-        m_iconPixmap = ThemeAppIcon::getIcon(iconName, 0, iconSize * 0.8, devicePixelRatioF());
-    } else {
-        m_iconPixmap = ThemeAppIcon::getIcon(iconName, m_entry->WIdList.at(m_entry->current), iconSize * 0.8, devicePixelRatioF());
-    }
+    m_iconPixmap = ThemeAppIcon::getIcon(iconName, 0, iconSize * 0.8, devicePixelRatioF());
+
+//    if (m_entry->WIdList.isEmpty()) {
+//        m_iconPixmap = ThemeAppIcon::getIcon(iconName, 0, iconSize * 0.8, devicePixelRatioF());
+//    } else {
+//        m_iconPixmap = ThemeAppIcon::getIcon(iconName, m_entry->WIdList.at(m_entry->current), iconSize * 0.8, devicePixelRatioF());
+//    }
 
     QWidget::update();
 
@@ -116,10 +119,13 @@ void AppItem::paintEvent(QPaintEvent *e)
 //    backgroundRect.moveCenter(itemRect.center());
 //    QPainterPath path;
 //    path.addRoundedRect(backgroundRect, 8, 8);
-//    if (m_entry->isActive) {
-//        painter.fillPath(path, QColor(0, 0, 0, 255 * 0.8));
-//    } else {
-//        painter.fillPath(path, QColor(0, 0, 0, 255 * 0.3));
+
+//    if (!m_entry->WIdList.isEmpty()) {
+//        if (m_entry->isActive) {
+//            painter.fillPath(path, QColor(0, 0, 0, 255 * 0.8));
+//        } else {
+//            painter.fillPath(path, QColor(0, 0, 0, 255 * 0.3));
+//        }
 //    }
 
     const int lineWidth = itemRect.width() / 2;
@@ -162,6 +168,7 @@ void AppItem::mousePressEvent(QMouseEvent *e)
 
     if (e->button() == Qt::RightButton) {
         m_contextMenu.popup(QCursor::pos());
+        return;
     }
 
     DockItem::mousePressEvent(e);
