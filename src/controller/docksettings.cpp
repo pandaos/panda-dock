@@ -22,7 +22,10 @@ DockSettings::DockSettings(QObject *parent)
       m_settingsMenu(new QMenu),
       m_leftPosAction(new QAction(tr("Left"), this)),
       m_rightPosAction(new QAction(tr("Right"), this)),
-      m_bottomPosAction(new QAction(tr("Bottom"), this))
+      m_bottomPosAction(new QAction(tr("Bottom"), this)),
+      m_smallSizeAction(new QAction(tr("Small"), this)),
+      m_mediumSizeAction(new QAction(tr("Medium"), this)),
+      m_largeSizeAction(new QAction(tr("Large"), this))
 {
     qDebug() << QString("%1/%2/%3/config.conf")
                 .arg(QStandardPaths::writableLocation(QStandardPaths::ConfigLocation))
@@ -42,6 +45,35 @@ DockSettings::DockSettings(QObject *parent)
     m_leftPosAction->setCheckable(true);
     m_rightPosAction->setCheckable(true);
     m_bottomPosAction->setCheckable(true);
+
+    m_smallSizeAction->setCheckable(true);
+    m_mediumSizeAction->setCheckable(true);
+    m_largeSizeAction->setCheckable(true);
+
+    QMenu *sizeSubMenu = new QMenu(m_settingsMenu);
+    sizeSubMenu->addAction(m_smallSizeAction);
+    sizeSubMenu->addAction(m_mediumSizeAction);
+    sizeSubMenu->addAction(m_largeSizeAction);
+
+    QAction *sizeSubAction = new QAction(tr("Size"), this);
+    sizeSubAction->setMenu(sizeSubMenu);
+    m_settingsMenu->addAction(sizeSubAction);
+
+    initSizeAction();
+
+    connect(m_smallSizeAction, &QAction::triggered, this, [=] {
+        setIconSize(32);
+    });
+
+    connect(m_mediumSizeAction, &QAction::triggered, this, [=] {
+        setIconSize(64);
+    });
+
+    connect(m_largeSizeAction, &QAction::triggered, this, [=] {
+        setIconSize(96);
+    });
+
+    // ****************
 
     QMenu *positionSubMenu = new QMenu(m_settingsMenu);
     positionSubMenu->addAction(m_leftPosAction);
@@ -93,12 +125,12 @@ const QRect DockSettings::windowRect() const
     // calculate window size.
     switch (m_position) {
     case Bottom:
-        size.setHeight(iconSize + PADDING * 4);
-        size.setWidth(iconCount * iconSize + (PADDING * 6));
+        size.setHeight(iconSize + PADDING * 2);
+        size.setWidth(iconCount * iconSize + (PADDING * 4));
         break;
     case Left: case Right:
-        size.setHeight(iconCount * iconSize + (PADDING * 6));
-        size.setWidth(iconSize + PADDING * 4);
+        size.setHeight(iconCount * iconSize + (PADDING * 4));
+        size.setWidth(iconSize + PADDING * 2);
         break;
     }
 
@@ -130,6 +162,14 @@ void DockSettings::setValue(const QString &key, const QVariant &variant)
     m_settings->setValue(key, variant);
 }
 
+void DockSettings::setIconSize(int size)
+{
+    m_settings->setValue("icon_size", size);
+    initSizeAction();
+
+    emit iconSizeChanged();
+}
+
 int DockSettings::iconSize() const
 {
     return m_settings->value("icon_size").toInt();
@@ -142,4 +182,23 @@ void DockSettings::showSettingsMenu()
     m_bottomPosAction->setChecked(m_position == Bottom);
 
     m_settingsMenu->exec(QCursor::pos());
+}
+
+void DockSettings::initSizeAction()
+{
+    const int size = iconSize();
+
+    if (size <= 32) {
+        m_smallSizeAction->setChecked(true);
+        m_mediumSizeAction->setChecked(false);
+        m_largeSizeAction->setChecked(false);
+    } else if (size >= 32 && size <= 64) {
+        m_smallSizeAction->setChecked(false);
+        m_mediumSizeAction->setChecked(true);
+        m_largeSizeAction->setChecked(false);
+    } else if (size > 64) {
+        m_smallSizeAction->setChecked(false);
+        m_mediumSizeAction->setChecked(false);
+        m_largeSizeAction->setChecked(true);
+    }
 }

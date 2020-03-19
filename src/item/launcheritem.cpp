@@ -2,6 +2,7 @@
 #include "utils/utils.h"
 #include <QPainter>
 #include <QProcess>
+#include <QDebug>
 
 LauncherItem::LauncherItem(QWidget *parent)
     : DockItem(parent)

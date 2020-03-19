@@ -78,13 +78,7 @@ void AppItem::refreshIcon()
     const int iconSize = qMin(width(), height());
     const QString iconName = m_entry->iconName;
 
-    m_iconPixmap = ThemeAppIcon::getIcon(iconName, 0, iconSize * 0.8, devicePixelRatioF());
-
-//    if (m_entry->WIdList.isEmpty()) {
-//        m_iconPixmap = ThemeAppIcon::getIcon(iconName, 0, iconSize * 0.8, devicePixelRatioF());
-//    } else {
-//        m_iconPixmap = ThemeAppIcon::getIcon(iconName, m_entry->WIdList.at(m_entry->current), iconSize * 0.8, devicePixelRatioF());
-//    }
+    m_iconPixmap = ThemeAppIcon::getIcon(iconName, iconSize * 0.7, devicePixelRatioF());
 
     QWidget::update();
 
@@ -113,21 +107,6 @@ void AppItem::paintEvent(QPaintEvent *e)
 
     // draw background
     const QRectF itemRect = rect();
-//    qreal min = qMin(itemRect.width(), itemRect.height());
-//    QRectF backgroundRect = QRectF(itemRect.x(), itemRect.y(), min, min);
-//    backgroundRect = backgroundRect.marginsRemoved(QMargins(3, 3, 3, 3));
-//    backgroundRect.moveCenter(itemRect.center());
-//    QPainterPath path;
-//    path.addRoundedRect(backgroundRect, 8, 8);
-
-//    if (!m_entry->WIdList.isEmpty()) {
-//        if (m_entry->isActive) {
-//            painter.fillPath(path, QColor(0, 0, 0, 255 * 0.8));
-//        } else {
-//            painter.fillPath(path, QColor(0, 0, 0, 255 * 0.3));
-//        }
-//    }
-
     const int lineWidth = itemRect.width() / 2;
     const int lineHeight = 2;
 
@@ -157,8 +136,8 @@ void AppItem::paintEvent(QPaintEvent *e)
     }
 
     const auto ratio = devicePixelRatioF();
-    const int iconX = rect().center().x() - m_iconPixmap.rect().center().x() / ratio;
-    const int iconY = rect().center().y() - m_iconPixmap.rect().center().y() / ratio;
+    const qreal iconX = rect().center().x() - m_iconPixmap.rect().center().x() / ratio;
+    const qreal iconY = rect().center().y() - m_iconPixmap.rect().center().y() / ratio;
     painter.drawPixmap(iconX, iconY, m_iconPixmap);
 }
 

@@ -28,14 +28,19 @@ public:
 
     void setValue(const QString &key, const QVariant &variant);
 
+    void setIconSize(int size);
     int iconSize() const;
 
     void showSettingsMenu();
 
     inline Position position() { return m_position; };
 
+private:
+    void initSizeAction();
+
 signals:
     void positionChanged();
+    void iconSizeChanged();
 
 private:
     QSettings *m_settings;
@@ -44,6 +49,10 @@ private:
     QAction *m_leftPosAction;
     QAction *m_rightPosAction;
     QAction *m_bottomPosAction;
+
+    QAction *m_smallSizeAction;
+    QAction *m_mediumSizeAction;
+    QAction *m_largeSizeAction;
 };
 
 #endif // DOCKSETTINGS_H

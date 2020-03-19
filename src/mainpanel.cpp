@@ -130,17 +130,19 @@ void MainPanel::updateLayout()
         m_appAreaLayout->setDirection(QBoxLayout::LeftToRight);
         break;
     }
+
+    emit requestResized();
 }
 
 void MainPanel::resizeDockIcon()
 {
-    const int iconSize = m_settings->iconSize();
+    int iconSize = m_settings->iconSize();
 
-    for (int i = 0; i < m_appAreaLayout->count(); ++ i) {
+    for (int i = 0; i < m_appAreaLayout->count(); ++i) {
         m_appAreaLayout->itemAt(i)->widget()->setFixedSize(iconSize, iconSize);
     }
 
-    for (int i = 0; i < m_fixedAreaLayout->count(); ++ i) {
+    for (int i = 0; i < m_fixedAreaLayout->count(); ++i) {
         m_fixedAreaLayout->itemAt(i)->widget()->setFixedSize(iconSize, iconSize);
     }
 

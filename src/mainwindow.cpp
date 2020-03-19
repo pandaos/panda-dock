@@ -59,6 +59,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(qApp->primaryScreen(), &QScreen::geometryChanged, this, &MainWindow::initSize, Qt::QueuedConnection);
 
     connect(m_mainPanel, &MainPanel::requestResized, this, &MainWindow::initSize);
+    connect(m_settings, &DockSettings::iconSizeChanged, this, &MainWindow::initSize);
 }
 
 MainWindow::~MainWindow()
