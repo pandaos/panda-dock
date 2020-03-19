@@ -122,14 +122,17 @@ const QRect DockSettings::windowRect() const
         iconCount++;
     }
 
+    const int maxWidth = primaryRect.width() - PADDING * 4;
+    const int maxHeight = primaryRect.height() - PADDING * 4;
+
     // calculate window size.
     switch (m_position) {
     case Bottom:
         size.setHeight(iconSize + PADDING * 2);
-        size.setWidth(iconCount * iconSize + (PADDING * 4));
+        size.setWidth(qMin(maxWidth, iconCount * iconSize + (PADDING * 4)));
         break;
     case Left: case Right:
-        size.setHeight(iconCount * iconSize + (PADDING * 4));
+        size.setHeight(qMin(maxHeight, iconCount * iconSize + (PADDING * 4)));
         size.setWidth(iconSize + PADDING * 3);
         break;
     }
