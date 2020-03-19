@@ -346,6 +346,8 @@ void AppWindowManager::onWindowRemoved(quint64 id)
             if (!e->isDocked) {
                 m_dockList.removeOne(e);
                 emit entryRemoved(e);
+            } else {
+                emit activeChanged(e);
             }
         }
     }
