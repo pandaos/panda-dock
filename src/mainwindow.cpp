@@ -56,10 +56,10 @@ MainWindow::MainWindow(QWidget *parent)
     // KWindowEffects::slideWindow(winId(), KWindowEffects::BottomEdge);
 
     connect(m_settings, &DockSettings::positionChanged, this, &MainWindow::onPositionChanged);
-    connect(qApp->primaryScreen(), &QScreen::geometryChanged, this, &MainWindow::initSize, Qt::QueuedConnection);
-
-    connect(m_mainPanel, &MainPanel::requestResized, this, &MainWindow::initSize);
     connect(m_settings, &DockSettings::iconSizeChanged, this, &MainWindow::initSize);
+    connect(m_mainPanel, &MainPanel::requestResized, this, &MainWindow::initSize);
+
+    connect(qApp->primaryScreen(), &QScreen::geometryChanged, this, &MainWindow::initSize, Qt::QueuedConnection);
 }
 
 MainWindow::~MainWindow()
@@ -162,9 +162,9 @@ void MainWindow::paintEvent(QPaintEvent *e)
     int radius;
 
     if (m_settings->position() == DockSettings::Bottom) {
-        radius = rect().height() * 0.3;
+        radius = rect().height() * 0.35;
     } else {
-        radius = rect().width() * 0.3;
+        radius = rect().width() * 0.35;
     }
 
     painter.drawRoundedRect(rect(), radius, radius);

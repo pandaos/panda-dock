@@ -1,6 +1,6 @@
-# FlymaOS TaskBar
+# FlymaOS Dock
 
-TaskBar for FlymaOS.
+Dock for FlymaOS.
 
 ## Dependencies
 
@@ -19,4 +19,4 @@ TaskBar for FlymaOS.
 
 ## License
 
-flyma-taskbar is licensed under GPLv3.
+flyma-dock is licensed under GPLv3.

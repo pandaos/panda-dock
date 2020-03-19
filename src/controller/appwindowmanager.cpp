@@ -79,7 +79,7 @@ bool AppWindowManager::isAcceptWindow(quint64 id) const
     KWindowInfo info(id, NET::WMWindowType | NET::WMState, NET::WM2TransientFor | NET::WM2WindowClass);
 
     // 过滤自身
-    if (info.windowClassClass().toLower() == "flyma-taskbar")
+    if (info.windowClassClass().toLower() == "flyma-dock")
         return false;
 
     if (!info.valid())
