@@ -130,7 +130,7 @@ const QRect DockSettings::windowRect() const
         break;
     case Left: case Right:
         size.setHeight(iconCount * iconSize + (PADDING * 4));
-        size.setWidth(iconSize + PADDING * 2);
+        size.setWidth(iconSize + PADDING * 3);
         break;
     }
 
