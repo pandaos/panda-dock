@@ -36,9 +36,7 @@ const QList<QPointer<DockItem> > DockItemManager::itemList() const
 
 void DockItemManager::appItemAdded(DockEntry *entry)
 {
-    // 第一个是启动器
     int insertIndex = 1;
-    // -1 表示插入最后
     int index = -1;
 
     // -1 for append to app list end

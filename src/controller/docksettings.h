@@ -47,7 +47,6 @@ private:
     Position m_position;
     QMenu *m_settingsMenu;
     QAction *m_leftPosAction;
-    QAction *m_rightPosAction;
     QAction *m_bottomPosAction;
 
     QAction *m_smallSizeAction;

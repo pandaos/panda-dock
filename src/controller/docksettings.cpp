@@ -6,6 +6,8 @@
 #include <QDebug>
 #include <math.h>
 
+#define TOPBARHEIGHT 40
+
 DockSettings *DockSettings::instance()
 {
     static DockSettings instance;
@@ -21,7 +23,6 @@ DockSettings::DockSettings(QObject *parent)
                                .arg(qApp->applicationName()), QSettings::IniFormat)),
       m_settingsMenu(new QMenu),
       m_leftPosAction(new QAction(tr("Left"), this)),
-      m_rightPosAction(new QAction(tr("Right"), this)),
       m_bottomPosAction(new QAction(tr("Bottom"), this)),
       m_smallSizeAction(new QAction(tr("Small"), this)),
       m_mediumSizeAction(new QAction(tr("Medium"), this)),
@@ -43,7 +44,6 @@ DockSettings::DockSettings(QObject *parent)
     m_position = static_cast<Position>(m_settings->value("position").toInt());
 
     m_leftPosAction->setCheckable(true);
-    m_rightPosAction->setCheckable(true);
     m_bottomPosAction->setCheckable(true);
 
     m_smallSizeAction->setCheckable(true);
@@ -77,7 +77,6 @@ DockSettings::DockSettings(QObject *parent)
 
     QMenu *positionSubMenu = new QMenu(m_settingsMenu);
     positionSubMenu->addAction(m_leftPosAction);
-    positionSubMenu->addAction(m_rightPosAction);
     positionSubMenu->addAction(m_bottomPosAction);
 
     QAction *positionSubAction = new QAction(tr("Position"), this);
@@ -88,12 +87,6 @@ DockSettings::DockSettings(QObject *parent)
     connect(m_leftPosAction, &QAction::triggered, this, [=] {
         m_position = Left;
         setValue("position", Left);
-        emit positionChanged();
-    });
-
-    connect(m_rightPosAction, &QAction::triggered, this, [=] {
-        m_position = Right;
-        setValue("position", Right);
         emit positionChanged();
     });
 
@@ -113,10 +106,14 @@ const QRect DockSettings::windowRect() const
 {
     QRect primaryRect = qApp->primaryScreen()->geometry();
     qreal scale = qApp->primaryScreen()->devicePixelRatio();
-    QSize size;
-
     int iconSize = m_settings->value("icon_size").toInt();
     int iconCount = 0;
+    QSize size;
+
+    if (m_position != Bottom) {
+        primaryRect.setHeight(primaryRect.height() - TOPBARHEIGHT);
+        primaryRect.setY(TOPBARHEIGHT);
+    }
 
     for (auto item : DockItemManager::instance()->itemList()) {
         iconCount++;
@@ -124,21 +121,20 @@ const QRect DockSettings::windowRect() const
 
     const int maxWidth = primaryRect.width() - PADDING * 4;
     const int maxHeight = primaryRect.height() - PADDING * 4;
+    const int calcWidth = iconCount * iconSize + PADDING * 4;
+    const int calcHeight = iconSize + PADDING * 3;
 
     // calculate window size.
     switch (m_position) {
     case Bottom:
-        size.setHeight(iconSize + PADDING * 2);
-        size.setWidth(qMin(maxWidth, iconCount * iconSize + (PADDING * 4)));
+        size.setHeight(calcHeight);
+        size.setWidth(qMin(maxWidth, calcWidth));
         break;
     case Left: case Right:
-        size.setHeight(qMin(maxHeight, iconCount * iconSize + (PADDING * 4)));
-        size.setWidth(iconSize + PADDING * 3);
+        size.setHeight(qMin(maxHeight, calcWidth));
+        size.setWidth(calcHeight);
         break;
     }
-
-    primaryRect.setWidth(std::round(qreal(primaryRect.width()) / scale));
-    primaryRect.setHeight(std::round(qreal(primaryRect.height()) / scale));
 
     const int offsetX = (primaryRect.width() - size.width()) / 2;
     const int offsetY = (primaryRect.height() - size.height()) / 2;
@@ -150,11 +146,11 @@ const QRect DockSettings::windowRect() const
         p = QPoint(offsetX, primaryRect.height() - size.height() - margin);
         break;
     case Left:
-        p = QPoint(margin, offsetY);
+        p = QPoint(margin, offsetY + TOPBARHEIGHT / 2);
         break;
-    case Right:
-        p = QPoint(primaryRect.width() - size.width() - margin, offsetY);
-        break;
+//    case Right:
+//        p = QPoint(primaryRect.width() - size.width() - margin, offsetY);
+//        break;
     }
 
     return QRect(primaryRect.topLeft() + p, size);
@@ -181,7 +177,6 @@ int DockSettings::iconSize() const
 void DockSettings::showSettingsMenu()
 {
     m_leftPosAction->setChecked(m_position == Left);
-    m_rightPosAction->setChecked(m_position == Right);
     m_bottomPosAction->setChecked(m_position == Bottom);
 
     m_settingsMenu->exec(QCursor::pos());
