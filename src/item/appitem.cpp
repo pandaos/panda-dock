@@ -107,7 +107,7 @@ void AppItem::paintEvent(QPaintEvent *e)
 
     // draw background
     const QRectF itemRect = rect();
-    const int lineWidth = itemRect.width() / 2;
+    const int lineWidth = itemRect.width() * 0.3;
     const int lineHeight = 2;
 
     if (!m_entry->WIdList.isEmpty()) {
