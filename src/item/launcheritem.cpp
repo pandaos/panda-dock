@@ -44,6 +44,6 @@ void LauncherItem::resizeEvent(QResizeEvent *e)
 
 void LauncherItem::mouseReleaseEvent(QMouseEvent *e)
 {
-    QProcess::startDetached("flyma-launcher");
+    QProcess::startDetached("panda-launcher");
     QWidget::mouseReleaseEvent(e);
 }

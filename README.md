@@ -1,6 +1,6 @@
-# FlymaOS Dock
+# PandaOS Dock
 
-Dock for FlymaOS.
+Dock for PandaOS.
 
 ## Dependencies
 
@@ -19,4 +19,4 @@ Dock for FlymaOS.
 
 ## License
 
-flyma-dock is licensed under GPLv3.
+panda-dock is licensed under GPLv3.
