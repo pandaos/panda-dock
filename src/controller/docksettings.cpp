@@ -138,7 +138,7 @@ const QRect DockSettings::windowRect() const
 
     const int offsetX = (primaryRect.width() - size.width()) / 2;
     const int offsetY = (primaryRect.height() - size.height()) / 2;
-    int margin = 10;
+    int margin = 16;
     QPoint p(0, 0);
 
     switch (m_position) {

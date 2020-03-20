@@ -92,7 +92,7 @@ void MainWindow::setStrutPartial()
 
     const auto ratio = devicePixelRatioF();
     const QRect windowRect = m_settings->windowRect();
-    const int margin = 10;
+    const int margin = 16;
 
     NETExtendedStrut strut;
 
