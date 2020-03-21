@@ -104,14 +104,7 @@ void AppItem::updateWindowIconGeometries()
 
 void AppItem::initStates()
 {
-    int active = false;
-    for (quint64 id : m_entry->WIdList) {
-        if (id == KWindowSystem::activeWindow()) {
-            active = true;
-        }
-    }
-
-    m_entry->isActive = active;
+    m_entry->isActive = m_entry->WIdList.contains(KWindowSystem::activeWindow());
     update();
 }
 
