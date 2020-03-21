@@ -34,7 +34,7 @@ AppWindowManager::AppWindowManager(QObject *parent)
 
     connect(KWindowSystem::self(), &KWindowSystem::windowAdded, this, &AppWindowManager::onWindowAdded);
     connect(KWindowSystem::self(), &KWindowSystem::windowRemoved, this, &AppWindowManager::onWindowRemoved);
-    connect(KWindowSystem::self(), &KWindowSystem::activeWindowChanged, this, &AppWindowManager::onActiveWindowChanged);
+//    connect(KWindowSystem::self(), &KWindowSystem::activeWindowChanged, this, &AppWindowManager::onActiveWindowChanged);
     connect(KWindowSystem::self(), &KWindowSystem::currentDesktopChanged, this, [&](int desktop) {
         m_currentDesktop = desktop;
     });

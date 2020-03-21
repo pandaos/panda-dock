@@ -24,6 +24,7 @@ private:
     void dockActionTriggered();
     void refreshIcon();
     void updateWindowIconGeometries();
+    void initStates();
 
 protected:
     void paintEvent(QPaintEvent *) override;

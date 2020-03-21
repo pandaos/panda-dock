@@ -9,6 +9,8 @@
 #include <QDebug>
 #include <QToolTip>
 
+#include <KWindowSystem>
+
 AppItem::AppItem(DockEntry *entry, QWidget *parent)
     : DockItem(parent),
       m_entry(entry),
@@ -26,7 +28,9 @@ AppItem::AppItem(DockEntry *entry, QWidget *parent)
 
     initDockAction();
     refreshIcon();
+    initStates();
 
+    connect(KWindowSystem::self(), &KWindowSystem::activeWindowChanged, this, &AppItem::initStates);
     connect(m_updateIconGeometryTimer, &QTimer::timeout, this, &AppItem::updateWindowIconGeometries, Qt::QueuedConnection);
     connect(m_closeAction, &QAction::triggered, this, &AppItem::closeWindow);
     connect(m_dockAction, &QAction::triggered, this, &AppItem::dockActionTriggered);
@@ -44,8 +48,10 @@ void AppItem::closeWindow()
 
 void AppItem::update()
 {
+    updateWindowIconGeometries();
     initDockAction();
     refreshIcon();
+
     QWidget::update();
 }
 
@@ -94,6 +100,19 @@ void AppItem::updateWindowIconGeometries()
     for (quint64 id : m_entry->WIdList) {
         xcb_misc->set_window_icon_geometry(id, r);
     }
+}
+
+void AppItem::initStates()
+{
+    int active = false;
+    for (quint64 id : m_entry->WIdList) {
+        if (id == KWindowSystem::activeWindow()) {
+            active = true;
+        }
+    }
+
+    m_entry->isActive = active;
+    update();
 }
 
 void AppItem::paintEvent(QPaintEvent *e)
