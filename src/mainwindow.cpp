@@ -40,6 +40,7 @@ MainWindow::MainWindow(QWidget *parent)
     m_fakeWidget->setFocusPolicy(Qt::NoFocus);
     m_fakeWidget->setWindowFlags(Qt::FramelessWindowHint);
     m_fakeWidget->setAttribute(Qt::WA_TranslucentBackground);
+    m_fakeWidget->setVisible(false);
 
     for (auto item : m_itemManager->itemList())
         m_mainPanel->insertItem(-1, item);
@@ -49,9 +50,10 @@ MainWindow::MainWindow(QWidget *parent)
     // blur
     setAttribute(Qt::WA_NoSystemBackground, false);
     setAttribute(Qt::WA_TranslucentBackground);
+    setWindowFlags(Qt::FramelessWindowHint);
 
     KWindowSystem::setOnDesktop(effectiveWinId(), NET::OnAllDesktops);
-    XcbMisc::instance()->enableBlurBehind(winId(), true);
+//    XcbMisc::instance()->enableBlurBehind(winId(), true);
     KWindowSystem::setType(winId(), NET::Dock);
     // KWindowEffects::slideWindow(winId(), KWindowEffects::BottomEdge);
 
@@ -89,6 +91,7 @@ void MainWindow::setStrutPartial()
     m_fakeWidget->setGeometry(rect);
     m_fakeWidget->setVisible(true);
     KWindowSystem::setState(m_fakeWidget->winId(), NET::SkipTaskbar);
+    KWindowSystem::setState(m_fakeWidget->winId(), NET::SkipSwitcher);
 
     const auto ratio = devicePixelRatioF();
     const QRect windowRect = m_settings->windowRect();
@@ -143,7 +146,7 @@ void MainWindow::showEvent(QShowEvent *e)
 {
     QWidget::showEvent(e);
 
-    XcbMisc::instance()->enableBlurBehind(winId(), true);
+    //XcbMisc::instance()->enableBlurBehind(winId(), true);
 }
 
 void MainWindow::paintEvent(QPaintEvent *e)
@@ -155,7 +158,7 @@ void MainWindow::paintEvent(QPaintEvent *e)
 //    QColor color("#000000");
 //    color.setAlpha(60);
     QColor color("#FFFFFF");
-    color.setAlpha(85);
+    color.setAlpha(130);
     painter.setPen(Qt::NoPen);
     painter.setBrush(color);
 

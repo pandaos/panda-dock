@@ -107,7 +107,7 @@ const QRect DockSettings::windowRect() const
     QRect primaryRect = qApp->primaryScreen()->geometry();
     qreal scale = qApp->primaryScreen()->devicePixelRatio();
     int iconSize = m_settings->value("icon_size").toInt();
-    int iconCount = 0;
+    int iconCount = DockItemManager::instance()->itemList().count();
     QSize size;
 
     if (m_position != Bottom) {
@@ -115,14 +115,10 @@ const QRect DockSettings::windowRect() const
         primaryRect.setY(TOPBARHEIGHT);
     }
 
-    for (auto item : DockItemManager::instance()->itemList()) {
-        iconCount++;
-    }
-
-    const int maxWidth = primaryRect.width() - PADDING * 4;
-    const int maxHeight = primaryRect.height() - PADDING * 4;
+    const int maxWidth = primaryRect.width() - MARGIN * 4;
+    const int maxHeight = primaryRect.height() - MARGIN * 4;
     const int calcWidth = iconCount * iconSize + PADDING * 4;
-    const int calcHeight = iconSize + PADDING * 3;
+    const int calcHeight = iconSize + PADDING * 2;
 
     // calculate window size.
     switch (m_position) {

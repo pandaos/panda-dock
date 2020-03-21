@@ -1,14 +1,16 @@
 #include "mainpanel.h"
 #include <QPainter>
 #include <QLabel>
+#include <QDebug>
 
 MainPanel::MainPanel(QWidget *parent)
     : QWidget(parent),
       m_mainLayout(new QBoxLayout(QBoxLayout::LeftToRight)),
       m_fixedAreaLayout(new QBoxLayout(QBoxLayout::LeftToRight)),
-      m_appAreaLayout(new QBoxLayout(QBoxLayout::LeftToRight)),
+//      m_appAreaLayout(new QBoxLayout(QBoxLayout::LeftToRight)),
       m_fixedAreaWidget(new QWidget),
-      m_appAreaWidget(new QWidget),
+//      m_appAreaWidget(new QWidget),
+      m_appArea(new AppScrollArea),
       m_dockItemmanager(DockItemManager::instance()),
       m_settings(DockSettings::instance())
 {
@@ -20,6 +22,7 @@ MainPanel::MainPanel(QWidget *parent)
     connect(m_dockItemmanager, &DockItemManager::itemInserted, this, &MainPanel::insertItem, Qt::QueuedConnection);
     connect(m_dockItemmanager, &DockItemManager::itemRemoved, this, &MainPanel::removeItem, Qt::QueuedConnection);
     connect(m_dockItemmanager, &DockItemManager::itemUpdated, this, &MainPanel::itemUpdated, Qt::QueuedConnection);
+    connect(m_dockItemmanager, &DockItemManager::requestScrollToItem, this, &MainPanel::scrollToItem);
     connect(m_settings, &DockSettings::positionChanged, this, &MainPanel::onPositionChanged);
 }
 
@@ -31,7 +34,7 @@ void MainPanel::addFixedAreaItem(int index, QWidget *wdg)
 
 void MainPanel::addAppAreaItem(int index, QWidget *wdg)
 {
-    m_appAreaLayout->insertWidget(index, wdg);
+//    m_appAreaLayout->insertWidget(index, wdg);
     resizeDockIcon();
 }
 
@@ -42,7 +45,7 @@ void MainPanel::removeFixedAreaItem(QWidget *wdg)
 
 void MainPanel::removeAppAreaItem(QWidget *wdg)
 {
-    m_appAreaLayout->removeWidget(wdg);
+//    m_appAreaLayout->removeWidget(wdg);
 
     emit requestResized();
 }
@@ -59,7 +62,9 @@ void MainPanel::insertItem(const int index, DockItem *item)
         addFixedAreaItem(index, item);
         break;
     case DockItem::App:
-        addAppAreaItem(index, item);
+        // addAppAreaItem(index, item);
+        m_appArea->addItem(static_cast<AppItem *>(item));
+        resizeDockIcon();
         break;
     default:
         break;
@@ -74,7 +79,9 @@ void MainPanel::removeItem(DockItem *item)
         removeFixedAreaItem(item);
         break;
     case DockItem::App:
-        removeAppAreaItem(item);
+        // removeAppAreaItem(item);
+        m_appArea->removeItem(static_cast<AppItem *>(item));
+        resizeDockIcon();
         break;
     default:
         break;
@@ -91,11 +98,12 @@ void MainPanel::init()
 {
     m_mainLayout->addStretch();
     m_mainLayout->addWidget(m_fixedAreaWidget);
-    m_mainLayout->addWidget(m_appAreaWidget);
+//    m_mainLayout->addWidget(m_appAreaWidget);
+    m_mainLayout->addWidget(m_appArea);
     m_mainLayout->addStretch();
 
     m_mainLayout->setMargin(0);
-    m_mainLayout->setContentsMargins(10, 0, 10, 0);
+    m_mainLayout->setContentsMargins(10, 10, 10, 10);
     m_mainLayout->setSpacing(0);
 
     m_fixedAreaWidget->setLayout(m_fixedAreaLayout);
@@ -103,10 +111,10 @@ void MainPanel::init()
     m_fixedAreaLayout->setContentsMargins(0, 0, 0, 0);
     m_fixedAreaLayout->setSpacing(0);
 
-    m_appAreaWidget->setLayout(m_appAreaLayout);
-    m_appAreaLayout->setMargin(0);
-    m_appAreaLayout->setContentsMargins(0, 0, 0, 0);
-    m_appAreaLayout->setSpacing(0);
+//    m_appAreaWidget->setLayout(m_appAreaLayout);
+//    m_appAreaLayout->setMargin(0);
+//    m_appAreaLayout->setContentsMargins(0, 0, 0, 0);
+//    m_appAreaLayout->setSpacing(0);
 
     setLayout(m_mainLayout);
 }
@@ -117,19 +125,24 @@ void MainPanel::updateLayout()
     case DockSettings::Left:
     case DockSettings::Right:
         m_fixedAreaWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
-        m_appAreaWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+//        m_appAreaWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
         m_mainLayout->setDirection(QBoxLayout::TopToBottom);
         m_fixedAreaLayout->setDirection(QBoxLayout::TopToBottom);
-        m_appAreaLayout->setDirection(QBoxLayout::TopToBottom);
+//        m_appAreaLayout->setDirection(QBoxLayout::TopToBottom);
+        m_appArea->layout()->setDirection(QBoxLayout::TopToBottom);
         break;
     case DockSettings::Bottom:
         m_fixedAreaWidget->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Expanding);
-        m_appAreaWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+//        m_appAreaWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+        // m_appArea->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
         m_mainLayout->setDirection(QBoxLayout::LeftToRight);
         m_fixedAreaLayout->setDirection(QBoxLayout::LeftToRight);
-        m_appAreaLayout->setDirection(QBoxLayout::LeftToRight);
+//        m_appAreaLayout->setDirection(QBoxLayout::LeftToRight);
+        m_appArea->layout()->setDirection(QBoxLayout::LeftToRight);
         break;
     }
+
+    resizeDockIcon();
 
     emit requestResized();
 }
@@ -137,9 +150,26 @@ void MainPanel::updateLayout()
 void MainPanel::resizeDockIcon()
 {
     int iconSize = m_settings->iconSize();
+    const int padding = 10;
 
-    for (int i = 0; i < m_appAreaLayout->count(); ++i) {
-        m_appAreaLayout->itemAt(i)->widget()->setFixedSize(iconSize, iconSize);
+    m_appArea->setRange(iconSize);
+
+    for (int i = 0; i < m_appArea->layout()->count(); ++i) {
+        m_appArea->layout()->itemAt(i)->widget()->setFixedSize(iconSize, iconSize);
+    }
+
+    int canDisplayAppCount = 0;
+    int fixedIconSize = iconSize * 2;
+
+    if (m_settings->position() == DockSettings::Bottom) {
+        canDisplayAppCount = (rect().width() / iconSize) - 2;
+        // rect().width() - iconSize * 2 - padding * 4
+        m_appArea->setFixedWidth(canDisplayAppCount * iconSize);
+        m_appArea->setFixedHeight(QWIDGETSIZE_MAX);
+    } else {
+        canDisplayAppCount = (rect().height() / iconSize) - 2;
+        m_appArea->setFixedWidth(QWIDGETSIZE_MAX);
+        m_appArea->setFixedHeight(canDisplayAppCount * iconSize);
     }
 
     for (int i = 0; i < m_fixedAreaLayout->count(); ++i) {
@@ -152,6 +182,11 @@ void MainPanel::resizeDockIcon()
 void MainPanel::onPositionChanged()
 {
     updateLayout();
+}
+
+void MainPanel::scrollToItem(DockItem *item)
+{
+    m_appArea->scrollToItem(static_cast<AppItem *>(item));
 }
 
 void MainPanel::resizeEvent(QResizeEvent *event)

@@ -88,5 +88,7 @@ void DockItemManager::appItemActiveChanged(DockEntry *entry)
             continue;
 
         app->update();
+
+        emit requestScrollToItem(item);
     }
 }

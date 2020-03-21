@@ -17,7 +17,7 @@ public:
         Bottom = 0, Left = 1, Right = 2
     };
 
-    const int PADDING = 5;
+    const int PADDING = 10;
     const int MARGIN = 10;
 
     static DockSettings *instance();

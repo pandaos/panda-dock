@@ -3,6 +3,7 @@
 
 #include <QWidget>
 #include <QBoxLayout>
+#include "appscrollarea.h"
 #include "item/dockitem.h"
 #include "controller/docksettings.h"
 #include "controller/dockitemmanager.h"
@@ -33,16 +34,20 @@ private:
     void resizeDockIcon();
     void onPositionChanged();
 
+    void scrollToItem(DockItem *item);
+
 protected:
     void resizeEvent(QResizeEvent *event) override;
 
 private:
     QBoxLayout *m_mainLayout;
     QBoxLayout *m_fixedAreaLayout;
-    QBoxLayout *m_appAreaLayout;
+//    QBoxLayout *m_appAreaLayout;
 
     QWidget *m_fixedAreaWidget;
-    QWidget *m_appAreaWidget;
+//    QWidget *m_appAreaWidget;
+
+    AppScrollArea *m_appArea;
 
     DockItemManager *m_dockItemmanager;
     DockSettings *m_settings;
