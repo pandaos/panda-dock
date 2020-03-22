@@ -18,7 +18,9 @@ AppScrollArea::AppScrollArea(QWidget *parent)
     setWidgetResizable(true);
     m_mainLayout->setMargin(0);
     m_mainLayout->setSpacing(0);
-    m_mainWidget->setAutoFillBackground(false);
+//    m_mainWidget->setAutoFillBackground(false);
+
+    setStyleSheet("background: transparent;");
 
     setContentsMargins(0, 0, 0, 0);
 

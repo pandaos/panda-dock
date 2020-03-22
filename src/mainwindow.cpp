@@ -28,7 +28,7 @@ MainWindow::MainWindow(QWidget *parent)
       m_mainPanel(new MainPanel),
       m_itemManager(DockItemManager::instance()),
       m_settings(DockSettings::instance()),
-      m_xcbMisc(XcbMisc::instance()),
+//      m_xcbMisc(XcbMisc::instance()),
       m_fakeWidget(new QWidget(nullptr))
 {
     QHBoxLayout *layout = new QHBoxLayout;

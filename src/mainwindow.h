@@ -5,7 +5,6 @@
 #include "mainpanel.h"
 #include "controller/dockitemmanager.h"
 #include "controller/docksettings.h"
-#include "xcb/xcbmisc.h"
 
 class MainWindow : public QWidget
 {
@@ -30,7 +29,7 @@ private:
     MainPanel *m_mainPanel;
     DockItemManager *m_itemManager;
     DockSettings *m_settings;
-    XcbMisc *m_xcbMisc;
+//    XcbMisc *m_xcbMisc;
     QWidget *m_fakeWidget;
     QSize m_size;
 };

@@ -95,10 +95,10 @@ void AppItem::updateWindowIconGeometries()
 {
     const QRect r(mapToGlobal(QPoint(0, 0)),
                   mapToGlobal(QPoint(width(), height())));
-    auto *xcb_misc = XcbMisc::instance();
+     auto *xcb_misc = XcbMisc::instance();
 
     for (quint64 id : m_entry->WIdList) {
-        xcb_misc->set_window_icon_geometry(id, r);
+         xcb_misc->set_window_icon_geometry(id, r);
     }
 }
 
