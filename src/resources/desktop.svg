@@ -1,39 +1,174 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Inkscape (http://www.inkscape.org/) -->
-<svg width="64" height="64" version="1.1" viewBox="0 0 16.933 16.933" xmlns="http://www.w3.org/2000/svg" xmlns:cc="http://creativecommons.org/ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
- <defs>
-  <filter id="filter2761" x="-.024" y="-.024" width="1.048" height="1.048" color-interpolation-filters="sRGB">
-   <feGaussianBlur stdDeviation="0.14552168"/>
-  </filter>
-  <linearGradient id="linearGradient2725" x1="1.2087" x2="15.751" y1="281.2" y2="295.74" gradientTransform="translate(-.1478 -280.07)" gradientUnits="userSpaceOnUse">
-   <stop stop-color="#198cff" offset="0"/>
-   <stop stop-color="#1964ff" offset="1"/>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   height="48"
+   width="48"
+   version="1.1"
+   id="svg57"
+   sodipodi:docname="remote-desktop.svg"
+   inkscape:version="0.92.4 (5da689c313, 2019-01-14)">
+  <metadata
+     id="metadata63">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <defs
+     id="defs61" />
+  <sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="957"
+     inkscape:window-height="858"
+     id="namedview59"
+     showgrid="false"
+     inkscape:zoom="4.9166667"
+     inkscape:cx="24"
+     inkscape:cy="24"
+     inkscape:window-x="960"
+     inkscape:window-y="35"
+     inkscape:window-maximized="0"
+     inkscape:current-layer="svg57" />
+  <linearGradient
+     id="a"
+     gradientTransform="matrix(0.93793686,0,0,0.87065184,-361.61627,-437.44776)"
+     gradientUnits="userSpaceOnUse"
+     x1="409.57144"
+     x2="409.57144"
+     y1="542.79797"
+     y2="507.798">
+    <stop
+       offset="0"
+       stop-color="#0a80fd"
+       id="stop2" />
+    <stop
+       offset="1"
+       stop-color="#56c5fa"
+       id="stop4" />
   </linearGradient>
- </defs>
- <metadata>
-  <rdf:RDF>
-   <cc:Work rdf:about="">
-    <dc:format>image/svg+xml</dc:format>
-    <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
-    <dc:title/>
-   </cc:Work>
-  </rdf:RDF>
- </metadata>
- <path d="m10.709 1.05c4.405 0 5.0345 0.67282 5.0345 5.388v3.7761c0 4.7152-0.62954 5.388-5.0345 5.388h-4.4832c-4.405 0-5.0346-0.6728-5.0346-5.388v-3.7761c0-4.7152 0.62954-5.388 5.0346-5.388z" enable-background="new" fill="#141414" filter="url(#filter2761)" opacity=".3"/>
- <path d="m10.692 1.05c4.405 0 5.0345 0.67282 5.0345 5.388v3.7761c0 4.7152-0.62954 5.388-5.0345 5.388h-4.4832c-4.405 0-5.0346-0.6728-5.0346-5.388v-3.7761c0-4.7152 0.62954-5.388 5.0346-5.388z" enable-background="new" fill="url(#linearGradient2725)"/>
- <path d="m6.2088 1.05c-2.9027 0-4.166 0.29276-4.6901 1.8412h13.863c-0.52406-1.5484-1.7874-1.8412-4.6901-1.8412h-2.2417z" enable-background="new" fill="#141414" opacity=".3"/>
- <g transform="matrix(.81502 0 0 .85436 -.6382 3.1031)" fill="#fff">
-  <rect x="4.1397" y="-1.3544" width="1.058" height=".529" ry=".265" opacity=".35" style="paint-order:stroke markers fill"/>
-  <rect x="9.6967" y="-1.3544" width="2.646" height=".529" ry=".265" opacity=".35" style="paint-order:stroke markers fill"/>
-  <rect x="17.634" y="-1.3544" width=".529" height=".529" ry=".265" opacity=".35" style="paint-order:stroke markers fill"/>
-  <rect x="16.576" y="-1.3544" width=".794" height=".529" ry=".265" opacity=".35" style="paint-order:stroke markers fill"/>
-  <rect x="15.782" y="-1.3544" width=".529" height=".529" ry=".265" opacity=".35" style="paint-order:stroke markers fill"/>
- </g>
- <path d="m4.1449 14.029c-0.29307 0-0.52916 0.35051-0.52916 0.78598v0.61545c0.67175 0.12983 1.5202 0.17208 2.5977 0.17208h4.4834c1.2883 0 2.2518-0.05899 2.9729-0.25838v-0.52916c0-0.43547-0.23608-0.78598-0.52916-0.78598z" enable-background="new" fill="#fff" opacity=".3"/>
- <g transform="translate(-20.201 6.9689)" fill="#d2dcff" stroke-width=".082447">
-  <path d="m25.659 6.4453c0.36318 0 0.41508 0.055471 0.41508 0.44423v0.31133c0 0.38876-0.0519 0.44423-0.41508 0.44423h-0.36963c-0.36318 0-0.41509-0.055471-0.41509-0.44423v-0.31133c0-0.38876 0.0519-0.44423 0.41509-0.44423z" enable-background="new"/>
-  <path d="m27.905 6.4453c0.36318 0 0.41508 0.055471 0.41508 0.44423v0.31133c0 0.38876-0.0519 0.44423-0.41508 0.44423h-0.36963c-0.36318 0-0.41509-0.055471-0.41509-0.44423v-0.31133c0-0.38876 0.0519-0.44423 0.41509-0.44423z" enable-background="new"/>
-  <path d="m30.152 6.4453c0.36318 0 0.41508 0.055471 0.41508 0.44423v0.31133c0 0.38876-0.0519 0.44423-0.41508 0.44423h-0.36963c-0.36318 0-0.41509-0.055471-0.41509-0.44423v-0.31133c0-0.38876 0.0519-0.44423 0.41509-0.44423z" enable-background="new"/>
-  <path d="m32.398 6.4453c0.36318 0 0.41508 0.055471 0.41508 0.44423v0.31133c0 0.38876-0.0519 0.44423-0.41508 0.44423h-0.36963c-0.36318 0-0.41509-0.055471-0.41509-0.44423v-0.31133c0-0.38876 0.0519-0.44423 0.41509-0.44423z" enable-background="new"/>
- </g>
+  <linearGradient
+     id="b"
+     gradientTransform="matrix(0.56675678,0,0,0.56776791,-185.30771,-268.30355)"
+     gradientUnits="userSpaceOnUse"
+     x1="400.5119"
+     x2="393.19086"
+     y1="546.07446"
+     y2="468.33124">
+    <stop
+       offset="0"
+       stop-color="#1365f4"
+       id="stop7" />
+    <stop
+       offset="1"
+       stop-color="#05b2fc"
+       id="stop9" />
+  </linearGradient>
+  <linearGradient
+     id="c"
+     gradientUnits="userSpaceOnUse"
+     x1="390.997076966011"
+     x2="455.371856746932"
+     y1="541.565593035549"
+     y2="489.92736441466"
+     gradientTransform="translate(-384.57143,-499.798)">
+    <stop
+       offset="0"
+       stop-color="#2980b9"
+       id="stop12" />
+    <stop
+       offset="1"
+       stop-color="#ba174e"
+       stop-opacity=".996078"
+       id="stop14" />
+  </linearGradient>
+  <rect
+     height="29.602163"
+     ry="1.393043"
+     transform="matrix(0.9999984,0.00178706,0.00604892,0.99998171,0,0)"
+     width="41.269222"
+     x="0.96033907"
+     y="5.1675086"
+     id="rect17"
+     style="fill-opacity:0.66666697" />
+  <g
+     style="fill-opacity:0.66666697"
+     id="g27"
+     transform="translate(-384.57143,-499.29799)">
+    <rect
+       id="rect19"
+       y="509.66397"
+       x="389.9404"
+       width="41.431"
+       rx="1.791274"
+       height="32.014854" />
+    <circle
+       id="circle21"
+       r="1.943373"
+       cy="513.58508"
+       cx="427.7334" />
+    <circle
+       id="circle23"
+       r="1.943373"
+       cy="513.62628"
+       cx="422.95914" />
+    <circle
+       id="circle25"
+       r="1.943373"
+       cy="513.6723"
+       cx="418.26614" />
+  </g>
+  <rect
+     style="fill:url(#a)"
+     id="rect39"
+     y="4.6674838"
+     x="0.96336371"
+     width="41.269222"
+     transform="matrix(0.9999984,0.00178706,0.00604892,0.99998171,0,0)"
+     ry="1.393043"
+     height="29.602163" />
+  <rect
+     style="fill:url(#c)"
+     id="rect41"
+     y="9.8659706"
+     x="5.368969"
+     width="41.431"
+     rx="1.791274"
+     height="32.014854" />
+  <g
+     style="fill:#ffffff"
+     id="g49"
+     transform="translate(-384.57143,-499.798)">
+    <circle
+       id="circle43"
+       r="1.943373"
+       cy="513.58508"
+       cx="403.48206" />
+    <circle
+       id="circle45"
+       r="1.943373"
+       cy="513.62628"
+       cx="398.70779" />
+    <circle
+       id="circle47"
+       r="1.943373"
+       cy="513.6723"
+       cx="394.0148" />
+  </g>
 </svg>

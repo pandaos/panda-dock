@@ -159,15 +159,14 @@ void MainPanel::resizeDockIcon()
     }
 
     int canDisplayAppCount = 0;
-    int fixedIconSize = iconSize * 2;
 
     if (m_settings->position() == DockSettings::Bottom) {
-        canDisplayAppCount = (rect().width() / iconSize) - 2;
+        canDisplayAppCount = (rect().width() / iconSize) - 1;
         // rect().width() - iconSize * 2 - padding * 4
         m_appArea->setFixedWidth(canDisplayAppCount * iconSize);
         m_appArea->setFixedHeight(QWIDGETSIZE_MAX);
     } else {
-        canDisplayAppCount = (rect().height() / iconSize) - 2;
+        canDisplayAppCount = (rect().height() / iconSize) - 1;
         m_appArea->setFixedWidth(QWIDGETSIZE_MAX);
         m_appArea->setFixedHeight(canDisplayAppCount * iconSize);
     }

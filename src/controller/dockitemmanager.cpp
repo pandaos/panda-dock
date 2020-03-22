@@ -17,7 +17,7 @@ DockItemManager::DockItemManager(QObject *parent)
     : QObject(parent),
       m_windowManager(AppWindowManager::instance())
 {
-    m_itemList.append(new ShowDesktopItem);
+//    m_itemList.append(new ShowDesktopItem);
     m_itemList.append(new LauncherItem);
 
     for (DockEntry *entry : m_windowManager->dockList()) {
