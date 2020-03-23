@@ -1,9 +1,7 @@
 /*
- * Copyright (C) 2015 ~ 2018 Deepin Technology Co., Ltd.
+ * Copyright (C) 2020 PandaOS Team.
  *
- * Author:     sbw <sbw@sbw.so>
- *
- * Maintainer: sbw <sbw@sbw.so>
+ * Author:     rekols <rekols@foxmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
