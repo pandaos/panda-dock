@@ -5,6 +5,8 @@
 #include "controller/dockitemmanager.h"
 #include "controller/appwindowmanager.h"
 
+#include <QVariantAnimation>
+
 class AppItem : public DockItem
 {
     Q_OBJECT
@@ -32,6 +34,9 @@ protected:
     void mouseReleaseEvent(QMouseEvent *e) override;
     void resizeEvent(QResizeEvent *e) override;
 
+    void enterEvent(QEvent *e) override;
+    void leaveEvent(QEvent *e) override;
+
 private:
     QPixmap m_iconPixmap;
     DockEntry *m_entry;
@@ -40,6 +45,9 @@ private:
     QAction *m_closeAction;
     QAction *m_dockAction;
     QTimer *m_updateIconGeometryTimer;
+
+    QVariantAnimation *m_hoverAnimation;
+    double m_hoverSize = 0;
 };
 
 #endif // APPITEM_H

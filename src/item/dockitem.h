@@ -31,6 +31,8 @@ public:
 
     virtual void showHoverTips();
 
+    bool isHover() { return m_hover; };
+
 private:
     void showContextMenu();
     const QPoint popupMarkPoint() const;

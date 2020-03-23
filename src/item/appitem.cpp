@@ -17,10 +17,14 @@ AppItem::AppItem(DockEntry *entry, QWidget *parent)
       m_updateIconGeometryTimer(new QTimer(this)),
       m_openAction(new QAction(tr("Open"))),
       m_closeAction(new QAction(tr("Close All"))),
-      m_dockAction(new QAction(""))
+      m_dockAction(new QAction("")),
+      m_hoverAnimation(new QVariantAnimation(this))
 {
-    m_updateIconGeometryTimer->setInterval(500);
+    m_updateIconGeometryTimer->setInterval(2000);
     m_updateIconGeometryTimer->setSingleShot(true);
+
+    m_hoverAnimation->setDuration(250);
+    m_hoverAnimation->setEasingCurve(QEasingCurve::OutQuad);
 
     m_contextMenu.addAction(m_openAction);
     m_contextMenu.addAction(m_dockAction);
@@ -36,6 +40,11 @@ AppItem::AppItem(DockEntry *entry, QWidget *parent)
     connect(m_dockAction, &QAction::triggered, this, &AppItem::dockActionTriggered);
     connect(m_openAction, &QAction::triggered, this, [=] {
         AppWindowManager::instance()->openApp(m_entry->className);
+    });
+
+    connect(m_hoverAnimation, &QVariantAnimation::valueChanged, this, [=] (const QVariant &value) {
+        m_hoverSize = value.toDouble();
+        QWidget::update();
     });
 }
 
@@ -147,6 +156,14 @@ void AppItem::paintEvent(QPaintEvent *e)
     const qreal iconX = rect().center().x() - m_iconPixmap.rect().center().x() / ratio;
     const qreal iconY = rect().center().y() - m_iconPixmap.rect().center().y() / ratio;
     painter.drawPixmap(iconX, iconY, m_iconPixmap);
+
+    if (m_hoverSize) {
+        painter.setBrush(QColor(0, 0, 0, 30));
+        QRect roundRect = QRect(0, 0, m_hoverSize, m_hoverSize);
+        roundRect.moveCenter(rect().center());
+        int radius = m_hoverSize * 0.4;
+        painter.drawRoundRect(roundRect, radius, radius);
+    }
 }
 
 void AppItem::mousePressEvent(QMouseEvent *e)
@@ -173,4 +190,20 @@ void AppItem::resizeEvent(QResizeEvent *e)
     DockItem::resizeEvent(e);
 
     refreshIcon();
+}
+
+void AppItem::enterEvent(QEvent *e)
+{
+    m_hoverAnimation->stop();
+    m_hoverAnimation->setStartValue(0.0);
+    m_hoverAnimation->setEndValue(rect().width() * 0.8);
+    m_hoverAnimation->start();
+}
+
+void AppItem::leaveEvent(QEvent *e)
+{
+    m_hoverAnimation->stop();
+    m_hoverAnimation->setStartValue(m_hoverSize);
+    m_hoverAnimation->setEndValue(0.0);
+    m_hoverAnimation->start();
 }

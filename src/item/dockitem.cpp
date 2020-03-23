@@ -9,7 +9,8 @@ DockItem::DockItem(QWidget *parent)
     : QWidget(parent),
       m_hoverEffect(new HoverHighlightEffect(this)),
       m_popupWindow(new DockPopupWindow(nullptr)),
-      m_popupTipsDelayTimer(new QTimer(this))
+      m_popupTipsDelayTimer(new QTimer(this)),
+      m_hover(false)
 {
     m_popupTipsDelayTimer->setInterval(500);
     m_popupTipsDelayTimer->setSingleShot(true);
