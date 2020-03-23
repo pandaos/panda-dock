@@ -43,7 +43,8 @@ SOURCES += \
     utils/dockpopupwindow.cpp \
     item/showdesktopitem.cpp \
     appscrollarea.cpp \
-    item/trashitem.cpp
+    item/trashitem.cpp \
+    item/blurwindow.cpp
 
 HEADERS += \
         mainwindow.h \
@@ -63,7 +64,8 @@ HEADERS += \
     utils/dockpopupwindow.h \
     item/showdesktopitem.h \
     appscrollarea.h \
-    item/trashitem.h
+    item/trashitem.h \
+    item/blurwindow.h
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

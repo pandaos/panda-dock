@@ -126,7 +126,6 @@ void MainPanel::updateLayout()
 {
     switch (m_settings->position()) {
     case DockSettings::Left:
-    case DockSettings::Right:
         m_fixedAreaWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
 //        m_appAreaWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
         m_mainLayout->setDirection(QBoxLayout::TopToBottom);

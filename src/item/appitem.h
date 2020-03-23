@@ -2,6 +2,7 @@
 #define APPITEM_H
 
 #include "dockitem.h"
+#include "blurwindow.h"
 #include "controller/dockitemmanager.h"
 #include "controller/appwindowmanager.h"
 
@@ -28,6 +29,8 @@ private:
     void updateWindowIconGeometries();
     void initStates();
 
+    void showPopup();
+
 protected:
     void paintEvent(QPaintEvent *) override;
     void mousePressEvent(QMouseEvent *e) override;
@@ -45,9 +48,12 @@ private:
     QAction *m_closeAction;
     QAction *m_dockAction;
     QTimer *m_updateIconGeometryTimer;
+    QTimer *m_popupTimer;
 
     QVariantAnimation *m_hoverAnimation;
     double m_hoverSize = 0;
+
+    BlurWindow *m_popupWidget;
 };
 
 #endif // APPITEM_H
