@@ -3,8 +3,8 @@
 
 #include "dockitem.h"
 #include "blurwindow.h"
-#include "controller/dockitemmanager.h"
-#include "controller/appwindowmanager.h"
+#include "utils/dockitemmanager.h"
+#include "utils/appwindowmanager.h"
 
 #include <QVariantAnimation>
 

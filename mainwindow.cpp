@@ -24,6 +24,7 @@
 #include <QScreen>
 #include <QPainter>
 #include <QMouseEvent>
+#include <QTimer>
 
 #include <KF5/KWindowSystem/KWindowEffects>
 
@@ -54,7 +55,7 @@ MainWindow::MainWindow(QWidget *parent)
     for (auto item : m_itemManager->itemList())
         m_mainPanel->insertItem(-1, item);
 
-    initSize();
+    initWindowSize();
 
     // blur
     setAttribute(Qt::WA_NoSystemBackground, false);
@@ -62,23 +63,22 @@ MainWindow::MainWindow(QWidget *parent)
     setWindowFlags(Qt::FramelessWindowHint);
 
     KWindowSystem::setOnDesktop(effectiveWinId(), NET::OnAllDesktops);
-//    XcbMisc::instance()->enableBlurBehind(winId(), true);
     KWindowSystem::setType(winId(), NET::Dock);
     // KWindowEffects::slideWindow(winId(), KWindowEffects::BottomEdge);
 
     connect(m_settings, &DockSettings::positionChanged, this, &MainWindow::onPositionChanged);
-    connect(m_settings, &DockSettings::iconSizeChanged, this, &MainWindow::initSize);
-    connect(m_mainPanel, &MainPanel::requestResized, this, &MainWindow::initSize);
+    connect(m_settings, &DockSettings::iconSizeChanged, this, &MainWindow::initWindowSize);
+    connect(m_mainPanel, &MainPanel::requestResized, this, &MainWindow::initWindowSize);
 
-    connect(qApp->primaryScreen(), &QScreen::geometryChanged, this, &MainWindow::initSize, Qt::QueuedConnection);
+    connect(qApp->primaryScreen(), &QScreen::geometryChanged, this, &MainWindow::initWindowSize, Qt::QueuedConnection);
 }
 
 MainWindow::~MainWindow()
 {
 
 }
-#include <QTimer>
-void MainWindow::initSize()
+
+void MainWindow::initWindowSize()
 {
     QRect windowRect = m_settings->windowRect();
 
@@ -87,7 +87,7 @@ void MainWindow::initSize()
     QWidget::setFixedSize(windowRect.size());
 
     QTimer::singleShot(100, this, [=] {
-        int radius;
+        qreal radius;
         if (m_settings->position() == DockSettings::Bottom) {
             radius = this->rect().height() * 0.35;
         } else {
@@ -115,7 +115,6 @@ void MainWindow::setStrutPartial()
     KWindowSystem::setState(m_fakeWidget->winId(), NET::SkipSwitcher);
 
     const auto ratio = devicePixelRatioF();
-    const QRect windowRect = m_settings->windowRect();
     const int margin = 14;
 
     NETExtendedStrut strut;
@@ -155,7 +154,7 @@ void MainWindow::setStrutPartial()
 
 void MainWindow::onPositionChanged()
 {
-    initSize();
+    initWindowSize();
 }
 
 void MainWindow::resizeEvent(QResizeEvent *e)

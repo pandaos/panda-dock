@@ -5,8 +5,8 @@
 #include <QBoxLayout>
 #include "appscrollarea.h"
 #include "item/dockitem.h"
-#include "controller/docksettings.h"
-#include "controller/dockitemmanager.h"
+#include "utils/docksettings.h"
+#include "utils/dockitemmanager.h"
 
 class TrashItem;
 class MainPanel : public QWidget
@@ -17,9 +17,7 @@ public:
     explicit MainPanel(QWidget *parent = nullptr);
 
     void addFixedAreaItem(int index, QWidget *wdg);
-    void addAppAreaItem(int index, QWidget *wdg);
     void removeFixedAreaItem(QWidget *wdg);
-    void removeAppAreaItem(QWidget *wdg);
 
 signals:
     void requestResized();
@@ -43,11 +41,8 @@ protected:
 private:
     QBoxLayout *m_mainLayout;
     QBoxLayout *m_fixedAreaLayout;
-//    QBoxLayout *m_appAreaLayout;
 
     QWidget *m_fixedAreaWidget;
-//    QWidget *m_appAreaWidget;
-
     AppScrollArea *m_appArea;
     TrashItem *m_trashItem;
 

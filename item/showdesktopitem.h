@@ -1,16 +1,16 @@
-#ifndef LAUNCHERITEM_H
-#define LAUNCHERITEM_H
+#ifndef SHOWDESKTOPITEM_H
+#define SHOWDESKTOPITEM_H
 
 #include "dockitem.h"
 
-class LauncherItem : public DockItem
+class ShowDesktopItem : public DockItem
 {
     Q_OBJECT
 
 public:
-    explicit LauncherItem(QWidget *parent = nullptr);
+    explicit ShowDesktopItem(QWidget *parent = nullptr);
 
-    inline ItemType itemType() const override { return DockItem::Launcher; }
+    inline virtual ItemType itemType() const { return Fixed; }
 
 private:
     void refreshIcon();
@@ -24,4 +24,4 @@ private:
     QPixmap m_iconPixmap;
 };
 
-#endif // LAUNCHERITEM_H
+#endif // SHOWDESKTOPITEM_H

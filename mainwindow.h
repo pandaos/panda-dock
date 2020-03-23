@@ -3,8 +3,8 @@
 
 #include <QWidget>
 #include "mainpanel.h"
-#include "controller/dockitemmanager.h"
-#include "controller/docksettings.h"
+#include "utils/dockitemmanager.h"
+#include "utils/docksettings.h"
 
 class MainWindow : public QWidget
 {
@@ -14,7 +14,7 @@ public:
     MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
-    void initSize();
+    void initWindowSize();
 
 private:
     void setStrutPartial();

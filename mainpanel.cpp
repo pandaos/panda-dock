@@ -8,17 +8,29 @@ MainPanel::MainPanel(QWidget *parent)
     : QWidget(parent),
       m_mainLayout(new QBoxLayout(QBoxLayout::LeftToRight)),
       m_fixedAreaLayout(new QBoxLayout(QBoxLayout::LeftToRight)),
-//      m_appAreaLayout(new QBoxLayout(QBoxLayout::LeftToRight)),
       m_fixedAreaWidget(new QWidget),
-//      m_appAreaWidget(new QWidget),
       m_appArea(new AppScrollArea),
       m_trashItem(new TrashItem),
       m_dockItemmanager(DockItemManager::instance()),
       m_settings(DockSettings::instance())
 {
-    setAttribute(Qt::WA_TranslucentBackground);
+    m_mainLayout->addStretch();
+    m_mainLayout->addWidget(m_fixedAreaWidget);
+    m_mainLayout->addWidget(m_appArea);
+    m_mainLayout->addWidget(m_trashItem);
+    m_mainLayout->addStretch();
 
-    init();
+    m_mainLayout->setMargin(0);
+    m_mainLayout->setContentsMargins(0, 0, 0, 0);
+    m_mainLayout->setSpacing(0);
+
+    m_fixedAreaWidget->setLayout(m_fixedAreaLayout);
+    m_fixedAreaLayout->setMargin(0);
+    m_fixedAreaLayout->setContentsMargins(0, 0, 0, 0);
+    m_fixedAreaLayout->setSpacing(0);
+
+    setAttribute(Qt::WA_TranslucentBackground);
+    setLayout(m_mainLayout);
     updateLayout();
 
     connect(m_dockItemmanager, &DockItemManager::itemInserted, this, &MainPanel::insertItem, Qt::QueuedConnection);
@@ -34,22 +46,9 @@ void MainPanel::addFixedAreaItem(int index, QWidget *wdg)
     resizeDockIcon();
 }
 
-void MainPanel::addAppAreaItem(int index, QWidget *wdg)
-{
-//    m_appAreaLayout->insertWidget(index, wdg);
-    resizeDockIcon();
-}
-
 void MainPanel::removeFixedAreaItem(QWidget *wdg)
 {
     m_fixedAreaLayout->removeWidget(wdg);
-}
-
-void MainPanel::removeAppAreaItem(QWidget *wdg)
-{
-//    m_appAreaLayout->removeWidget(wdg);
-
-    emit requestResized();
 }
 
 void MainPanel::insertItem(const int index, DockItem *item)
@@ -57,14 +56,10 @@ void MainPanel::insertItem(const int index, DockItem *item)
     item->installEventFilter(this);
 
     switch (item->itemType()) {
-    case DockItem::Launcher:
+    case DockItem::Fixed:
         addFixedAreaItem(0, item);
         break;
-    case DockItem::FixedPlugin:
-        addFixedAreaItem(index, item);
-        break;
     case DockItem::App:
-        // addAppAreaItem(index, item);
         m_appArea->addItem(static_cast<AppItem *>(item));
         resizeDockIcon();
         break;
@@ -76,12 +71,10 @@ void MainPanel::insertItem(const int index, DockItem *item)
 void MainPanel::removeItem(DockItem *item)
 {
     switch (item->itemType()) {
-    case DockItem::Launcher:
-    case DockItem::FixedPlugin:
+    case DockItem::Fixed:
         removeFixedAreaItem(item);
         break;
     case DockItem::App:
-        // removeAppAreaItem(item);
         m_appArea->removeItem(static_cast<AppItem *>(item));
         resizeDockIcon();
         break;
@@ -94,32 +87,6 @@ void MainPanel::itemUpdated(DockItem *item)
 {
     item->parentWidget()->adjustSize();
     resizeDockIcon();
-}
-
-void MainPanel::init()
-{
-    m_mainLayout->addStretch();
-    m_mainLayout->addWidget(m_fixedAreaWidget);
-//    m_mainLayout->addWidget(m_appAreaWidget);
-    m_mainLayout->addWidget(m_appArea);
-    m_mainLayout->addWidget(m_trashItem);
-    m_mainLayout->addStretch();
-
-    m_mainLayout->setMargin(0);
-    m_mainLayout->setContentsMargins(0, 0, 0, 0);
-    m_mainLayout->setSpacing(0);
-
-    m_fixedAreaWidget->setLayout(m_fixedAreaLayout);
-    m_fixedAreaLayout->setMargin(0);
-    m_fixedAreaLayout->setContentsMargins(0, 0, 0, 0);
-    m_fixedAreaLayout->setSpacing(0);
-
-//    m_appAreaWidget->setLayout(m_appAreaLayout);
-//    m_appAreaLayout->setMargin(0);
-//    m_appAreaLayout->setContentsMargins(0, 0, 0, 0);
-//    m_appAreaLayout->setSpacing(0);
-
-    setLayout(m_mainLayout);
 }
 
 void MainPanel::updateLayout()

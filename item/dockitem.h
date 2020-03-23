@@ -4,8 +4,7 @@
 #include <QWidget>
 #include <QPointer>
 #include <QMenu>
-#include "components/hoverhighlighteffect.h"
-#include "utils/dockpopupwindow.h"
+#include <QVariantAnimation>
 
 class DockItem : public QWidget
 {
@@ -13,9 +12,8 @@ class DockItem : public QWidget
 
 public:
     enum ItemType {
-        Launcher,
-        App,
-        FixedPlugin
+        Fixed,
+        App
     };
 
     explicit DockItem(QWidget *parent = nullptr);
@@ -29,8 +27,6 @@ public:
 
     virtual QWidget *popupTips();
 
-    virtual void showHoverTips();
-
     bool isHover() { return m_hover; };
 
 private:
@@ -39,15 +35,16 @@ private:
     const QPoint topleftPoint() const;
 
 protected:
+    void paintEvent(QPaintEvent *e) override;
     void enterEvent(QEvent *e) override;
     void leaveEvent(QEvent *e) override;
     void mousePressEvent(QMouseEvent *e) override;
 
 private:
-    QPointer<HoverHighlightEffect> m_hoverEffect;
-    QPointer<DockPopupWindow> m_popupWindow;
+    QVariantAnimation *m_hoverAnimation;
     QTimer *m_popupTipsDelayTimer;
     QMenu m_contextMenu;
+    qreal m_hoverSize;
     bool m_hover;
 };
 

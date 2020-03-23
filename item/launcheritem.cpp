@@ -22,7 +22,7 @@ void LauncherItem::refreshIcon()
 
 void LauncherItem::paintEvent(QPaintEvent *e)
 {
-    QWidget::paintEvent(e);
+    DockItem::paintEvent(e);
     QPainter painter(this);
 
     painter.setRenderHint(QPainter::Antialiasing, true);

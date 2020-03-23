@@ -11,7 +11,7 @@ class TrashItem : public DockItem
 public:
     explicit TrashItem(QWidget *parent = nullptr);
 
-    inline ItemType itemType() const override { return DockItem::Launcher; }
+    inline ItemType itemType() const override { return DockItem::Fixed; }
 
 private:
     void refreshIcon();
