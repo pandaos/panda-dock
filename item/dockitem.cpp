@@ -31,7 +31,6 @@ DockItem::DockItem(QWidget *parent)
       m_hover(false)
 {
     m_hoverAnimation->setDuration(250);
-    m_hoverAnimation->setEasingCurve(QEasingCurve::OutQuad);
 
     setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
@@ -93,6 +92,7 @@ void DockItem::enterEvent(QEvent *e)
         return;
     }
 
+    m_hoverAnimation->setEasingCurve(QEasingCurve::OutBack);
     m_hoverAnimation->stop();
     m_hoverAnimation->setStartValue(0.0);
     m_hoverAnimation->setEndValue(rect().width() * 0.8);
@@ -109,6 +109,7 @@ void DockItem::leaveEvent(QEvent *e)
     QWidget::leaveEvent(e);
 
     m_hover = false;
+    m_hoverAnimation->setEasingCurve(QEasingCurve::OutQuad);
     m_hoverAnimation->stop();
     m_hoverAnimation->setStartValue(m_hoverSize);
     m_hoverAnimation->setEndValue(0.0);
