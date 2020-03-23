@@ -79,6 +79,11 @@ void AppItem::update()
     QWidget::update();
 }
 
+void AppItem::hideTips()
+{
+    m_popupWidget->hide();
+}
+
 void AppItem::initDockAction()
 {
     m_openAction->setVisible(m_entry->WIdList.isEmpty());

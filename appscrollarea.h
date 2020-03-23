@@ -22,6 +22,7 @@
 
 #include <QScrollArea>
 #include <QBoxLayout>
+#include <QScroller>
 #include "item/appitem.h"
 
 class AppScrollArea : public QScrollArea
@@ -39,8 +40,12 @@ public:
 
     void setRange(int value);
 
+private:
+    void onScrollerStateChanged(QScroller::State state);
+
 protected:
     void wheelEvent(QWheelEvent *e) override;
+    void mouseMoveEvent(QMouseEvent *e) override;
 
 private:
     QWidget *m_mainWidget;

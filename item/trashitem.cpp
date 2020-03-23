@@ -19,6 +19,7 @@
 
 #include "trashitem.h"
 #include "utils/utils.h"
+#include <QMouseEvent>
 #include <QProcess>
 #include <QPainter>
 #include <QDir>
@@ -28,9 +29,18 @@ const QDir::Filters ItemsShouldCount = QDir::AllEntries | QDir::Hidden | QDir::S
 
 TrashItem::TrashItem(QWidget *parent)
     : DockItem(parent),
-      m_filesWatcher(new QFileSystemWatcher(this))
+      m_filesWatcher(new QFileSystemWatcher(this)),
+      m_rightMenu(new QMenu(this))
 {
+    QAction *openAction = new QAction(tr("Open"));
+    QAction *emptyAction = new QAction(tr("Empty"));
+
+    m_rightMenu->addAction(openAction);
+    m_rightMenu->addAction(emptyAction);
+
     connect(m_filesWatcher, &QFileSystemWatcher::directoryChanged, this, &TrashItem::onDirectoryChanged, Qt::QueuedConnection);
+    connect(openAction, &QAction::triggered, this, &TrashItem::openTrashFold);
+    connect(emptyAction, &QAction::triggered, this, &TrashItem::emptyTrash);
 
     setAccessibleName("Trash");
     onDirectoryChanged();
@@ -63,6 +73,16 @@ void TrashItem::onDirectoryChanged()
     refreshIcon();
 }
 
+void TrashItem::openTrashFold()
+{
+    QProcess::startDetached("gio", QStringList() << "open" << "trash:///");
+}
+
+void TrashItem::emptyTrash()
+{
+
+}
+
 void TrashItem::paintEvent(QPaintEvent *e)
 {
     DockItem::paintEvent(e);
@@ -85,8 +105,16 @@ void TrashItem::resizeEvent(QResizeEvent *e)
     refreshIcon();
 }
 
+void TrashItem::mousePressEvent(QMouseEvent *e)
+{
+    if (e->button() == Qt::RightButton) {
+        m_rightMenu->move(QCursor::pos());
+        m_rightMenu->exec();
+    }
+}
+
 void TrashItem::mouseReleaseEvent(QMouseEvent *e)
 {
-    QProcess::startDetached("gio", QStringList() << "open" << "trash:///");
+    openTrashFold();
     QWidget::mouseReleaseEvent(e);
 }

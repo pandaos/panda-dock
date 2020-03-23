@@ -40,6 +40,7 @@ public:
     void closeWindow();
 
     void update();
+    void hideTips();
 
 private:
     void initDockAction();

@@ -36,14 +36,19 @@ private:
     void refreshIcon();
     void onDirectoryChanged();
 
+    void openTrashFold();
+    void emptyTrash();
+
 protected:
     void paintEvent(QPaintEvent *e) override;
     void resizeEvent(QResizeEvent *e) override;
+    void mousePressEvent(QMouseEvent *e) override;
     void mouseReleaseEvent(QMouseEvent *e) override;
 
 private:
     QPixmap m_iconPixmap;
     QFileSystemWatcher *m_filesWatcher;
+    QMenu *m_rightMenu;
     int m_count = 0;
 };
 

@@ -45,8 +45,10 @@ AppScrollArea::AppScrollArea(QWidget *parent)
     setContentsMargins(0, 0, 0, 0);
 
     // TODO: Adjust the order
-    QScroller::grabGesture(this, QScroller::TouchGesture);
-    QScroller::grabGesture(this, QScroller::LeftMouseButtonGesture);
+    QScroller *scroller = QScroller::scroller(this);
+    scroller->grabGesture(this, QScroller::TouchGesture);
+    scroller->grabGesture(this, QScroller::LeftMouseButtonGesture);
+    connect(scroller, &QScroller::stateChanged, this, &AppScrollArea::onScrollerStateChanged);
 
     setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
@@ -80,14 +82,29 @@ void AppScrollArea::setRange(int value)
     m_range = value;
 }
 
+void AppScrollArea::onScrollerStateChanged(QScroller::State state)
+{
+    if (state == QScroller::Pressed) {
+        for (int i = 0; i < m_mainLayout->count(); ++i) {
+            static_cast<AppItem *>(m_mainLayout->itemAt(i)->widget())->hideTips();
+        }
+    }
+}
+
 void AppScrollArea::wheelEvent(QWheelEvent *e)
 {
     if (m_mainLayout->direction() == QBoxLayout::LeftToRight) {
-        horizontalScrollBar()->setValue(horizontalScrollBar()->value() - (e->angleDelta().y() / 120.0 * m_range));
+         horizontalScrollBar()->setValue(horizontalScrollBar()->value() - (e->angleDelta().y() / 120.0 * m_range));
     } else {
-        verticalScrollBar()->setValue(verticalScrollBar()->value() - (e->angleDelta().y() / 120.0 * m_range));
+         verticalScrollBar()->setValue(verticalScrollBar()->value() - (e->angleDelta().y() / 120.0 * m_range));
     }
     return;
 
     QScrollArea::wheelEvent(e);
+}
+
+void AppScrollArea::mouseMoveEvent(QMouseEvent *e)
+{
+
+    QScrollArea::mouseMoveEvent(e);
 }
