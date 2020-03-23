@@ -46,7 +46,7 @@ private:
     void initDockAction();
     void dockActionTriggered();
     void refreshIcon();
-    void updateWindowIconGeometries();
+    void updateIconGeometry();
     void initStates();
 
     void showPopup();

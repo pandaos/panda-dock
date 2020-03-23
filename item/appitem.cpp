@@ -19,7 +19,6 @@
 
 #include "appitem.h"
 #include "utils/utils.h"
-#include "utils/xcbmisc.h"
 #include "utils/appwindowmanager.h"
 #include "utils/docksettings.h"
 
@@ -27,6 +26,7 @@
 #include <QMouseEvent>
 #include <QDebug>
 #include <QToolTip>
+#include <QX11Info>
 #include <KWindowSystem>
 
 AppItem::AppItem(DockEntry *entry, QWidget *parent)
@@ -54,7 +54,7 @@ AppItem::AppItem(DockEntry *entry, QWidget *parent)
     initStates();
 
     connect(KWindowSystem::self(), &KWindowSystem::activeWindowChanged, this, &AppItem::initStates);
-    connect(m_updateIconGeometryTimer, &QTimer::timeout, this, &AppItem::updateWindowIconGeometries, Qt::QueuedConnection);
+    connect(m_updateIconGeometryTimer, &QTimer::timeout, this, &AppItem::updateIconGeometry, Qt::QueuedConnection);
     connect(m_popupTimer, &QTimer::timeout, this, &AppItem::showPopup);
     connect(m_closeAction, &QAction::triggered, this, &AppItem::closeWindow);
     connect(m_dockAction, &QAction::triggered, this, &AppItem::dockActionTriggered);
@@ -72,7 +72,7 @@ void AppItem::closeWindow()
 
 void AppItem::update()
 {
-    updateWindowIconGeometries();
+    updateIconGeometry();
     initDockAction();
     refreshIcon();
 
@@ -120,14 +120,23 @@ void AppItem::refreshIcon()
     m_updateIconGeometryTimer->start();
 }
 
-void AppItem::updateWindowIconGeometries()
+void AppItem::updateIconGeometry()
 {
     const QRect r(mapToGlobal(QPoint(0, 0)),
                   mapToGlobal(QPoint(width(), height())));
-     auto *xcb_misc = XcbMisc::instance();
 
     for (quint64 id : m_entry->WIdList) {
-         xcb_misc->set_window_icon_geometry(id, r);
+         NETWinInfo info(QX11Info::connection(),
+                         id,
+                         (WId) QX11Info::appRootWindow(),
+                         NET::WMIconGeometry,
+                         0);
+         NETRect nrect;
+         nrect.pos.x = r.x();
+         nrect.pos.y = r.y();
+         nrect.size.height = r.height();
+         nrect.size.width = r.width();
+         info.setIconGeometry(nrect);
     }
 }
 

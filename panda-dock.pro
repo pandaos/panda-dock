@@ -29,7 +29,6 @@ SOURCES += \
         main.cpp \
         mainwindow.cpp \
     mainpanel.cpp \
-    utils/xcbmisc.cpp \
     item/dockitem.cpp \
     item/launcheritem.cpp \
     utils/dockitemmanager.cpp \
@@ -44,7 +43,6 @@ SOURCES += \
 HEADERS += \
         mainwindow.h \
     mainpanel.h \
-    utils/xcbmisc.h \
     item/dockitem.h \
     item/launcheritem.h \
     utils/utils.h \
