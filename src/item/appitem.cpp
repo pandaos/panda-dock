@@ -128,11 +128,7 @@ void AppItem::paintEvent(QPaintEvent *e)
             activeRect = QRect(0,
                                (itemRect.height() - lineWidth) / 2,
                                lineHeight, lineWidth);
-        } /*else if (DockSettings::instance()->position() == DockSettings::Right) {
-            activeRect = QRect(itemRect.width() - lineHeight,
-                               (itemRect.height() - lineWidth) / 2,
-                               lineHeight, lineWidth);
-        }*/ else {
+        } else {
             activeRect = QRect((itemRect.width() - lineWidth) / 2,
                                itemRect.height() - lineHeight - 1,
                                lineWidth, lineHeight);

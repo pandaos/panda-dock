@@ -18,13 +18,16 @@ AppScrollArea::AppScrollArea(QWidget *parent)
     setWidgetResizable(true);
     m_mainLayout->setMargin(0);
     m_mainLayout->setSpacing(0);
+    m_mainLayout->setContentsMargins(0, 0, 0, 0);
 //    m_mainWidget->setAutoFillBackground(false);
 
     setStyleSheet("background: transparent;");
 
     setContentsMargins(0, 0, 0, 0);
 
-    QScroller::grabGesture(m_mainWidget);
+    // TODO: Adjust the order
+    QScroller::grabGesture(this, QScroller::TouchGesture);
+    QScroller::grabGesture(this, QScroller::LeftMouseButtonGesture);
 
     setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);

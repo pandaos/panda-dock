@@ -6,7 +6,7 @@
 #include <QDebug>
 #include <math.h>
 
-#define TOPBARHEIGHT 40
+#define TOPBARHEIGHT 35
 
 DockSettings *DockSettings::instance()
 {
@@ -106,50 +106,52 @@ const QRect DockSettings::windowRect() const
 {
     QRect primaryRect = qApp->primaryScreen()->geometry();
     qreal scale = qApp->primaryScreen()->devicePixelRatio();
-    int iconSize = m_settings->value("icon_size").toInt();
-    int iconCount = DockItemManager::instance()->itemList().count();
-    QSize size;
+    const int iconSize = m_settings->value("icon_size").toInt();
+    const int iconCount = DockItemManager::instance()->itemList().count() - 1;
+    const int margin = 14;
+    QSize panelSize;
+    QPoint p;
 
-    if (m_position != Bottom) {
+    if (m_position == Bottom) {
+        int maxWidth = primaryRect.width() - margin * 2;
+        int calcWidth = iconSize * 2 + PADDING * 2;
+        for (int i = 1; i <= iconCount; ++i) {
+            calcWidth += iconSize;
+
+            if (calcWidth >= maxWidth) {
+                calcWidth -= iconSize;
+                break;
+            }
+        }
+        panelSize.setHeight(iconSize);
+        panelSize.setWidth(calcWidth);
+    } else {
         primaryRect.setHeight(primaryRect.height() - TOPBARHEIGHT);
         primaryRect.setY(TOPBARHEIGHT);
+
+        int maxHeight = primaryRect.height() - margin * 2;
+        int calcHeight = iconSize * 2 + PADDING * 2;
+        for (int i = 1; i <= iconCount; ++i) {
+            calcHeight += iconSize;
+
+            if (calcHeight >= maxHeight) {
+                calcHeight -= iconSize;
+                break;
+            }
+        }
+        panelSize.setHeight(calcHeight);
+        panelSize.setWidth(iconSize);
     }
 
-    const int maxWidth = primaryRect.width() - MARGIN * 4;
-    const int maxHeight = primaryRect.height() - MARGIN * 4;
-    const int calcWidth = iconCount * iconSize + PADDING * 4;
-    const int calcHeight = iconSize + PADDING * 2;
-
-    // calculate window size.
-    switch (m_position) {
-    case Bottom:
-        size.setHeight(calcHeight);
-        size.setWidth(qMin(maxWidth, calcWidth));
-        break;
-    case Left: case Right:
-        size.setHeight(qMin(maxHeight, calcWidth));
-        size.setWidth(calcHeight);
-        break;
-    }
-
-    const int offsetX = (primaryRect.width() - size.width()) / 2;
-    const int offsetY = (primaryRect.height() - size.height()) / 2;
-    int margin = 14;
-    QPoint p(0, 0);
-
-    switch (m_position) {
-    case Bottom:
-        p = QPoint(offsetX, primaryRect.height() - size.height() - margin);
-        break;
-    case Left:
+    const int offsetX = (primaryRect.width() - panelSize.width()) / 2;
+    const int offsetY = (primaryRect.height() - panelSize.height()) / 2;
+    if (m_position == Bottom) {
+        p = QPoint(offsetX, primaryRect.height() - panelSize.height() - margin);
+    } else {
         p = QPoint(margin, offsetY + TOPBARHEIGHT / 2);
-        break;
-//    case Right:
-//        p = QPoint(primaryRect.width() - size.width() - margin, offsetY);
-//        break;
     }
 
-    return QRect(primaryRect.topLeft() + p, size);
+    return QRect(primaryRect.topLeft() + p, panelSize);
 }
 
 void DockSettings::setValue(const QString &key, const QVariant &variant)

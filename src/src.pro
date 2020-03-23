@@ -42,7 +42,8 @@ SOURCES += \
     controller/docksettings.cpp \
     utils/dockpopupwindow.cpp \
     item/showdesktopitem.cpp \
-    appscrollarea.cpp
+    appscrollarea.cpp \
+    item/trashitem.cpp
 
 HEADERS += \
         mainwindow.h \
@@ -61,7 +62,8 @@ HEADERS += \
     controller/docksettings.h \
     utils/dockpopupwindow.h \
     item/showdesktopitem.h \
-    appscrollarea.h
+    appscrollarea.h \
+    item/trashitem.h
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

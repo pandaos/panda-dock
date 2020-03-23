@@ -1,4 +1,5 @@
 #include "mainpanel.h"
+#include "item/trashitem.h"
 #include <QPainter>
 #include <QLabel>
 #include <QDebug>
@@ -11,6 +12,7 @@ MainPanel::MainPanel(QWidget *parent)
       m_fixedAreaWidget(new QWidget),
 //      m_appAreaWidget(new QWidget),
       m_appArea(new AppScrollArea),
+      m_trashItem(new TrashItem),
       m_dockItemmanager(DockItemManager::instance()),
       m_settings(DockSettings::instance())
 {
@@ -100,10 +102,11 @@ void MainPanel::init()
     m_mainLayout->addWidget(m_fixedAreaWidget);
 //    m_mainLayout->addWidget(m_appAreaWidget);
     m_mainLayout->addWidget(m_appArea);
+    m_mainLayout->addWidget(m_trashItem);
     m_mainLayout->addStretch();
 
     m_mainLayout->setMargin(0);
-    m_mainLayout->setContentsMargins(10, 10, 10, 10);
+    m_mainLayout->setContentsMargins(0, 0, 0, 0);
     m_mainLayout->setSpacing(0);
 
     m_fixedAreaWidget->setLayout(m_fixedAreaLayout);
@@ -130,6 +133,7 @@ void MainPanel::updateLayout()
         m_fixedAreaLayout->setDirection(QBoxLayout::TopToBottom);
 //        m_appAreaLayout->setDirection(QBoxLayout::TopToBottom);
         m_appArea->layout()->setDirection(QBoxLayout::TopToBottom);
+        m_mainLayout->setContentsMargins(0, 10, 0, 10);
         break;
     case DockSettings::Bottom:
         m_fixedAreaWidget->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Expanding);
@@ -139,6 +143,7 @@ void MainPanel::updateLayout()
         m_fixedAreaLayout->setDirection(QBoxLayout::LeftToRight);
 //        m_appAreaLayout->setDirection(QBoxLayout::LeftToRight);
         m_appArea->layout()->setDirection(QBoxLayout::LeftToRight);
+        m_mainLayout->setContentsMargins(10, 0, 10, 0);
         break;
     }
 
@@ -161,12 +166,12 @@ void MainPanel::resizeDockIcon()
     int canDisplayAppCount = 0;
 
     if (m_settings->position() == DockSettings::Bottom) {
-        canDisplayAppCount = (rect().width() / iconSize) - 1;
+        canDisplayAppCount = (rect().width() / iconSize) - 2;
         // rect().width() - iconSize * 2 - padding * 4
         m_appArea->setFixedWidth(canDisplayAppCount * iconSize);
         m_appArea->setFixedHeight(QWIDGETSIZE_MAX);
     } else {
-        canDisplayAppCount = (rect().height() / iconSize) - 1;
+        canDisplayAppCount = (rect().height() / iconSize) - 2;
         m_appArea->setFixedWidth(QWIDGETSIZE_MAX);
         m_appArea->setFixedHeight(canDisplayAppCount * iconSize);
     }
@@ -174,6 +179,8 @@ void MainPanel::resizeDockIcon()
     for (int i = 0; i < m_fixedAreaLayout->count(); ++i) {
         m_fixedAreaLayout->itemAt(i)->widget()->setFixedSize(iconSize, iconSize);
     }
+
+    m_trashItem->setFixedSize(iconSize, iconSize);
 
     emit requestResized();
 }

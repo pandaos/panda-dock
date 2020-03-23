@@ -2,5 +2,7 @@
     <qresource prefix="/">
         <file>resources/launcher.svg</file>
         <file>resources/desktop.svg</file>
+        <file>resources/user-trash-full.svg</file>
+        <file>resources/user-trash.svg</file>
     </qresource>
 </RCC>

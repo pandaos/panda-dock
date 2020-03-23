@@ -8,6 +8,7 @@
 #include "controller/docksettings.h"
 #include "controller/dockitemmanager.h"
 
+class TrashItem;
 class MainPanel : public QWidget
 {
     Q_OBJECT
@@ -48,6 +49,7 @@ private:
 //    QWidget *m_appAreaWidget;
 
     AppScrollArea *m_appArea;
+    TrashItem *m_trashItem;
 
     DockItemManager *m_dockItemmanager;
     DockSettings *m_settings;
