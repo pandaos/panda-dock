@@ -23,6 +23,7 @@
 #include <QScrollArea>
 #include <QBoxLayout>
 #include <QScroller>
+#include <QVariantAnimation>
 #include "item/appitem.h"
 
 class AppScrollArea : public QScrollArea
@@ -50,6 +51,7 @@ protected:
 private:
     QWidget *m_mainWidget;
     QBoxLayout *m_mainLayout;
+    QVariantAnimation *m_scrollAni;
     int m_range;
 };
 

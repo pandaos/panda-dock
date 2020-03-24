@@ -21,14 +21,19 @@
 #include <QWheelEvent>
 #include <QScrollBar>
 #include <QScroller>
+#include <QTimer>
 #include <QDebug>
 
 AppScrollArea::AppScrollArea(QWidget *parent)
     : QScrollArea(parent),
       m_mainLayout(new QBoxLayout(QBoxLayout::LeftToRight)),
       m_mainWidget(new QWidget),
+      m_scrollAni(new QVariantAnimation(this)),
       m_range(10)
 {
+    m_scrollAni->setDuration(500);
+    m_scrollAni->setEasingCurve(QEasingCurve::InQuad);
+
     m_mainWidget->setLayout(m_mainLayout);
 
     setAttribute(Qt::WA_TranslucentBackground);
@@ -38,10 +43,8 @@ AppScrollArea::AppScrollArea(QWidget *parent)
     m_mainLayout->setMargin(0);
     m_mainLayout->setSpacing(0);
     m_mainLayout->setContentsMargins(0, 0, 0, 0);
-//    m_mainWidget->setAutoFillBackground(false);
 
     setStyleSheet("background: transparent;");
-
     setContentsMargins(0, 0, 0, 0);
 
     // TODO: Adjust the order
@@ -52,12 +55,22 @@ AppScrollArea::AppScrollArea(QWidget *parent)
 
     setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+
+    connect(m_scrollAni, &QVariantAnimation::valueChanged, this, [=] (QVariant val) {
+        if (m_mainLayout->direction() == QBoxLayout::LeftToRight) {
+            horizontalScrollBar()->setValue(val.toInt());
+        } else {
+            verticalScrollBar()->setValue(val.toInt());
+        }
+    });
 }
 
 void AppScrollArea::addItem(AppItem *item)
 {
     m_mainLayout->addWidget(item);
     m_mainWidget->adjustSize();
+
+    QTimer::singleShot(100, this, [=] { scrollToItem(item); });
 }
 
 void AppScrollArea::removeItem(AppItem *item)
@@ -67,14 +80,17 @@ void AppScrollArea::removeItem(AppItem *item)
 
 void AppScrollArea::scrollToItem(AppItem *item)
 {
-    return;
-    blockSignals(true);
+    m_scrollAni->stop();
+
     if (m_mainLayout->direction() == QBoxLayout::LeftToRight) {
-        horizontalScrollBar()->setValue(item->geometry().x());
+        m_scrollAni->setStartValue(horizontalScrollBar()->value());
+        m_scrollAni->setEndValue(item->geometry().x());
+        m_scrollAni->start();
     } else {
-        verticalScrollBar()->setValue(item->geometry().y());
+        m_scrollAni->setStartValue(verticalScrollBar()->value());
+        m_scrollAni->setEndValue(item->geometry().y());
+        m_scrollAni->start();
     }
-    blockSignals(false);
 }
 
 void AppScrollArea::setRange(int value)

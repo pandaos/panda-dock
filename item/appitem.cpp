@@ -39,7 +39,7 @@ AppItem::AppItem(DockEntry *entry, QWidget *parent)
       m_dockAction(new QAction("")),
       m_popupWidget(new BlurWindow)
 {
-    m_updateIconGeometryTimer->setInterval(2000);
+    m_updateIconGeometryTimer->setInterval(200);
     m_updateIconGeometryTimer->setSingleShot(true);
 
     m_contextMenu.addAction(m_openAction);
@@ -68,7 +68,6 @@ void AppItem::closeWindow()
 
 void AppItem::update()
 {
-    updateIconGeometry();
     initDockAction();
     refreshIcon();
 
@@ -118,8 +117,8 @@ void AppItem::refreshIcon()
 
 void AppItem::updateIconGeometry()
 {
-    const QRect r(mapToGlobal(QPoint(0, 0)),
-                  mapToGlobal(QPoint(width(), height())));
+    QRect rect = geometry();
+    rect.moveTo(mapToGlobal(QPoint(0, 0)));
 
     for (quint64 id : m_entry->WIdList) {
          NETWinInfo info(QX11Info::connection(),
@@ -128,10 +127,10 @@ void AppItem::updateIconGeometry()
                          NET::WMIconGeometry,
                          0);
          NETRect nrect;
-         nrect.pos.x = r.x();
-         nrect.pos.y = r.y();
-         nrect.size.height = r.height();
-         nrect.size.width = r.width();
+         nrect.pos.x = rect.x();
+         nrect.pos.y = rect.y();
+         nrect.size.height = rect.height();
+         nrect.size.width = rect.width();
          info.setIconGeometry(nrect);
     }
 }
@@ -139,6 +138,7 @@ void AppItem::updateIconGeometry()
 void AppItem::initStates()
 {
     m_entry->isActive = m_entry->WIdList.contains(KWindowSystem::activeWindow());
+
     update();
 }
 

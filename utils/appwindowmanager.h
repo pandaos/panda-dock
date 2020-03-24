@@ -86,7 +86,6 @@ private:
     QString getIcon(const QString &exec);
     void onWindowAdded(quint64 id);
     void onWindowRemoved(quint64 id);
-    void onActiveWindowChanged(quint64 id);
     void onWindowChanged(WId id, NET::Properties properties, NET::Properties2 properties2);
 
 private:

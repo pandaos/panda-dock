@@ -59,7 +59,6 @@ AppWindowManager::AppWindowManager(QObject *parent)
 
     connect(KWindowSystem::self(), &KWindowSystem::windowAdded, this, &AppWindowManager::onWindowAdded);
     connect(KWindowSystem::self(), &KWindowSystem::windowRemoved, this, &AppWindowManager::onWindowRemoved);
-//    connect(KWindowSystem::self(), &KWindowSystem::activeWindowChanged, this, &AppWindowManager::onActiveWindowChanged);
     connect(KWindowSystem::self(), &KWindowSystem::currentDesktopChanged, this, [&](int desktop) {
         m_currentDesktop = desktop;
     });
@@ -525,27 +524,6 @@ void AppWindowManager::onWindowRemoved(quint64 id)
                 emit activeChanged(e);
             }
         }
-    }
-}
-
-void AppWindowManager::onActiveWindowChanged(quint64 id)
-{
-    KWindowInfo info(id, windowInfoFlags, windowInfoFlags2);
-
-    if (!info.valid(true))
-        return;
-
-    for (auto entry : m_dockList) {
-        for (quint64 wid : entry->WIdList) {
-            if (wid == id) {
-                entry->isActive = true;
-                break;
-            } else {
-                entry->isActive = false;
-            }
-        }
-
-        emit activeChanged(entry);
     }
 }
 
