@@ -178,12 +178,12 @@ void AppItem::paintEvent(QPaintEvent *e)
     if (!m_entry->WIdList.isEmpty()) {
         QRect activeRect;
         if (DockSettings::instance()->position() == DockSettings::Left) {
-            activeRect = QRect(0,
+            activeRect = QRect(1,
                                (itemRect.height() - lineWidth) / 2,
                                lineHeight, lineWidth);
         } else {
             activeRect = QRect((itemRect.width() - lineWidth) / 2,
-                               itemRect.height() - lineHeight - 1,
+                               itemRect.height() - lineHeight - 2,
                                lineWidth, lineHeight);
         }
 
@@ -220,7 +220,9 @@ void AppItem::mouseReleaseEvent(QMouseEvent *e)
     m_popupWidget->hide();
 
     if (e->button() == Qt::LeftButton) {
-        AppWindowManager::instance()->clicked(m_entry);
+        if (rect().contains(mapFromGlobal(QCursor::pos()))) {
+            AppWindowManager::instance()->clicked(m_entry);
+        }
     }
 }
 

@@ -88,9 +88,9 @@ void DockItem::paintEvent(QPaintEvent *e)
 void DockItem::enterEvent(QEvent *e)
 {
     // Remove the bottom area to prevent unintentional operation in auto-hide mode.
-    if (!rect().adjusted(0, 0, width(), height() - 5).contains(mapFromGlobal(QCursor::pos()))) {
-        return;
-    }
+//    if (!rect().adjusted(0, 0, width(), height() - 5).contains(mapFromGlobal(QCursor::pos()))) {
+//        return;
+//    }
 
     m_hoverAnimation->stop();
     m_hoverAnimation->setEasingCurve(QEasingCurve::OutBack);
