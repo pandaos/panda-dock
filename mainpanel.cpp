@@ -55,7 +55,6 @@ MainPanel::MainPanel(QWidget *parent)
     connect(m_dockItemmanager, &DockItemManager::itemInserted, this, &MainPanel::insertItem, Qt::QueuedConnection);
     connect(m_dockItemmanager, &DockItemManager::itemRemoved, this, &MainPanel::removeItem, Qt::QueuedConnection);
     connect(m_dockItemmanager, &DockItemManager::itemUpdated, this, &MainPanel::itemUpdated, Qt::QueuedConnection);
-    connect(m_dockItemmanager, &DockItemManager::requestScrollToItem, this, &MainPanel::scrollToItem);
     connect(m_settings, &DockSettings::positionChanged, this, &MainPanel::onPositionChanged);
 }
 
@@ -173,11 +172,6 @@ void MainPanel::resizeDockIcon()
 void MainPanel::onPositionChanged()
 {
     updateLayout();
-}
-
-void MainPanel::scrollToItem(DockItem *item)
-{
-    m_appArea->scrollToItem(static_cast<AppItem *>(item));
 }
 
 void MainPanel::resizeEvent(QResizeEvent *event)

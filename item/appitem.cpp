@@ -220,10 +220,12 @@ void AppItem::mouseReleaseEvent(QMouseEvent *e)
     m_popupWidget->hide();
 
     if (e->button() == Qt::LeftButton) {
-        if (rect().contains(mapFromGlobal(QCursor::pos()))) {
+//        if (rect().contains(mapFromGlobal(QCursor::pos()))) {
             AppWindowManager::instance()->clicked(m_entry);
-        }
+//        }
     }
+
+    DockItem::mouseReleaseEvent(e);
 }
 
 void AppItem::resizeEvent(QResizeEvent *e)

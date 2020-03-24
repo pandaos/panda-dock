@@ -49,7 +49,6 @@ signals:
     void trayVisableCountChanged(const int &count) const;
     void requestWindowAutoHide(const bool autoHide) const;
     void requestRefershWindowVisible() const;
-    void requestScrollToItem(DockItem *item);
 
 private:
     static DockItemManager *INSTANCE;

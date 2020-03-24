@@ -237,22 +237,31 @@ void AppWindowManager::save()
 
 void AppWindowManager::initEntry(DockEntry *entry)
 {
-    // 通过 window class class 找到系统 desktop 文件, 读取真正的图标名词exec等字段
+    // 通过 window class class 找到系统 desktop 文件, 读取真正的图标名称 exec 等字段...
     // 并且存储方便下次直接读取
+    // rekols
     const QString &key = entry->className;
     QSettings set(QString("%1/%2/appinfo.conf")
                   .arg(QStandardPaths::writableLocation(QStandardPaths::ConfigLocation))
                   .arg(qApp->applicationName()), QSettings::IniFormat);
     set.setIniCodec("UTF8");
-    set.beginReadArray(key);
+    set.beginGroup(key);
 
+    // 如果找到存储的数据，则无需再查找 /usr/share/applications 每一个文件.
     if (set.contains("Desktop")) {
-        entry->visibleName = set.value("Name").toString();
+        if (set.contains(QString("Name[%1]").arg(QLocale::system().name()))) {
+            entry->visibleName = set.value(QString("Name[%1]").arg(QLocale::system().name())).toString();
+        } else {
+            entry->visibleName = set.value("Name").toString();
+        }
+
         entry->iconName = set.value("Icon").toString();
         entry->exec = set.value("Exec").toString();
         return;
     }
+    set.endGroup();
 
+    // 开始通过 window class 属性找到相关的 desktop 文件
     QDir dir("/usr/share/applications");
     for (const QFileInfo &info : dir.entryInfoList(QDir::Files)) {
         // 必须是 desktop 文件
@@ -319,13 +328,19 @@ void AppWindowManager::initEntry(DockEntry *entry)
                 entry->iconName = iconValue;
                 entry->exec = execValue;
 
-//                set.beginWriteArray(key);
                 set.beginGroup(key);
                 set.setValue("Icon", iconValue);
                 set.setValue("Exec", execValue);
                 set.setValue("Desktop", info.filePath());
-                // TODO: 多语言
                 set.setValue("Name", nameValue);
+
+                // support multiple languages.
+                for (const QString &key : settings.allKeys()) {
+                    if (key.startsWith("Name[")) {
+                        set.setValue(key, settings.value(key).toString());
+                    }
+                }
+
                 set.endGroup();
                 set.sync();
             }

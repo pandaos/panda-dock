@@ -52,8 +52,6 @@ private:
     void resizeDockIcon();
     void onPositionChanged();
 
-    void scrollToItem(DockItem *item);
-
 protected:
     void resizeEvent(QResizeEvent *event) override;
 
