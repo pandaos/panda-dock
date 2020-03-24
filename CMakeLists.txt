@@ -27,8 +27,7 @@ include(KDEInstallDirs)
 include(KDECMakeSettings)
 include(KDECompilerSettings)
 include(FeatureSummary)
-find_package(KF5 REQUIRED COMPONENTS WindowSystem Service)
-
+find_package(KF5 REQUIRED COMPONENTS WindowSystem)
 
 add_executable(${TARGET} ${SOURCES} ${HEADERS} ${FORMS} ${RESOURCES})
 target_link_libraries(${TARGET}
@@ -38,5 +37,6 @@ target_link_libraries(${TARGET}
         Qt5::Svg
         Qt5::X11Extras
         KF5::WindowSystem
-        KF5::Service
-        )
+)
+
+install(TARGETS ${TARGET} DESTINATION /usr/bin)
