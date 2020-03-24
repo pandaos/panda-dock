@@ -27,12 +27,12 @@
 #include <QDebug>
 #include <QToolTip>
 #include <QX11Info>
+#include <QTimer>
 #include <KWindowSystem>
 
 AppItem::AppItem(DockEntry *entry, QWidget *parent)
     : DockItem(parent),
       m_entry(entry),
-      m_popupTimer(new QTimer(this)),
       m_updateIconGeometryTimer(new QTimer(this)),
       m_openAction(new QAction(tr("Open"))),
       m_closeAction(new QAction(tr("Close All"))),
@@ -41,9 +41,6 @@ AppItem::AppItem(DockEntry *entry, QWidget *parent)
 {
     m_updateIconGeometryTimer->setInterval(2000);
     m_updateIconGeometryTimer->setSingleShot(true);
-
-    m_popupTimer->setInterval(200);
-    m_popupTimer->setSingleShot(true);
 
     m_contextMenu.addAction(m_openAction);
     m_contextMenu.addAction(m_dockAction);
@@ -55,7 +52,6 @@ AppItem::AppItem(DockEntry *entry, QWidget *parent)
 
     connect(KWindowSystem::self(), &KWindowSystem::activeWindowChanged, this, &AppItem::initStates);
     connect(m_updateIconGeometryTimer, &QTimer::timeout, this, &AppItem::updateIconGeometry, Qt::QueuedConnection);
-    connect(m_popupTimer, &QTimer::timeout, this, &AppItem::showPopup);
     connect(m_closeAction, &QAction::triggered, this, &AppItem::closeWindow);
     connect(m_dockAction, &QAction::triggered, this, &AppItem::dockActionTriggered);
     connect(m_openAction, &QAction::triggered, this, [=] {
@@ -153,7 +149,7 @@ void AppItem::showPopup()
 
     QPoint p = mapToGlobal(QPoint(0, 0));
 
-    m_popupWidget->setText(m_entry->className);
+    m_popupWidget->setText(m_entry->visibleName);
     m_popupWidget->setVisible(true);
 
     if (DockSettings::instance()->position() == DockSettings::Bottom)
@@ -239,13 +235,12 @@ void AppItem::enterEvent(QEvent *e)
 {
     DockItem::enterEvent(e);
 
-    m_popupTimer->start();
+    showPopup();
 }
 
 void AppItem::leaveEvent(QEvent *e)
 {
     DockItem::leaveEvent(e);
 
-    m_popupTimer->stop();
     m_popupWidget->setVisible(false);
 }

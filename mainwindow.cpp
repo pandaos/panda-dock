@@ -96,6 +96,13 @@ void MainWindow::initWindowSize()
         QPainterPath path;
         path.addRoundedRect(this->rect(), radius, radius);
         KWindowEffects::enableBlurBehind(winId(), true, path.toFillPolygon().toPolygon());
+
+//        int backgroundOpacity = 150;
+//        const qreal factor = (qreal)backgroundOpacity / (qreal)100;
+//        qreal contrast = currentMidValue(0.45, factor, 1);
+//        qreal intesity = currentMidValue(0.45, factor, 1);
+//        qreal saturation = currentMidValue(1.7, factor, 1);
+//        KWindowEffects::enableBackgroundContrast(winId(), true, 0.45, 0.45, 1.7, path.toFillPolygon().toPolygon());
     });
 
     m_size = windowRect.size();

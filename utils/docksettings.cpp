@@ -36,9 +36,8 @@ DockSettings *DockSettings::instance()
 
 DockSettings::DockSettings(QObject *parent)
     : QObject(parent),
-      m_settings(new QSettings(QString("%1/%2/%3/config.conf")
+      m_settings(new QSettings(QString("%1/%2/config.conf")
                                .arg(QStandardPaths::writableLocation(QStandardPaths::ConfigLocation))
-                               .arg(qApp->organizationName())
                                .arg(qApp->applicationName()), QSettings::IniFormat)),
       m_settingsMenu(new QMenu),
       m_leftPosAction(new QAction(tr("Left"), this)),
@@ -47,11 +46,6 @@ DockSettings::DockSettings(QObject *parent)
       m_mediumSizeAction(new QAction(tr("Medium"), this)),
       m_largeSizeAction(new QAction(tr("Large"), this))
 {
-    qDebug() << QString("%1/%2/%3/config.conf")
-                .arg(QStandardPaths::writableLocation(QStandardPaths::ConfigLocation))
-                .arg(qApp->organizationName())
-                .arg(qApp->applicationName());
-
     if (!m_settings->contains("icon_size")) {
         m_settings->setValue("icon_size", 64);
     }
@@ -81,11 +75,11 @@ DockSettings::DockSettings(QObject *parent)
     initSizeAction();
 
     connect(m_smallSizeAction, &QAction::triggered, this, [=] {
-        setIconSize(32);
+        setIconSize(64);
     });
 
     connect(m_mediumSizeAction, &QAction::triggered, this, [=] {
-        setIconSize(64);
+        setIconSize(80);
     });
 
     connect(m_largeSizeAction, &QAction::triggered, this, [=] {
@@ -203,15 +197,15 @@ void DockSettings::initSizeAction()
 {
     const int size = iconSize();
 
-    if (size <= 32) {
+    if (size <= 64) {
         m_smallSizeAction->setChecked(true);
         m_mediumSizeAction->setChecked(false);
         m_largeSizeAction->setChecked(false);
-    } else if (size >= 32 && size <= 64) {
+    } else if (size >= 64 && size <= 80) {
         m_smallSizeAction->setChecked(false);
         m_mediumSizeAction->setChecked(true);
         m_largeSizeAction->setChecked(false);
-    } else if (size > 64) {
+    } else if (size > 80) {
         m_smallSizeAction->setChecked(false);
         m_mediumSizeAction->setChecked(false);
         m_largeSizeAction->setChecked(true);

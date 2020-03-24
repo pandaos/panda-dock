@@ -24,6 +24,7 @@
 #include <QObject>
 #include <QRect>
 #include <QMenu>
+#include <QFileSystemWatcher>
 
 #include "dockitemmanager.h"
 
@@ -71,6 +72,8 @@ private:
     QAction *m_smallSizeAction;
     QAction *m_mediumSizeAction;
     QAction *m_largeSizeAction;
+
+    QFileSystemWatcher *m_setWatcher;
 };
 
 #endif // DOCKSETTINGS_H

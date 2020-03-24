@@ -20,10 +20,12 @@
 #ifndef APPWINDOWMANAGER_H
 #define APPWINDOWMANAGER_H
 
-#include <QObject>
-#include <QSettings>
+#include <QFileSystemWatcher>
 #include <QDataStream>
+#include <QSettings>
+#include <QObject>
 #include <QSet>
+
 #include <KF5/KWindowSystem/KWindowSystem>
 #include <KF5/KWindowSystem/KWindowInfo>
 #include <KF5/KWindowSystem/NETWM>
@@ -33,11 +35,10 @@ struct DockEntry
     bool isActive = false;
     bool isDocked = false;
     QString desktopPath;
+    QString visibleName;
     QString className;
     QString iconName;
     QString exec;
-    QString name;
-    QString id;
     int current = 0;
 
     QList<quint64> WIdList;
@@ -53,6 +54,9 @@ public:
 
     QList<DockEntry *> dockList() const { return m_dockList; }
     DockEntry *find(quint64 id);
+    DockEntry *findByClassName(const QString &className);
+    int getPid(quint64 winId);
+
     bool classNameContains(const QString &className);
     bool isAcceptWindow(quint64 id) const;
 
@@ -66,6 +70,8 @@ public:
     void undock(DockEntry *entry);
     void save();
 
+    void initEntry(DockEntry *entry);
+
 signals:
     void entryAdded(DockEntry *entry);
     void entryRemoved(DockEntry *entry);
@@ -73,6 +79,7 @@ signals:
 
 private:
     void refreshWindowList();
+    void refreshDockedList();
     QString getExec(quint64 id);
     QString whichCmd(const QString &cmd);
     QString getDesktop(const QString &keyword);
@@ -86,6 +93,8 @@ private:
     QSettings *m_settings;
     int m_currentDesktop;
     QList<DockEntry *> m_dockList;
+
+    QFileSystemWatcher *m_setWatcher;
 };
 
 #endif // APPWINDOWMANAGER_H

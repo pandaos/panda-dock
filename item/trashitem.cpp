@@ -22,6 +22,7 @@
 #include <QMouseEvent>
 #include <QProcess>
 #include <QPainter>
+#include <QDialog>
 #include <QDir>
 
 const QString TrashDir = QDir::homePath() + "/.local/share/Trash";
@@ -80,7 +81,9 @@ void TrashItem::openTrashFold()
 
 void TrashItem::emptyTrash()
 {
-
+//    QDialog *dialog = new QDialog;
+//    dialog->setWindowTitle(tr("Empty Trash"));
+//    dialog->show();
 }
 
 void TrashItem::paintEvent(QPaintEvent *e)
