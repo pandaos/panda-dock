@@ -60,9 +60,9 @@ MainWindow::MainWindow(QWidget *parent)
     // blur
     setAttribute(Qt::WA_NoSystemBackground, false);
     setAttribute(Qt::WA_TranslucentBackground);
-    setWindowFlags(Qt::FramelessWindowHint);
+    setWindowFlags(Qt::FramelessWindowHint | Qt::WindowDoesNotAcceptFocus);
 
-    KWindowSystem::setOnDesktop(effectiveWinId(), NET::OnAllDesktops);
+    KWindowSystem::setOnDesktop(winId(), NET::OnAllDesktops);
     KWindowSystem::setType(winId(), NET::Dock);
     // KWindowEffects::slideWindow(winId(), KWindowEffects::BottomEdge);
 
@@ -186,7 +186,7 @@ void MainWindow::paintEvent(QPaintEvent *e)
 //    color.setAlpha(60);
     QColor color("#FFFFFF");
     color.setAlpha(80); // default 130
-    painter.setPen(QColor(0, 0, 0, 30));
+    painter.setPen(Qt::NoPen);
     painter.setBrush(color);
 
     int radius;

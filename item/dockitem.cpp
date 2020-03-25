@@ -28,6 +28,7 @@
 DockItem::DockItem(QWidget *parent)
     : QWidget(parent),
       m_hoverAnimation(new QVariantAnimation(this)),
+      m_hoverSize(0),
       m_hover(false)
 {
     m_hoverAnimation->setDuration(250);
