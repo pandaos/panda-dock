@@ -68,6 +68,7 @@ private:
     QAction *m_closeAction;
     QAction *m_dockAction;
     QTimer *m_updateIconGeometryTimer;
+    QTimer *m_popupTimer;
 
     QVariantAnimation *m_hoverAnimation;
     double m_hoverSize = 0;

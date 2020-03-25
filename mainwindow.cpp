@@ -182,10 +182,9 @@ void MainWindow::paintEvent(QPaintEvent *e)
     QPainter painter(this);
     painter.setRenderHint(QPainter::Antialiasing, true);
     painter.setRenderHint(QPainter::SmoothPixmapTransform, true);
-//    QColor color("#000000");
-//    color.setAlpha(60);
+
     QColor color("#FFFFFF");
-    color.setAlpha(80); // default 130
+    color.setAlpha(80);
     painter.setPen(Qt::NoPen);
     painter.setBrush(color);
 

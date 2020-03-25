@@ -34,6 +34,7 @@ AppItem::AppItem(DockEntry *entry, QWidget *parent)
     : DockItem(parent),
       m_entry(entry),
       m_updateIconGeometryTimer(new QTimer(this)),
+      m_popupTimer(new QTimer(this)),
       m_openAction(new QAction(tr("Open"))),
       m_closeAction(new QAction(tr("Close All"))),
       m_dockAction(new QAction("")),
@@ -41,6 +42,9 @@ AppItem::AppItem(DockEntry *entry, QWidget *parent)
 {
     m_updateIconGeometryTimer->setInterval(200);
     m_updateIconGeometryTimer->setSingleShot(true);
+
+    m_popupTimer->setInterval(150);
+    m_popupTimer->setSingleShot(true);
 
     m_contextMenu.addAction(m_openAction);
     m_contextMenu.addAction(m_dockAction);
@@ -57,6 +61,8 @@ AppItem::AppItem(DockEntry *entry, QWidget *parent)
     connect(m_openAction, &QAction::triggered, this, [=] {
         AppWindowManager::instance()->openApp(m_entry->className);
     });
+
+    connect(m_popupTimer, &QTimer::timeout, this, &AppItem::showPopup);
 }
 
 void AppItem::closeWindow()
@@ -239,12 +245,13 @@ void AppItem::enterEvent(QEvent *e)
 {
     DockItem::enterEvent(e);
 
-    showPopup();
+    m_popupTimer->start();
 }
 
 void AppItem::leaveEvent(QEvent *e)
 {
     DockItem::leaveEvent(e);
 
+    m_popupTimer->stop();
     m_popupWidget->setVisible(false);
 }
