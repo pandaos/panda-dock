@@ -34,7 +34,7 @@ public:
     void update();
 
 private:
-    void paintEvent(QPaintEvent *e);
+    void paintEvent(QPaintEvent *e) override;
 
 private:
     QLabel *m_textLabel;

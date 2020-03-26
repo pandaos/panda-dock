@@ -38,7 +38,6 @@ MainWindow::MainWindow(QWidget *parent)
       m_mainPanel(new MainPanel),
       m_itemManager(DockItemManager::instance()),
       m_settings(DockSettings::instance()),
-//      m_xcbMisc(XcbMisc::instance()),
       m_fakeWidget(new QWidget(nullptr))
 {
     QHBoxLayout *layout = new QHBoxLayout;
@@ -99,13 +98,11 @@ void MainWindow::initWindowSize()
 
 //        int backgroundOpacity = 150;
 //        const qreal factor = (qreal)backgroundOpacity / (qreal)100;
-//        qreal contrast = currentMidValue(0.45, factor, 1);
-//        qreal intesity = currentMidValue(0.45, factor, 1);
-//        qreal saturation = currentMidValue(1.7, factor, 1);
-//        KWindowEffects::enableBackgroundContrast(winId(), true, 0.45, 0.45, 1.7, path.toFillPolygon().toPolygon());
+//        qreal contrast = 0.5; // currentMidValue(0.45, factor, 1);
+//        qreal intesity = 1.5; //currentMidValue(0.45, factor, 1);
+//        qreal saturation = 1.6;//currentMidValue(1.7, factor, 1);
+//        KWindowEffects::enableBackgroundContrast(winId(), true, contrast, intesity, saturation, path.toFillPolygon().toPolygon());
     });
-
-    m_size = windowRect.size();
 
     setStrutPartial();
 }
@@ -172,8 +169,6 @@ void MainWindow::resizeEvent(QResizeEvent *e)
 void MainWindow::showEvent(QShowEvent *e)
 {
     QWidget::showEvent(e);
-
-    //XcbMisc::instance()->enableBlurBehind(winId(), true);
 }
 
 void MainWindow::paintEvent(QPaintEvent *e)

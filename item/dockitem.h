@@ -46,8 +46,6 @@ public:
 
     virtual QWidget *popupTips();
 
-    bool isHover() { return m_hover; };
-
 private:
     void showContextMenu();
     const QPoint popupMarkPoint() const;
@@ -64,7 +62,6 @@ private:
     QTimer *m_popupTipsDelayTimer;
     QMenu m_contextMenu;
     qreal m_hoverSize;
-    bool m_hover;
 };
 
 #endif // DOCKITEM_H

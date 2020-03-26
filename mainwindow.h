@@ -48,9 +48,7 @@ private:
     MainPanel *m_mainPanel;
     DockItemManager *m_itemManager;
     DockSettings *m_settings;
-//    XcbMisc *m_xcbMisc;
     QWidget *m_fakeWidget;
-    QSize m_size;
 };
 
 #endif // MAINWINDOW_H

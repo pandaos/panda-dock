@@ -23,6 +23,8 @@
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
+    a.setApplicationName("panda-dock");
+    a.setApplicationDisplayName("PandaOS");
 
     MainWindow w;
     w.show();
