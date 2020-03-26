@@ -33,6 +33,7 @@ class AppItem : public DockItem
 
 public:
     explicit AppItem(DockEntry *entry, QWidget *parent = nullptr);
+    ~AppItem();
 
     inline ItemType itemType() const override { return DockItem::App; }
     DockEntry *entry() { return m_entry; };

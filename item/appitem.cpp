@@ -65,6 +65,12 @@ AppItem::AppItem(DockEntry *entry, QWidget *parent)
     connect(m_popupTimer, &QTimer::timeout, this, &AppItem::showPopup);
 }
 
+AppItem::~AppItem()
+{
+    m_popupWidget->setVisible(false);
+    m_popupWidget->deleteLater();
+}
+
 void AppItem::closeWindow()
 {
     for (quint64 id : m_entry->WIdList) {
