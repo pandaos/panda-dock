@@ -4,6 +4,8 @@ project(panda-dock)
 set(TARGET panda-dock)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_AUTOMOC ON)
+set(CMAKE_AUTORCC ON)
+set(CMAKE_AUTOUIC ON)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 file (GLOB_RECURSE SRCS
