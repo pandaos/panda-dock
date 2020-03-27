@@ -188,6 +188,12 @@ void AppItem::paintEvent(QPaintEvent *e)
     const int lineHeight = 2;
 
     if (!m_entry->WIdList.isEmpty()) {
+        // QPixmap pixmap(":/resources/dot-normal.svg");
+        // QPoint p;
+        // p.setX((itemRect.width() - pixmap.width()) / 2);
+        // p.setY((itemRect.height() - pixmap.height()) - 4);
+        // painter.drawPixmap(p, pixmap);
+
         QRect activeRect;
         if (DockSettings::instance()->position() == DockSettings::Left) {
             activeRect = QRect(1,

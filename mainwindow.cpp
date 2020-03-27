@@ -54,7 +54,7 @@ MainWindow::MainWindow(QWidget *parent)
     for (auto item : m_itemManager->itemList())
         m_mainPanel->insertItem(-1, item);
 
-    initWindowSize();
+    updateSize();
 
     // blur
     setAttribute(Qt::WA_NoSystemBackground, false);
@@ -66,10 +66,10 @@ MainWindow::MainWindow(QWidget *parent)
     // KWindowEffects::slideWindow(winId(), KWindowEffects::BottomEdge);
 
     connect(m_settings, &DockSettings::positionChanged, this, &MainWindow::onPositionChanged);
-    connect(m_settings, &DockSettings::iconSizeChanged, this, &MainWindow::initWindowSize);
-    connect(m_mainPanel, &MainPanel::requestResized, this, &MainWindow::initWindowSize);
+    connect(m_settings, &DockSettings::iconSizeChanged, this, &MainWindow::updateSize);
+    connect(m_mainPanel, &MainPanel::requestResized, this, &MainWindow::updateSize);
 
-    connect(qApp->primaryScreen(), &QScreen::geometryChanged, this, &MainWindow::initWindowSize, Qt::QueuedConnection);
+    connect(qApp->primaryScreen(), &QScreen::geometryChanged, this, &MainWindow::updateSize, Qt::QueuedConnection);
 }
 
 MainWindow::~MainWindow()
@@ -77,7 +77,7 @@ MainWindow::~MainWindow()
 
 }
 
-void MainWindow::initWindowSize()
+void MainWindow::updateSize()
 {
     QRect windowRect = m_settings->windowRect();
 
@@ -104,10 +104,10 @@ void MainWindow::initWindowSize()
 //        KWindowEffects::enableBackgroundContrast(winId(), true, contrast, intesity, saturation, path.toFillPolygon().toPolygon());
     });
 
-    setStrutPartial();
+    updateStrutPartial();
 }
 
-void MainWindow::setStrutPartial()
+void MainWindow::updateStrutPartial()
 {
     // 不清真的作法，kwin设置blur后设置程序支撑导致模糊无效
     QRect rect(geometry());
@@ -158,7 +158,7 @@ void MainWindow::setStrutPartial()
 
 void MainWindow::onPositionChanged()
 {
-    initWindowSize();
+    updateSize();
 }
 
 void MainWindow::resizeEvent(QResizeEvent *e)

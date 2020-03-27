@@ -33,10 +33,10 @@ public:
     MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
-    void initWindowSize();
+    void updateSize();
 
 private:
-    void setStrutPartial();
+    void updateStrutPartial();
     void onPositionChanged();
 
     void resizeEvent(QResizeEvent *e) override;
