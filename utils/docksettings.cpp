@@ -142,7 +142,7 @@ const QRect DockSettings::windowRect() const
         primaryRect.setHeight(primaryRect.height() - TOPBARHEIGHT);
         primaryRect.setY(TOPBARHEIGHT);
 
-        int maxHeight = primaryRect.height() - margin * 2;
+        int maxHeight = primaryRect.height() - margin; // margin * 2
         int calcHeight = iconSize * 2 + PADDING;
         for (int i = 1; i <= iconCount; ++i) {
             calcHeight += iconSize;
