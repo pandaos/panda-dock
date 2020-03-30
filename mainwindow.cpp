@@ -174,7 +174,7 @@ void MainWindow::paintEvent(QPaintEvent *e)
     painter.setRenderHint(QPainter::SmoothPixmapTransform, true);
 
     QColor color("#FFFFFF");
-    color.setAlpha(80);
+    color.setAlpha(150);
     painter.setPen(Qt::NoPen);
     painter.setBrush(color);
     const qreal radius = std::min(rect().width(), rect().height()) / 3.0;
