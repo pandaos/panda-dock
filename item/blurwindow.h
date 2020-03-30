@@ -35,6 +35,8 @@ public:
 
 private:
     void paintEvent(QPaintEvent *e) override;
+    void showEvent(QShowEvent *event) override;
+    void hideEvent(QHideEvent *event) override;
 
 private:
     QLabel *m_textLabel;
