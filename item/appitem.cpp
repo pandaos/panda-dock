@@ -34,17 +34,12 @@ AppItem::AppItem(DockEntry *entry, QWidget *parent)
     : DockItem(parent),
       m_entry(entry),
       m_updateIconGeometryTimer(new QTimer(this)),
-      m_popupTimer(new QTimer(this)),
       m_openAction(new QAction(tr("Open"))),
       m_closeAction(new QAction(tr("Close All"))),
-      m_dockAction(new QAction("")),
-      m_popupWidget(new BlurWindow)
+      m_dockAction(new QAction(""))
 {
     m_updateIconGeometryTimer->setInterval(200);
     m_updateIconGeometryTimer->setSingleShot(true);
-
-    m_popupTimer->setInterval(150);
-    m_popupTimer->setSingleShot(true);
 
     m_contextMenu.addAction(m_openAction);
     m_contextMenu.addAction(m_dockAction);
@@ -61,14 +56,15 @@ AppItem::AppItem(DockEntry *entry, QWidget *parent)
     connect(m_openAction, &QAction::triggered, this, [=] {
         AppWindowManager::instance()->openApp(m_entry->className);
     });
-
-    connect(m_popupTimer, &QTimer::timeout, this, &AppItem::showPopup);
 }
 
 AppItem::~AppItem()
 {
-    m_popupWidget->setVisible(false);
-    m_popupWidget->deleteLater();
+}
+
+QString AppItem::popupText()
+{
+    return m_entry->visibleName;
 }
 
 void AppItem::closeWindow()
@@ -84,11 +80,6 @@ void AppItem::update()
     refreshIcon();
 
     QWidget::update();
-}
-
-void AppItem::hideTips()
-{
-    m_popupWidget->hide();
 }
 
 void AppItem::initDockAction()
@@ -154,25 +145,6 @@ void AppItem::initStates()
     update();
 }
 
-void AppItem::showPopup()
-{
-    if (m_entry->className.isEmpty())
-        return;
-
-    QPoint p = mapToGlobal(QPoint(0, 0));
-
-    m_popupWidget->setText(m_entry->visibleName);
-    m_popupWidget->setVisible(true);
-
-    if (DockSettings::instance()->position() == DockSettings::Bottom)
-        p += QPoint(width() / 2 - m_popupWidget->width() / 2, 0);
-    else
-        p += QPoint(0, height() / 2 - m_popupWidget->height() / 2);
-
-    m_popupWidget->move(p);
-    m_popupWidget->update();
-}
-
 void AppItem::paintEvent(QPaintEvent *e)
 {
     DockItem::paintEvent(e);
@@ -222,7 +194,6 @@ void AppItem::paintEvent(QPaintEvent *e)
 
 void AppItem::mousePressEvent(QMouseEvent *e)
 {
-    m_popupWidget->hide();
     m_updateIconGeometryTimer->stop();
 
     if (e->button() == Qt::RightButton) {
@@ -235,12 +206,10 @@ void AppItem::mousePressEvent(QMouseEvent *e)
 
 void AppItem::mouseReleaseEvent(QMouseEvent *e)
 {
-    m_popupWidget->hide();
-
     if (e->button() == Qt::LeftButton) {
-//        if (rect().contains(mapFromGlobal(QCursor::pos()))) {
+        if (iconRect().contains(e->pos())) {
             AppWindowManager::instance()->clicked(m_entry);
-//        }
+        }
     }
 
     DockItem::mouseReleaseEvent(e);
@@ -256,14 +225,9 @@ void AppItem::resizeEvent(QResizeEvent *e)
 void AppItem::enterEvent(QEvent *e)
 {
     DockItem::enterEvent(e);
-
-    m_popupTimer->start();
 }
 
 void AppItem::leaveEvent(QEvent *e)
 {
     DockItem::leaveEvent(e);
-
-    m_popupTimer->stop();
-    m_popupWidget->setVisible(false);
 }

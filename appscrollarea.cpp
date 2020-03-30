@@ -102,7 +102,7 @@ void AppScrollArea::onScrollerStateChanged(QScroller::State state)
 {
     if (state == QScroller::Pressed) {
         for (int i = 0; i < m_mainLayout->count(); ++i) {
-            static_cast<AppItem *>(m_mainLayout->itemAt(i)->widget())->hideTips();
+            static_cast<DockItem *>(m_mainLayout->itemAt(i)->widget())->hidePopup();
         }
     }
 }

@@ -25,6 +25,8 @@
 #include <QMenu>
 #include <QVariantAnimation>
 
+#include "blurwindow.h"
+
 class DockItem : public QWidget
 {
     Q_OBJECT
@@ -38,15 +40,17 @@ public:
     explicit DockItem(QWidget *parent = nullptr);
 
     inline virtual ItemType itemType() const { Q_UNREACHABLE(); return App; }
+    inline virtual QString popupText() { return QString(); };
 
     QSize sizeHint() const override;
 
     virtual const QString contextMenu() const;
-    const QRect perfectIconRect() const;
+    const QRect iconRect() const;
 
-    virtual QWidget *popupTips();
+    void hidePopup();
 
 private:
+    void showPopup();
     void showContextMenu();
     const QPoint popupMarkPoint() const;
     const QPoint topleftPoint() const;
@@ -56,12 +60,15 @@ protected:
     void enterEvent(QEvent *e) override;
     void leaveEvent(QEvent *e) override;
     void mousePressEvent(QMouseEvent *e) override;
+    void mouseReleaseEvent(QMouseEvent *e) override;
 
 private:
     QVariantAnimation *m_hoverAnimation;
-    QTimer *m_popupTipsDelayTimer;
+    QTimer *m_popupDelayTimer;
     QMenu m_contextMenu;
     qreal m_hoverSize;
+
+    BlurWindow *m_popupWidget;
 };
 
 #endif // DOCKITEM_H

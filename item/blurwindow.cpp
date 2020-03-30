@@ -45,7 +45,7 @@ void BlurWindow::setText(const QString &text)
 
 void BlurWindow::update()
 {
-    int radius = 16;
+    const qreal radius = std::min(rect().height(), rect().width()) / 2;
     QPainterPath path;
     path.addRoundedRect(this->rect(), radius, radius);
     KWindowEffects::enableBlurBehind(winId(), true, path.toFillPolygon().toPolygon());
@@ -61,6 +61,6 @@ void BlurWindow::paintEvent(QPaintEvent *e)
     painter.setRenderHint(QPainter::SmoothPixmapTransform, true);
     painter.setPen(QColor(0, 0, 0, 30));
     painter.setBrush(QColor(255, 255, 255, 100));
-    int radius = 16;
+    const qreal radius = std::min(rect().height(), rect().width()) / 2;
     painter.drawRoundedRect(rect(), 16, 16);
 }

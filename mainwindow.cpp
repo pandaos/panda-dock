@@ -86,12 +86,7 @@ void MainWindow::updateSize()
     QWidget::setFixedSize(windowRect.size());
 
     QTimer::singleShot(100, this, [=] {
-        qreal radius;
-        if (m_settings->position() == DockSettings::Bottom) {
-            radius = this->rect().height() * 0.35;
-        } else {
-            radius = this->rect().width() * 0.35;
-        }
+        const qreal radius = std::min(rect().width(), rect().height()) / 3.0;
         QPainterPath path;
         path.addRoundedRect(this->rect(), radius, radius);
         KWindowEffects::enableBlurBehind(winId(), true, path.toFillPolygon().toPolygon());
@@ -182,13 +177,7 @@ void MainWindow::paintEvent(QPaintEvent *e)
     color.setAlpha(80);
     painter.setPen(Qt::NoPen);
     painter.setBrush(color);
-
-    int radius;
-    if (m_settings->position() == DockSettings::Bottom) {
-        radius = rect().height() * 0.35;
-    } else {
-        radius = rect().width() * 0.35;
-    }
+    const qreal radius = std::min(rect().width(), rect().height()) / 3.0;
     painter.drawRoundedRect(rect(), radius, radius);
 }
 

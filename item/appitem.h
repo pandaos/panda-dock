@@ -36,12 +36,12 @@ public:
     ~AppItem();
 
     inline ItemType itemType() const override { return DockItem::App; }
+    QString popupText();
     DockEntry *entry() { return m_entry; };
 
     void closeWindow();
 
     void update();
-    void hideTips();
 
 private:
     void initDockAction();
@@ -49,8 +49,6 @@ private:
     void refreshIcon();
     void updateIconGeometry();
     void initStates();
-
-    void showPopup();
 
 protected:
     void paintEvent(QPaintEvent *) override;
@@ -69,12 +67,6 @@ private:
     QAction *m_closeAction;
     QAction *m_dockAction;
     QTimer *m_updateIconGeometryTimer;
-    QTimer *m_popupTimer;
-
-    QVariantAnimation *m_hoverAnimation;
-    double m_hoverSize = 0;
-
-    BlurWindow *m_popupWidget;
 };
 
 #endif // APPITEM_H

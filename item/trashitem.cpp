@@ -52,9 +52,9 @@ void TrashItem::refreshIcon()
     const int iconSize = qMin(width(), height());
 
     if (m_count) {
-        m_iconPixmap = Utils::renderSVG(":/resources/user-trash-full.svg", QSize(iconSize * 0.8, iconSize * 0.8));
+        m_iconPixmap = Utils::renderSVG(":/resources/user-trash-full.svg", QSize(iconSize * 0.7, iconSize * 0.7));
     } else {
-        m_iconPixmap = Utils::renderSVG(":/resources/user-trash.svg", QSize(iconSize * 0.8, iconSize * 0.8));
+        m_iconPixmap = Utils::renderSVG(":/resources/user-trash.svg", QSize(iconSize * 0.7, iconSize * 0.7));
     }
 
     QWidget::update();

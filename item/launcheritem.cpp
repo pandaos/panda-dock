@@ -30,11 +30,16 @@ LauncherItem::LauncherItem(QWidget *parent)
     refreshIcon();
 }
 
+QString LauncherItem::popupText()
+{
+    return tr("Launcher");
+}
+
 void LauncherItem::refreshIcon()
 {
     const int iconSize = qMin(width(), height());
 
-    m_iconPixmap = Utils::renderSVG(":/resources/launcher.svg", QSize(iconSize * 0.8, iconSize * 0.8));
+    m_iconPixmap = Utils::renderSVG(":/resources/launcher.svg", QSize(iconSize * 0.7, iconSize * 0.7));
 
     QWidget::update();
 }

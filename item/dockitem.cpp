@@ -17,6 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "../utils/docksettings.h"
 #include "dockitem.h"
 #include <QMouseEvent>
 #include <QJsonDocument>
@@ -28,9 +29,13 @@
 DockItem::DockItem(QWidget *parent)
     : QWidget(parent),
       m_hoverAnimation(new QVariantAnimation(this)),
-      m_hoverSize(0)
+      m_popupDelayTimer(new QTimer(this)),
+      m_hoverSize(0),
+      m_popupWidget(new BlurWindow)
 {
     m_hoverAnimation->setDuration(250);
+    m_popupDelayTimer->setInterval(150);
+    m_popupDelayTimer->setSingleShot(true);
 
     setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
@@ -38,6 +43,8 @@ DockItem::DockItem(QWidget *parent)
         m_hoverSize = value.toReal();
         QWidget::update();
     });
+
+    connect(m_popupDelayTimer, &QTimer::timeout, this, &DockItem::showPopup);
 }
 
 QSize DockItem::sizeHint() const
@@ -52,7 +59,7 @@ const QString DockItem::contextMenu() const
     return QString();
 }
 
-const QRect DockItem::perfectIconRect() const
+const QRect DockItem::iconRect() const
 {
     const QRect itemRect = rect();
     QRect iconRect;
@@ -65,9 +72,28 @@ const QRect DockItem::perfectIconRect() const
     return iconRect;
 }
 
-QWidget *DockItem::popupTips()
+void DockItem::showPopup()
 {
-    return nullptr;
+    if (popupText().isEmpty())
+        return;
+
+    QPoint p = mapToGlobal(QPoint(0, 0));
+
+    m_popupWidget->setText(popupText());
+    m_popupWidget->setVisible(true);
+
+    if (DockSettings::instance()->position() == DockSettings::Bottom)
+        p += QPoint(width() / 2 - m_popupWidget->width() / 2, 0);
+    else
+        p += QPoint(0, height() / 2 - m_popupWidget->height() / 2);
+
+    m_popupWidget->move(p);
+    m_popupWidget->update();
+}
+
+void DockItem::hidePopup()
+{
+    m_popupWidget->hide();
 }
 
 void DockItem::paintEvent(QPaintEvent *e)
@@ -98,6 +124,8 @@ void DockItem::enterEvent(QEvent *e)
     m_hoverAnimation->setEndValue(rect().width() * 0.8);
     m_hoverAnimation->start();
 
+    m_popupDelayTimer->start();
+
     QWidget::update();
     QWidget::enterEvent(e);
 }
@@ -106,6 +134,8 @@ void DockItem::leaveEvent(QEvent *e)
 {
     QWidget::leaveEvent(e);
 
+    hidePopup();
+    m_popupDelayTimer->stop();
     m_hoverAnimation->stop();
     m_hoverAnimation->setEasingCurve(QEasingCurve::InBack);
     m_hoverAnimation->setStartValue(m_hoverSize);
@@ -117,11 +147,20 @@ void DockItem::leaveEvent(QEvent *e)
 
 void DockItem::mousePressEvent(QMouseEvent *e)
 {
-    if (e->button() == Qt::RightButton) {
-        if (perfectIconRect().contains(e->pos())) {
-            // showContextMenu();
-        }
-    }
+    hidePopup();
+
+//    if (e->button() == Qt::RightButton) {
+//        if (iconRect().contains(e->pos())) {
+//            showContextMenu();
+//        }
+//    }
 
     QWidget::mousePressEvent(e);
+}
+
+void DockItem::mouseReleaseEvent(QMouseEvent *e)
+{
+    hidePopup();
+
+    QWidget::mouseReleaseEvent(e);
 }

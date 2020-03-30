@@ -30,6 +30,7 @@ public:
     explicit LauncherItem(QWidget *parent = nullptr);
 
     inline ItemType itemType() const override { return DockItem::Fixed; }
+    QString popupText();
 
 private:
     void refreshIcon();
