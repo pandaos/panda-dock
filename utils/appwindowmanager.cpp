@@ -500,7 +500,7 @@ void AppWindowManager::onWindowAdded(quint64 id)
             initEntry(entry);
         }
 
-        qDebug() << "added: " << id << entry->className << entry->isActive << entry->exec;
+        qDebug() << "contains: " << id << entry->className << entry->isActive << entry->exec;
 
     } else {
         DockEntry *entry = new DockEntry;

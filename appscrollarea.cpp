@@ -70,7 +70,10 @@ void AppScrollArea::addItem(AppItem *item)
     m_mainLayout->addWidget(item);
     m_mainWidget->adjustSize();
 
-    QTimer::singleShot(100, this, [=] { scrollToItem(item); });
+    // 初始化时不需要滚动到相应位置
+    if (!item->entry()->WIdList.isEmpty()) {
+        QTimer::singleShot(100, this, [=] { scrollToItem(item); });
+    }
 }
 
 void AppScrollArea::removeItem(AppItem *item)
