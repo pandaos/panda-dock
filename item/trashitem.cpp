@@ -47,6 +47,11 @@ TrashItem::TrashItem(QWidget *parent)
     onDirectoryChanged();
 }
 
+QString TrashItem::popupText()
+{
+    return tr("Trash");
+}
+
 void TrashItem::refreshIcon()
 {
     const int iconSize = qMin(width(), height());

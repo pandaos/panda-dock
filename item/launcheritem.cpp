@@ -68,6 +68,7 @@ void LauncherItem::resizeEvent(QResizeEvent *e)
 
 void LauncherItem::mouseReleaseEvent(QMouseEvent *e)
 {
+    DockItem::mouseReleaseEvent(e);
+
     QProcess::startDetached("panda-launcher");
-    QWidget::mouseReleaseEvent(e);
 }

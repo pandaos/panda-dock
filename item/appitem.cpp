@@ -207,9 +207,7 @@ void AppItem::mousePressEvent(QMouseEvent *e)
 void AppItem::mouseReleaseEvent(QMouseEvent *e)
 {
     if (e->button() == Qt::LeftButton) {
-        if (iconRect().contains(e->pos())) {
-            AppWindowManager::instance()->clicked(m_entry);
-        }
+        AppWindowManager::instance()->clicked(m_entry);
     }
 
     DockItem::mouseReleaseEvent(e);
