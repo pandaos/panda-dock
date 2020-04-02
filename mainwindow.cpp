@@ -173,7 +173,7 @@ void MainWindow::paintEvent(QPaintEvent *e)
     painter.setRenderHint(QPainter::Antialiasing, true);
     painter.setRenderHint(QPainter::SmoothPixmapTransform, true);
     painter.setPen(Qt::NoPen);
-    painter.setBrush(QColor(241, 241, 241, 160));
+    painter.setBrush(QColor(241, 241, 241, 150));
     const qreal radius = std::min(rect().width(), rect().height()) / 3.0;
     painter.drawRoundedRect(rect(), radius, radius);
 }
