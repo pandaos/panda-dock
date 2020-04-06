@@ -38,7 +38,10 @@ public:
 private:
     void updateStrutPartial();
     void onPositionChanged();
+    void updateBlurRegion();
+    void delayUpdateBlurRegion();
 
+    bool eventFilter(QObject *obj, QEvent *e) override;
     void resizeEvent(QResizeEvent *e) override;
     void showEvent(QShowEvent *e) override;
     void paintEvent(QPaintEvent *e) override;

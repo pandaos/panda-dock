@@ -57,6 +57,7 @@ MainWindow::MainWindow(QWidget *parent)
     updateSize();
 
     // blur
+    installEventFilter(this);
     setAttribute(Qt::WA_NoSystemBackground, false);
     setAttribute(Qt::WA_TranslucentBackground);
     setWindowFlags(Qt::FramelessWindowHint | Qt::WindowDoesNotAcceptFocus);
@@ -84,20 +85,6 @@ void MainWindow::updateSize()
     // set size.
     QWidget::move(windowRect.left(), windowRect.top());
     QWidget::setFixedSize(windowRect.size());
-
-    QTimer::singleShot(100, this, [=] {
-        const qreal radius = std::min(rect().width(), rect().height()) / 3.0;
-        QPainterPath path;
-        path.addRoundedRect(this->rect(), radius, radius);
-        KWindowEffects::enableBlurBehind(winId(), true, path.toFillPolygon().toPolygon());
-
-//        int backgroundOpacity = 150;
-//        const qreal factor = (qreal)backgroundOpacity / (qreal)100;
-//        qreal contrast = 0.5; // currentMidValue(0.45, factor, 1);
-//        qreal intesity = 1.5; //currentMidValue(0.45, factor, 1);
-//        qreal saturation = 1.6;//currentMidValue(1.7, factor, 1);
-//        KWindowEffects::enableBackgroundContrast(winId(), true, contrast, intesity, saturation, path.toFillPolygon().toPolygon());
-    });
 
     updateStrutPartial();
 }
@@ -154,6 +141,32 @@ void MainWindow::updateStrutPartial()
 void MainWindow::onPositionChanged()
 {
     updateSize();
+}
+
+void MainWindow::updateBlurRegion()
+{
+    const qreal radius = std::min(rect().width(), rect().height()) / 3.0;
+    QPainterPath path;
+    path.addRoundedRect(this->rect(), radius, radius);
+    KWindowEffects::enableBlurBehind(winId(), true, path.toFillPolygon().toPolygon());
+}
+
+void MainWindow::delayUpdateBlurRegion()
+{
+    QTimer::singleShot(100, this, &MainWindow::updateBlurRegion);
+}
+
+bool MainWindow::eventFilter(QObject *obj, QEvent *e)
+{
+    switch (e->type()) {
+    case QEvent::UpdateRequest:
+    case QEvent::LayoutRequest:
+        delayUpdateBlurRegion();
+        break;
+    default: break;
+    }
+
+    return false;
 }
 
 void MainWindow::resizeEvent(QResizeEvent *e)
