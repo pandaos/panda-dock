@@ -51,8 +51,6 @@ public:
 
 private:
     void showPopup();
-    void showContextMenu();
-    const QPoint popupMarkPoint() const;
     const QPoint topleftPoint() const;
 
 protected:

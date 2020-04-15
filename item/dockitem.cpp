@@ -77,18 +77,33 @@ void DockItem::showPopup()
     if (popupText().isEmpty())
         return;
 
-    QPoint p = mapToGlobal(QPoint(0, 0));
+    QPoint p(topleftPoint());
+    const int offset = 10;
 
     m_popupWidget->setText(popupText());
     m_popupWidget->setVisible(true);
 
     if (DockSettings::instance()->position() == DockSettings::Bottom)
-        p += QPoint(width() / 2 - m_popupWidget->width() / 2, 0);
+        p += QPoint(rect().width() / 2 - m_popupWidget->width() / 2,
+                    0 - m_popupWidget->height() - offset);
     else
-        p += QPoint(0, height() / 2 - m_popupWidget->height() / 2);
+        p += QPoint(0 + rect().width() + offset,
+                    rect().height() / 2 - m_popupWidget->height() / 2);
 
     m_popupWidget->move(p);
     m_popupWidget->update();
+}
+
+const QPoint DockItem::topleftPoint() const
+{
+    QPoint p(0, 0);
+    const QWidget *w = this;
+    do {
+        p += w->pos();
+        w = qobject_cast<QWidget *>(w->parent());
+    } while (w);
+
+    return p;
 }
 
 void DockItem::hidePopup()
