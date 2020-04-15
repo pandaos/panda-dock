@@ -56,15 +56,7 @@ AppWindowManager::AppWindowManager(QObject *parent)
                           .arg(QStandardPaths::writableLocation(QStandardPaths::ConfigLocation))
                           .arg(qApp->applicationName()));
 
-    refreshWindowList();
-
-    connect(KWindowSystem::self(), &KWindowSystem::windowAdded, this, &AppWindowManager::onWindowAdded);
-    connect(KWindowSystem::self(), &KWindowSystem::windowRemoved, this, &AppWindowManager::onWindowRemoved);
-    connect(KWindowSystem::self(), &KWindowSystem::currentDesktopChanged, this, [&](int desktop) {
-        m_currentDesktop = desktop;
-    });
-
-    //    connect(KWindowSystem::self(), &KWindowSystem::windowChanged, this, &AppWindowManager::onWindowChanged);
+    QTimer::singleShot(0, this, &AppWindowManager::init);
 }
 
 DockEntry *AppWindowManager::find(quint64 id)
@@ -327,10 +319,6 @@ void AppWindowManager::initEntry(DockEntry *entry)
                 entry->iconName = iconValue;
                 entry->exec = execValue;
 
-                if (info.fileName().contains("chromium")) {
-                    qDebug() << nameValue << " !!!!草";
-                }
-
                 set.beginGroup(key);
                 set.setValue("Icon", iconValue);
                 set.setValue("Exec", execValue);
@@ -349,6 +337,18 @@ void AppWindowManager::initEntry(DockEntry *entry)
             }
         }
     }
+}
+
+void AppWindowManager::init()
+{
+    refreshWindowList();
+
+    connect(KWindowSystem::self(), &KWindowSystem::windowAdded, this, &AppWindowManager::onWindowAdded);
+    connect(KWindowSystem::self(), &KWindowSystem::windowRemoved, this, &AppWindowManager::onWindowRemoved);
+    // connect(KWindowSystem::self(), &KWindowSystem::windowChanged, this, &AppWindowManager::onWindowChanged);
+    connect(KWindowSystem::self(), &KWindowSystem::currentDesktopChanged, this, [&](int desktop) {
+        m_currentDesktop = desktop;
+    });
 }
 
 void AppWindowManager::refreshWindowList()

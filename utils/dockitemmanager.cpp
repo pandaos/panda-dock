@@ -48,7 +48,7 @@ DockItemManager::DockItemManager(QObject *parent)
     connect(m_windowManager, &AppWindowManager::activeChanged, this, &DockItemManager::appItemActiveChanged);
 }
 
-const QList<QPointer<DockItem> > DockItemManager::itemList() const
+const QList<QPointer<DockItem>> DockItemManager::itemList() const
 {
     return m_itemList;
 }

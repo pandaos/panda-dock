@@ -78,6 +78,7 @@ signals:
     void activeChanged(DockEntry *entry);
 
 private:
+    void init();
     void refreshWindowList();
     void refreshDockedList();
     QString getExec(quint64 id);

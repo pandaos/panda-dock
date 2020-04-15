@@ -54,13 +54,12 @@ MainWindow::MainWindow(QWidget *parent)
     for (auto item : m_itemManager->itemList())
         m_mainPanel->insertItem(-1, item);
 
-    updateSize();
-
     // blur
     installEventFilter(this);
     setAttribute(Qt::WA_NoSystemBackground, false);
     setAttribute(Qt::WA_TranslucentBackground);
     setWindowFlags(Qt::FramelessWindowHint | Qt::WindowDoesNotAcceptFocus);
+    updateSize();
 
     KWindowSystem::setOnDesktop(winId(), NET::OnAllDesktops);
     KWindowSystem::setType(winId(), NET::Dock);
