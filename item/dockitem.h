@@ -51,6 +51,7 @@ public:
 
 private:
     void showPopup();
+    void onHoverValueChanged(const QVariant &value);
     const QPoint topleftPoint() const;
 
 protected:

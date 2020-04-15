@@ -40,6 +40,7 @@ public:
     void scrollToItem(AppItem *item);
 
     void setRange(int value);
+    void setIconSize(int size);
 
 private:
     void onScrollerStateChanged(QScroller::State state);

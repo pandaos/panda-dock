@@ -39,11 +39,7 @@ DockItem::DockItem(QWidget *parent)
 
     setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
-    connect(m_hoverAnimation, &QVariantAnimation::valueChanged, this, [=] (const QVariant &value) {
-        m_hoverSize = value.toReal();
-        QWidget::update();
-    });
-
+    connect(m_hoverAnimation, &QVariantAnimation::valueChanged, this, &DockItem::onHoverValueChanged);
     connect(m_popupDelayTimer, &QTimer::timeout, this, &DockItem::showPopup);
 }
 
@@ -92,6 +88,13 @@ void DockItem::showPopup()
 
     m_popupWidget->move(p);
     m_popupWidget->update();
+}
+
+void DockItem::onHoverValueChanged(const QVariant &value)
+{
+    m_hoverSize = value.toReal();
+
+    QWidget::update();
 }
 
 const QPoint DockItem::topleftPoint() const

@@ -138,14 +138,11 @@ void MainPanel::updateLayout()
 
 void MainPanel::resizeDockIcon()
 {
-    int iconSize = m_settings->iconSize();
+    const int iconSize = m_settings->iconSize();
     const int padding = 10;
 
     m_appArea->setRange(iconSize);
-
-    for (int i = 0; i < m_appArea->layout()->count(); ++i) {
-        m_appArea->layout()->itemAt(i)->widget()->setFixedSize(iconSize, iconSize);
-    }
+    m_appArea->setIconSize(iconSize);
 
     int canDisplayAppCount = 0;
 

@@ -18,6 +18,7 @@
  */
 
 #include "appwindowmanager.h"
+#include "desktopproperties.h"
 #include <QRegularExpression>
 #include <QStandardPaths>
 #include <QApplication>
@@ -244,7 +245,7 @@ void AppWindowManager::initEntry(DockEntry *entry)
     QSettings set(QString("%1/%2/appinfo.conf")
                   .arg(QStandardPaths::writableLocation(QStandardPaths::ConfigLocation))
                   .arg(qApp->applicationName()), QSettings::IniFormat);
-    set.setIniCodec("UTF8");
+    set.setIniCodec("UTF-8");
     set.beginGroup(key);
 
     // 如果找到存储的数据，则无需再查找 /usr/share/applications 每一个文件.
@@ -266,17 +267,15 @@ void AppWindowManager::initEntry(DockEntry *entry)
     for (const QFileInfo &info : dir.entryInfoList(QDir::Files)) {
         // 必须是 desktop 文件
         if (info.suffix() == "desktop") {
-            QSettings settings(info.filePath(), QSettings::IniFormat);
-            settings.beginGroup("Desktop Entry");
-            settings.setIniCodec("UTF8");
+            DesktopProperties desktop(info.filePath(), "Desktop Entry");
 
-            if (settings.value("NoDisplay").toBool()) {
+            if (desktop.value("NoDisplay").toBool()) {
                 continue;
             }
 
-            const QString &iconValue = settings.value("Icon").toString();
-            QString execValue = settings.value("Exec").toString();
-            QString nameValue = settings.value("Name").toString();
+            const QString &iconValue = desktop.value("Icon").toString();
+            QString execValue = desktop.value("Exec").toString();
+            QString nameValue = desktop.value("Name").toString();
 
             execValue.remove(QRegularExpression("%."));
             execValue.remove(QRegularExpression("^\""));
@@ -299,7 +298,7 @@ void AppWindowManager::initEntry(DockEntry *entry)
             //   window with the given string as its WM class or WM name hint.
             //
             // Source: https://specifications.freedesktop.org/startup-notification-spec/startup-notification-0.1.txt
-            if (!founded && settings.value("StartupWMClass").toString().startsWith(key, Qt::CaseInsensitive)) {
+            if (!founded && desktop.value("StartupWMClass").toString().startsWith(key, Qt::CaseInsensitive)) {
                 founded = true;
             }
 
@@ -321,12 +320,16 @@ void AppWindowManager::initEntry(DockEntry *entry)
             }
 
             if (founded) {
-                if (!settings.value(QString("Name[%1]").arg(QLocale::system().name())).toString().isEmpty()) {
-                    nameValue = settings.value(QString("Name[%1]").arg(QLocale::system().name())).toString();
+                if (!desktop.value(QString("Name[%1]").arg(QLocale::system().name())).toString().isEmpty()) {
+                    nameValue = desktop.value(QString("Name[%1]").arg(QLocale::system().name())).toString();
                 }
                 entry->visibleName = nameValue;
                 entry->iconName = iconValue;
                 entry->exec = execValue;
+
+                if (info.fileName().contains("chromium")) {
+                    qDebug() << nameValue << " !!!!草";
+                }
 
                 set.beginGroup(key);
                 set.setValue("Icon", iconValue);
@@ -335,9 +338,9 @@ void AppWindowManager::initEntry(DockEntry *entry)
                 set.setValue("Name", nameValue);
 
                 // support multiple languages.
-                for (const QString &key : settings.allKeys()) {
+                for (const QString &key : desktop.allKeys()) {
                     if (key.startsWith("Name[")) {
-                        set.setValue(key, settings.value(key).toString());
+                        set.setValue(key, desktop.value(key).toString());
                     }
                 }
 

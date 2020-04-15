@@ -101,6 +101,13 @@ void AppScrollArea::setRange(int value)
     m_range = value;
 }
 
+void AppScrollArea::setIconSize(int size)
+{
+    for (int i = 0; i < layout()->count(); ++i) {
+        layout()->itemAt(i)->widget()->setFixedSize(size, size);
+    }
+}
+
 void AppScrollArea::onScrollerStateChanged(QScroller::State state)
 {
     if (state == QScroller::Pressed) {
