@@ -71,6 +71,7 @@ public:
     void save();
 
     void initEntry(DockEntry *entry);
+    void move(int from, int to);
 
 signals:
     void entryAdded(DockEntry *entry);

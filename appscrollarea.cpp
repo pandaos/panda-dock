@@ -18,6 +18,7 @@
  */
 
 #include "appscrollarea.h"
+#include "utils/appwindowmanager.h"
 #include <QWheelEvent>
 #include <QDragEnterEvent>
 #include <QScrollBar>
@@ -188,11 +189,14 @@ void AppScrollArea::dragMoveEvent(QDragMoveEvent *e)
         if (!m_draggingItem)
             return;
 
-        const int moveIndex = layout()->indexOf(m_draggingItem);
-        const int replaceIndex = layout()->indexOf(currentItem);
+        const int fromIndex = layout()->indexOf(m_draggingItem);
+        const int toIndex = layout()->indexOf(currentItem);
 
         layout()->removeWidget(m_draggingItem);
-        layout()->insertWidget(replaceIndex, m_draggingItem);
+        layout()->insertWidget(toIndex, m_draggingItem);
+
+        // 保存配置
+        AppWindowManager::instance()->move(fromIndex, toIndex);
 
         /* drop 之后接收不到 wheel 事件
          * 不知道为啥，把 scroller stop 之后问题就解决

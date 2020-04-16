@@ -221,8 +221,6 @@ void AppWindowManager::save()
         }
     }
 
-    qDebug() << "saved: " << docked;
-
     m_setWatcher->blockSignals(true);
     m_settings->setValue("appname", QVariant::fromValue(docked));
     m_setWatcher->blockSignals(false);
@@ -337,6 +335,14 @@ void AppWindowManager::initEntry(DockEntry *entry)
             }
         }
     }
+}
+
+void AppWindowManager::move(int from, int to)
+{
+    m_dockList.move(from, to);
+
+    // 移动之后保存配置文件
+    save();
 }
 
 void AppWindowManager::init()
