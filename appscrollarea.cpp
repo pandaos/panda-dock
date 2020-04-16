@@ -29,12 +29,8 @@ AppScrollArea::AppScrollArea(QWidget *parent)
     : QScrollArea(parent),
       m_mainLayout(new QBoxLayout(QBoxLayout::LeftToRight)),
       m_mainWidget(new QWidget),
-      m_scrollAni(new QVariantAnimation(this)),
       m_range(10)
 {
-    m_scrollAni->setDuration(500);
-    m_scrollAni->setEasingCurve(QEasingCurve::InQuad);
-
     m_mainWidget->setLayout(m_mainLayout);
     m_mainLayout->setMargin(0);
     m_mainLayout->setSpacing(0);
@@ -57,14 +53,6 @@ AppScrollArea::AppScrollArea(QWidget *parent)
 
     setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-
-    connect(m_scrollAni, &QVariantAnimation::valueChanged, this, [=] (QVariant val) {
-        if (m_mainLayout->direction() == QBoxLayout::LeftToRight) {
-            horizontalScrollBar()->setValue(val.toInt());
-        } else {
-            verticalScrollBar()->setValue(val.toInt());
-        }
-    });
 }
 
 void AppScrollArea::addItem(AppItem *item)
@@ -88,16 +76,12 @@ void AppScrollArea::removeItem(AppItem *item)
 
 void AppScrollArea::scrollToItem(AppItem *item)
 {
-    m_scrollAni->stop();
+    QScroller::scroller(this)->stop();
 
     if (m_mainLayout->direction() == QBoxLayout::LeftToRight) {
-        m_scrollAni->setStartValue(horizontalScrollBar()->value());
-        m_scrollAni->setEndValue(item->geometry().x());
-        m_scrollAni->start();
+        QScroller::scroller(this)->scrollTo(QPointF(item->geometry().x(), 0));
     } else {
-        m_scrollAni->setStartValue(verticalScrollBar()->value());
-        m_scrollAni->setEndValue(item->geometry().y());
-        m_scrollAni->start();
+        QScroller::scroller(this)->scrollTo(QPointF(0, item->geometry().y()));
     }
 }
 
@@ -152,9 +136,9 @@ void AppScrollArea::wheelEvent(QWheelEvent *e)
     e->ignore();
 
     if (m_mainLayout->direction() == QBoxLayout::LeftToRight) {
-         horizontalScrollBar()->setValue(horizontalScrollBar()->value() - (e->angleDelta().y() / 120.0 * m_range));
+        QScroller::scroller(this)->scrollTo(QPointF(horizontalScrollBar()->value() - (e->angleDelta().y() / 120.0 * m_range), 0));
     } else {
-         verticalScrollBar()->setValue(verticalScrollBar()->value() - (e->angleDelta().y() / 120.0 * m_range));
+        QScroller::scroller(this)->scrollTo(QPointF(0, verticalScrollBar()->value() - (e->angleDelta().y() / 120.0 * m_range * 2)));
     }
 }
 
