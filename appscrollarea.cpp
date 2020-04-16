@@ -27,9 +27,11 @@
 
 AppScrollArea::AppScrollArea(QWidget *parent)
     : QScrollArea(parent),
+      m_draggingItem(nullptr),
       m_mainLayout(new QBoxLayout(QBoxLayout::LeftToRight)),
       m_mainWidget(new QWidget),
-      m_range(10)
+      m_range(10),
+      m_iconSize(0)
 {
     m_mainWidget->setLayout(m_mainLayout);
     m_mainLayout->setMargin(0);
@@ -50,9 +52,6 @@ AppScrollArea::AppScrollArea(QWidget *parent)
     scroller->grabGesture(this, QScroller::TouchGesture);
     scroller->grabGesture(this, QScroller::LeftMouseButtonGesture);
     connect(scroller, &QScroller::stateChanged, this, &AppScrollArea::onScrollerStateChanged);
-
-    setFocusPolicy(Qt::StrongFocus);
-    m_mainWidget->setFocusPolicy(Qt::StrongFocus);
 
     setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
@@ -95,6 +94,8 @@ void AppScrollArea::setRange(int value)
 
 void AppScrollArea::setIconSize(int size)
 {
+    m_iconSize = size;
+
     for (int i = 0; i < layout()->count(); ++i) {
         layout()->itemAt(i)->widget()->setFixedSize(size, size);
     }
@@ -119,6 +120,13 @@ void AppScrollArea::itemDragStarted()
 
 AppItem *AppScrollArea::itemAt(const QPoint &point)
 {
+    QPoint pos = point;
+    if (m_mainLayout->direction() == QBoxLayout::LeftToRight) {
+        pos += QPoint((horizontalScrollBar()->value() / m_iconSize) * m_iconSize, 0);
+    } else {
+        pos += QPoint(0, (verticalScrollBar()->value() / m_iconSize) * m_iconSize);
+    }
+
     for (int i = 0; i < m_mainLayout->count(); ++i) {
         AppItem *item = static_cast<AppItem *>(m_mainLayout->itemAt(i)->widget());
 
@@ -126,7 +134,7 @@ AppItem *AppScrollArea::itemAt(const QPoint &point)
         rect.setSize(item->size());
         rect.setTopLeft(mapToParent(item->pos()));
 
-        if (rect.contains(point)) {
+        if (rect.contains(pos)) {
             return item;
         }
     }
@@ -136,12 +144,12 @@ AppItem *AppScrollArea::itemAt(const QPoint &point)
 
 void AppScrollArea::wheelEvent(QWheelEvent *e)
 {
-    e->ignore();
+    const int offset = -e->delta() / 120;
 
     if (m_mainLayout->direction() == QBoxLayout::LeftToRight) {
-        QScroller::scroller(this)->scrollTo(QPointF(horizontalScrollBar()->value() - (e->angleDelta().y() / 120.0 * m_range), 0));
+        horizontalScrollBar()->setValue(horizontalScrollBar()->value() + offset * m_range);
     } else {
-        QScroller::scroller(this)->scrollTo(QPointF(0, verticalScrollBar()->value() - (e->angleDelta().y() / 120.0 * m_range * 2)));
+        verticalScrollBar()->setValue(verticalScrollBar()->value() + offset * m_range);
     }
 }
 
@@ -168,14 +176,7 @@ void AppScrollArea::dragMoveEvent(QDragMoveEvent *e)
 {
     e->accept();
 
-    QPoint pos = e->pos();
-    if (m_mainLayout->direction() == QBoxLayout::LeftToRight) {
-        pos += QPoint((horizontalScrollBar()->value() / m_draggingItem->rect().width()) * m_draggingItem->rect().width(), 0);
-    } else {
-        pos += QPoint(0, (verticalScrollBar()->value() / m_draggingItem->rect().height()) * m_draggingItem->rect().height());
-    }
-
-    AppItem *currentItem = itemAt(pos);
+    AppItem *currentItem = itemAt(e->pos());
 
     if (!currentItem)
         return;

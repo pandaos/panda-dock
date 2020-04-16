@@ -55,11 +55,12 @@ protected:
     void dropEvent(QDropEvent *e) override;
 
 private:
+    AppItem *m_draggingItem;
     QWidget *m_mainWidget;
     QBoxLayout *m_mainLayout;
-    int m_range;
 
-    AppItem *m_draggingItem = nullptr;
+    int m_range;
+    int m_iconSize;
     bool m_dragging = false;
 };
 
