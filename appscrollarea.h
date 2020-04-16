@@ -44,16 +44,25 @@ public:
 
 private:
     void onScrollerStateChanged(QScroller::State state);
+    void itemDragStarted();
+    void handleDragMove(QDragMoveEvent *e, bool isFilter);
+    AppItem *itemAt(const QPoint &point);
 
 protected:
     void wheelEvent(QWheelEvent *e) override;
+    void dragEnterEvent(QDragEnterEvent *e) override;
     void mouseMoveEvent(QMouseEvent *e) override;
+    void dragMoveEvent(QDragMoveEvent *e) override;
+    void dropEvent(QDropEvent *e) override;
 
 private:
     QWidget *m_mainWidget;
     QBoxLayout *m_mainLayout;
     QVariantAnimation *m_scrollAni;
     int m_range;
+
+    AppItem *m_draggingItem = nullptr;
+    bool m_dragging = false;
 };
 
 #endif // APPSCROLLAREA_H

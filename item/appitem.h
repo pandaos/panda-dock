@@ -26,6 +26,7 @@
 #include "utils/appwindowmanager.h"
 
 #include <QVariantAnimation>
+#include <QDrag>
 
 class AppItem : public DockItem
 {
@@ -40,8 +41,14 @@ public:
     DockEntry *entry() { return m_entry; };
 
     void closeWindow();
-
     void update();
+
+    void setBlockMouseRelease(bool enable) {
+        m_blockMouseRelease = enable;
+    };
+
+signals:
+    void dragStarted();
 
 private:
     void initDockAction();
@@ -49,13 +56,14 @@ private:
     void refreshIcon();
     void updateIconGeometry();
     void initStates();
+    void startDrag();
 
 protected:
     void paintEvent(QPaintEvent *) override;
     void mousePressEvent(QMouseEvent *e) override;
+    void mouseMoveEvent(QMouseEvent *e) override;
     void mouseReleaseEvent(QMouseEvent *e) override;
     void resizeEvent(QResizeEvent *e) override;
-
     void enterEvent(QEvent *e) override;
     void leaveEvent(QEvent *e) override;
 
@@ -67,6 +75,13 @@ private:
     QAction *m_closeAction;
     QAction *m_dockAction;
     QTimer *m_updateIconGeometryTimer;
+    QTimer *m_dragActiveTimer;
+
+    QDrag *m_drag;
+    QPoint m_mousePressPos;
+    bool m_dragging = false;
+
+    bool m_blockMouseRelease = false;
 };
 
 #endif // APPITEM_H

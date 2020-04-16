@@ -24,6 +24,7 @@
 
 #include <QPainter>
 #include <QMouseEvent>
+#include <QMimeData>
 #include <QDebug>
 #include <QToolTip>
 #include <QX11Info>
@@ -34,6 +35,7 @@ AppItem::AppItem(DockEntry *entry, QWidget *parent)
     : DockItem(parent),
       m_entry(entry),
       m_updateIconGeometryTimer(new QTimer(this)),
+      m_dragActiveTimer(new QTimer(this)),
       m_openAction(new QAction(tr("Open"))),
       m_closeAction(new QAction(tr("Close All"))),
       m_dockAction(new QAction(""))
@@ -41,9 +43,14 @@ AppItem::AppItem(DockEntry *entry, QWidget *parent)
     m_updateIconGeometryTimer->setInterval(200);
     m_updateIconGeometryTimer->setSingleShot(true);
 
+    m_dragActiveTimer->setInterval(350);
+    m_dragActiveTimer->setSingleShot(true);
+
     m_contextMenu.addAction(m_openAction);
     m_contextMenu.addAction(m_dockAction);
     m_contextMenu.addAction(m_closeAction);
+
+    setAcceptDrops(true);
 
     initDockAction();
     refreshIcon();
@@ -51,6 +58,7 @@ AppItem::AppItem(DockEntry *entry, QWidget *parent)
 
     connect(KWindowSystem::self(), &KWindowSystem::activeWindowChanged, this, &AppItem::initStates);
     connect(m_updateIconGeometryTimer, &QTimer::timeout, this, &AppItem::updateIconGeometry, Qt::QueuedConnection);
+    connect(m_dragActiveTimer, &QTimer::timeout, this, [=] { startDrag(); });
     connect(m_closeAction, &QAction::triggered, this, &AppItem::closeWindow);
     connect(m_dockAction, &QAction::triggered, this, &AppItem::dockActionTriggered);
     connect(m_openAction, &QAction::triggered, this, [=] {
@@ -145,11 +153,33 @@ void AppItem::initStates()
     update();
 }
 
+void AppItem::startDrag()
+{
+    m_dragging = true;
+    update();
+
+    QPixmap pixmap = m_iconPixmap;
+    m_drag = new QDrag(this);
+    m_drag->setMimeData(new QMimeData);
+
+    connect(m_drag, &QDrag::destroyed, this, [=] {
+        m_dragging = false;
+        update();
+    });
+
+    m_drag->QDrag::setPixmap(pixmap);
+    m_drag->setHotSpot(pixmap.rect().center() / pixmap.devicePixelRatioF());
+    emit dragStarted();
+    m_drag->exec(Qt::MoveAction);
+}
+
 void AppItem::paintEvent(QPaintEvent *e)
 {
+    if (m_dragging)
+        return;
+
     DockItem::paintEvent(e);
     QPainter painter(this);
-
     painter.setRenderHint(QPainter::Antialiasing, true);
     painter.setRenderHint(QPainter::SmoothPixmapTransform, true);
     painter.setPen(Qt::NoPen);
@@ -195,6 +225,12 @@ void AppItem::paintEvent(QPaintEvent *e)
 void AppItem::mousePressEvent(QMouseEvent *e)
 {
     m_updateIconGeometryTimer->stop();
+    m_dragActiveTimer->stop();
+
+    if (e->button() == Qt::LeftButton) {
+        m_mousePressPos = e->pos();
+        m_dragActiveTimer->start();
+    }
 
     if (e->button() == Qt::RightButton) {
         m_contextMenu.popup(QCursor::pos());
@@ -204,8 +240,18 @@ void AppItem::mousePressEvent(QMouseEvent *e)
     DockItem::mousePressEvent(e);
 }
 
+void AppItem::mouseMoveEvent(QMouseEvent *e)
+{
+    e->ignore();
+}
+
 void AppItem::mouseReleaseEvent(QMouseEvent *e)
 {
+    m_dragActiveTimer->stop();
+
+    if (m_blockMouseRelease)
+        return;
+
     if (e->button() == Qt::LeftButton) {
         AppWindowManager::instance()->clicked(m_entry);
     }

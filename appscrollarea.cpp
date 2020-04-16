@@ -19,6 +19,7 @@
 
 #include "appscrollarea.h"
 #include <QWheelEvent>
+#include <QDragEnterEvent>
 #include <QScrollBar>
 #include <QScroller>
 #include <QTimer>
@@ -35,17 +36,18 @@ AppScrollArea::AppScrollArea(QWidget *parent)
     m_scrollAni->setEasingCurve(QEasingCurve::InQuad);
 
     m_mainWidget->setLayout(m_mainLayout);
-
-    setAttribute(Qt::WA_TranslucentBackground);
-    setFrameShape(QFrame::NoFrame);
-    setWidget(m_mainWidget);
-    setWidgetResizable(true);
     m_mainLayout->setMargin(0);
     m_mainLayout->setSpacing(0);
     m_mainLayout->setContentsMargins(0, 0, 0, 0);
 
+    setAttribute(Qt::WA_TranslucentBackground);
     setStyleSheet("background: transparent;");
+    setFrameShape(QFrame::NoFrame);
     setContentsMargins(0, 0, 0, 0);
+    setWidget(m_mainWidget);
+    setWidgetResizable(true);
+    setAcceptDrops(true);
+    setMouseTracking(true);
 
     // TODO: Adjust the order
     QScroller *scroller = QScroller::scroller(this);
@@ -67,8 +69,11 @@ AppScrollArea::AppScrollArea(QWidget *parent)
 
 void AppScrollArea::addItem(AppItem *item)
 {
+    item->setParent(this);
     m_mainLayout->addWidget(item);
     m_mainWidget->adjustSize();
+
+    connect(item, &AppItem::dragStarted, this, &AppScrollArea::itemDragStarted, Qt::UniqueConnection);
 
     // 初始化时不需要滚动到相应位置
     if (!item->entry()->WIdList.isEmpty()) {
@@ -110,27 +115,101 @@ void AppScrollArea::setIconSize(int size)
 
 void AppScrollArea::onScrollerStateChanged(QScroller::State state)
 {
-    if (state == QScroller::Pressed) {
+    m_dragging = false;
+
+    if (state == QScroller::Pressed || state == QScroller::Inactive) {
         for (int i = 0; i < m_mainLayout->count(); ++i) {
-            static_cast<DockItem *>(m_mainLayout->itemAt(i)->widget())->hidePopup();
+            static_cast<AppItem *>(m_mainLayout->itemAt(i)->widget())->hidePopup();
+            static_cast<AppItem *>(m_mainLayout->itemAt(i)->widget())->setBlockMouseRelease(state != QScroller::Inactive);
         }
     }
 }
 
+void AppScrollArea::itemDragStarted()
+{
+    m_draggingItem = qobject_cast<AppItem *>(sender());
+}
+
+AppItem *AppScrollArea::itemAt(const QPoint &point)
+{
+    for (int i = 0; i < m_mainLayout->count(); ++i) {
+        AppItem *item = static_cast<AppItem *>(m_mainLayout->itemAt(i)->widget());
+
+        QRect rect;
+        rect.setSize(item->size());
+        rect.setTopLeft(mapToParent(item->pos()));
+
+        if (rect.contains(point)) {
+            return item;
+        }
+    }
+
+    return nullptr;
+}
+
 void AppScrollArea::wheelEvent(QWheelEvent *e)
 {
+    e->ignore();
+
     if (m_mainLayout->direction() == QBoxLayout::LeftToRight) {
          horizontalScrollBar()->setValue(horizontalScrollBar()->value() - (e->angleDelta().y() / 120.0 * m_range));
     } else {
          verticalScrollBar()->setValue(verticalScrollBar()->value() - (e->angleDelta().y() / 120.0 * m_range));
     }
-    return;
+}
 
-    QScrollArea::wheelEvent(e);
+void AppScrollArea::dragEnterEvent(QDragEnterEvent *e)
+{
+    AppItem *dragSourceItem = qobject_cast<AppItem *>(e->source());
+
+    if (dragSourceItem) {
+        e->accept();
+    } else {
+        m_draggingItem = nullptr;
+    }
 }
 
 void AppScrollArea::mouseMoveEvent(QMouseEvent *e)
 {
+    if (m_dragging)
+        return e->ignore();
 
     QScrollArea::mouseMoveEvent(e);
+}
+
+void AppScrollArea::dragMoveEvent(QDragMoveEvent *e)
+{
+    e->accept();
+
+    QPoint pos = e->pos();
+    if (m_mainLayout->direction() == QBoxLayout::LeftToRight) {
+        pos += QPoint((horizontalScrollBar()->value() / m_draggingItem->rect().width()) * m_draggingItem->rect().width(), 0);
+    } else {
+        pos += QPoint(0, (verticalScrollBar()->value() / m_draggingItem->rect().height()) * m_draggingItem->rect().height());
+    }
+
+    AppItem *currentItem = itemAt(pos);
+
+    if (!currentItem)
+        return;
+
+    if (e->source()) {
+        if (currentItem == m_draggingItem)
+            return;
+
+        if (!m_draggingItem)
+            return;
+
+        const int moveIndex = layout()->indexOf(m_draggingItem);
+        const int replaceIndex = layout()->indexOf(currentItem);
+
+        layout()->removeWidget(m_draggingItem);
+        layout()->insertWidget(replaceIndex, m_draggingItem);
+    }
+}
+
+void AppScrollArea::dropEvent(QDropEvent *e)
+{
+    m_draggingItem = nullptr;
+    m_dragging = false;
 }
