@@ -19,8 +19,9 @@
 
 #include "appscrollarea.h"
 #include "utils/appwindowmanager.h"
-#include <QWheelEvent>
+#include <QApplication>
 #include <QDragEnterEvent>
+#include <QWheelEvent>
 #include <QScrollBar>
 #include <QScroller>
 #include <QTimer>
@@ -60,7 +61,6 @@ AppScrollArea::AppScrollArea(QWidget *parent)
 
 void AppScrollArea::addItem(AppItem *item)
 {
-    item->setParent(this);
     m_mainLayout->addWidget(item);
     m_mainWidget->adjustSize();
 
@@ -68,7 +68,7 @@ void AppScrollArea::addItem(AppItem *item)
 
     // 初始化时不需要滚动到相应位置
     if (!item->entry()->WIdList.isEmpty()) {
-        QTimer::singleShot(100, this, [=] { scrollToItem(item); });
+        QTimer::singleShot(0, this, [=] { scrollToItem(item); });
     }
 }
 
@@ -79,8 +79,6 @@ void AppScrollArea::removeItem(AppItem *item)
 
 void AppScrollArea::scrollToItem(AppItem *item)
 {
-    QScroller::scroller(this)->stop();
-
     if (m_mainLayout->direction() == QBoxLayout::LeftToRight) {
         QScroller::scroller(this)->scrollTo(QPointF(item->geometry().x(), 0));
     } else {
@@ -106,10 +104,20 @@ void AppScrollArea::onScrollerStateChanged(QScroller::State state)
 {
     m_dragging = false;
 
-    if (state == QScroller::Pressed || state == QScroller::Inactive) {
-        for (int i = 0; i < m_mainLayout->count(); ++i) {
+    for (int i = 0; i < m_mainLayout->count(); ++i) {
+        switch (state) {
+        case QScroller::Pressed:
             static_cast<AppItem *>(m_mainLayout->itemAt(i)->widget())->hidePopup();
-            static_cast<AppItem *>(m_mainLayout->itemAt(i)->widget())->setBlockMouseRelease(state != QScroller::Inactive);
+            static_cast<AppItem *>(m_mainLayout->itemAt(i)->widget())->setBlockMouseRelease(true);
+            break;
+        case QScroller::Inactive: {
+            QEvent *event = new QEvent(QEvent::Leave);
+            qApp->postEvent(static_cast<AppItem *>(m_mainLayout->itemAt(i)->widget()), event);
+            static_cast<AppItem *>(m_mainLayout->itemAt(i)->widget())->setBlockMouseRelease(false);
+        }
+            break;
+        default:
+            break;
         }
     }
 }
@@ -117,6 +125,9 @@ void AppScrollArea::onScrollerStateChanged(QScroller::State state)
 void AppScrollArea::itemDragStarted()
 {
     m_draggingItem = qobject_cast<AppItem *>(sender());
+
+    // 开始的时候也要 stop，否则也会影响到 wheel event.
+    QScroller::scroller(this)->stop();
 }
 
 AppItem *AppScrollArea::itemAt(const QPoint &point)
@@ -197,11 +208,6 @@ void AppScrollArea::dragMoveEvent(QDragMoveEvent *e)
 
         // 保存配置
         AppWindowManager::instance()->move(fromIndex, toIndex);
-
-        /* drop 之后接收不到 wheel 事件
-         * 不知道为啥，把 scroller stop 之后问题就解决
-         */
-        QScroller::scroller(this)->stop();
     }
 }
 
@@ -209,4 +215,9 @@ void AppScrollArea::dropEvent(QDropEvent *e)
 {
     m_draggingItem = nullptr;
     m_dragging = false;
+
+    /* drop 之后接收不到 wheel 事件
+     * 不知道为啥，把 scroller stop 之后问题就解决
+     */
+    QScroller::scroller(this)->stop();
 }
