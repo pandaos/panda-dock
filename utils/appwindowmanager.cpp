@@ -56,7 +56,7 @@ AppWindowManager::AppWindowManager(QObject *parent)
                           .arg(QStandardPaths::writableLocation(QStandardPaths::ConfigLocation))
                           .arg(qApp->applicationName()));
 
-    QTimer::singleShot(0, this, &AppWindowManager::init);
+    init();
 }
 
 DockEntry *AppWindowManager::find(quint64 id)

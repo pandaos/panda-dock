@@ -51,6 +51,9 @@ AppScrollArea::AppScrollArea(QWidget *parent)
     scroller->grabGesture(this, QScroller::LeftMouseButtonGesture);
     connect(scroller, &QScroller::stateChanged, this, &AppScrollArea::onScrollerStateChanged);
 
+    setFocusPolicy(Qt::StrongFocus);
+    m_mainWidget->setFocusPolicy(Qt::StrongFocus);
+
     setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 }
@@ -189,6 +192,11 @@ void AppScrollArea::dragMoveEvent(QDragMoveEvent *e)
 
         layout()->removeWidget(m_draggingItem);
         layout()->insertWidget(replaceIndex, m_draggingItem);
+
+        /* drop 之后接收不到 wheel 事件
+         * 不知道为啥，把 scroller stop 之后问题就解决
+         */
+        QScroller::scroller(this)->stop();
     }
 }
 
