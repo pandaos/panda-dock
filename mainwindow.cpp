@@ -100,7 +100,7 @@ void MainWindow::updateStrutPartial()
     KWindowSystem::setState(m_fakeWidget->winId(), NET::SkipSwitcher);
 
     const auto ratio = devicePixelRatioF();
-    const int margin = 20;
+    const int margin = 10;
 
     NETExtendedStrut strut;
 

@@ -121,7 +121,7 @@ const QRect DockSettings::windowRect() const
     qreal scale = qApp->primaryScreen()->devicePixelRatio();
     const int iconSize = m_settings->value("icon_size").toInt();
     const int iconCount = DockItemManager::instance()->itemList().count() - 1;
-    const int margin = 20;
+    const int margin = 10;
     QSize panelSize;
     QPoint p;
 
