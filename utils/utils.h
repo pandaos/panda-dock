@@ -22,6 +22,7 @@
 #include <QApplication>
 #include <QScreen>
 #include <QIcon>
+#include <QFile>
 
 namespace Utils
 {
@@ -42,28 +43,29 @@ namespace Utils
         return pixmap;
     }
 
-    static const QPixmap getIcon(const QString iconName, const int size, const qreal ratio)
+    static const QPixmap getIcon(const QString iconName, const qreal size)
     {
+        const qreal ratio = qApp->devicePixelRatio();
         QPixmap pixmap;
 
-        // 把size改为小于size的最大偶数 :)
-        const int s = int(size * ratio) & ~1;
+        // 文件路径处理
+        if (QFile::exists(iconName)) {
+            if (iconName.endsWith(".svg"))
+                pixmap = renderSVG(iconName, QSize(size * ratio, size * ratio));
+            else
+                pixmap = QPixmap(iconName).scaled(size * ratio, size * ratio, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+        }
 
-        // load pixmap from Icon-Theme.
-        const QIcon icon = QIcon::fromTheme(iconName);
-        const int fakeSize = std::max(48, s); // cannot use 16x16, cause 16x16 is label icon
-        pixmap = icon.pixmap(QSize(fakeSize, fakeSize));
-
+        // 从 theme 中获取
         if (pixmap.isNull()) {
-            pixmap = QIcon::fromTheme("application-x-desktop").pixmap(QSize(fakeSize, fakeSize));
+            // 把 size 改为小于size的最大偶数
+            const int s = int(size * ratio) & ~1;
+            const int fakeSize = std::max(48, s); // cannot use 16x16, cause 16x16 is label icon
+            const QIcon icon = QIcon::fromTheme(iconName, QIcon::fromTheme("application-x-desktop"));
+            pixmap = icon.pixmap(QSize(fakeSize, fakeSize));
         }
 
-        if (!pixmap.isNull()) {
-            if (pixmap.size().width() != s) {
-                pixmap = pixmap.scaled(s, s, Qt::KeepAspectRatio, Qt::SmoothTransformation);
-            }
-            pixmap.setDevicePixelRatio(ratio);
-        }
+        pixmap.setDevicePixelRatio(ratio);
 
         return pixmap;
     }

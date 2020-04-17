@@ -38,14 +38,13 @@ public:
 
     inline ItemType itemType() const override { return DockItem::App; }
     QString popupText();
-    DockEntry *entry() { return m_entry; };
+    DockEntry *entry();
 
-    void closeWindow();
+    void open();
+    void close();
     void update();
 
-    void setBlockMouseRelease(bool enable) {
-        m_blockMouseRelease = enable;
-    };
+    void setBlockMouseRelease(bool enable);
 
 signals:
     void dragStarted();
@@ -53,7 +52,7 @@ signals:
 private:
     void initDockAction();
     void dockActionTriggered();
-    void refreshIcon();
+    void updateIcon();
     void updateIconGeometry();
     void initStates();
     void startDrag();

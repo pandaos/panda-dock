@@ -105,17 +105,17 @@ void AppScrollArea::onScrollerStateChanged(QScroller::State state)
     m_dragging = false;
 
     for (int i = 0; i < m_mainLayout->count(); ++i) {
+        AppItem *item = static_cast<AppItem *>(m_mainLayout->itemAt(i)->widget());
+
         switch (state) {
         case QScroller::Pressed:
-            static_cast<AppItem *>(m_mainLayout->itemAt(i)->widget())->hidePopup();
-            static_cast<AppItem *>(m_mainLayout->itemAt(i)->widget())->setBlockMouseRelease(true);
+            item->hidePopup();
+            item->setBlockMouseRelease(true);
             break;
         case QScroller::Inactive: {
-            QEvent *event = new QEvent(QEvent::Leave);
-            qApp->postEvent(static_cast<AppItem *>(m_mainLayout->itemAt(i)->widget()), event);
-            static_cast<AppItem *>(m_mainLayout->itemAt(i)->widget())->setBlockMouseRelease(false);
-        }
+            item->setBlockMouseRelease(false);
             break;
+        }
         default:
             break;
         }

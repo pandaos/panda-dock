@@ -53,17 +53,15 @@ AppItem::AppItem(DockEntry *entry, QWidget *parent)
     setAcceptDrops(true);
 
     initDockAction();
-    refreshIcon();
     initStates();
+    updateIcon();
 
     connect(KWindowSystem::self(), &KWindowSystem::activeWindowChanged, this, &AppItem::initStates);
     connect(m_updateIconGeometryTimer, &QTimer::timeout, this, &AppItem::updateIconGeometry, Qt::QueuedConnection);
-    connect(m_dragActiveTimer, &QTimer::timeout, this, [=] { startDrag(); });
-    connect(m_closeAction, &QAction::triggered, this, &AppItem::closeWindow);
+    connect(m_dragActiveTimer, &QTimer::timeout, this, &AppItem::startDrag);
+    connect(m_openAction, &QAction::triggered, this, &AppItem::open);
+    connect(m_closeAction, &QAction::triggered, this, &AppItem::close);
     connect(m_dockAction, &QAction::triggered, this, &AppItem::dockActionTriggered);
-    connect(m_openAction, &QAction::triggered, this, [=] {
-        AppWindowManager::instance()->openApp(m_entry->className);
-    });
 }
 
 AppItem::~AppItem()
@@ -75,7 +73,17 @@ QString AppItem::popupText()
     return m_entry->visibleName;
 }
 
-void AppItem::closeWindow()
+DockEntry *AppItem::entry()
+{
+    return m_entry;
+}
+
+void AppItem::open()
+{
+    AppWindowManager::instance()->openApp(m_entry->className);
+}
+
+void AppItem::close()
 {
     for (quint64 id : m_entry->WIdList) {
         AppWindowManager::instance()->closeWindow(id);
@@ -85,9 +93,14 @@ void AppItem::closeWindow()
 void AppItem::update()
 {
     initDockAction();
-    refreshIcon();
+    updateIcon();
 
     QWidget::update();
+}
+
+void AppItem::setBlockMouseRelease(bool enable)
+{
+    m_blockMouseRelease = enable;
 }
 
 void AppItem::initDockAction()
@@ -114,12 +127,12 @@ void AppItem::dockActionTriggered()
     AppWindowManager::instance()->save();
 }
 
-void AppItem::refreshIcon()
+void AppItem::updateIcon()
 {
-    const int iconSize = qMin(width(), height());
+    const qreal iconSize = qMin(width(), height());
     const QString iconName = m_entry->iconName;
 
-    m_iconPixmap = Utils::getIcon(iconName, iconSize * 0.7, devicePixelRatioF());
+    m_iconPixmap = Utils::getIcon(iconName, iconSize * 0.7);
 
     QWidget::update();
 
@@ -263,7 +276,7 @@ void AppItem::resizeEvent(QResizeEvent *e)
 {
     DockItem::resizeEvent(e);
 
-    refreshIcon();
+    updateIcon();
 }
 
 void AppItem::enterEvent(QEvent *e)
