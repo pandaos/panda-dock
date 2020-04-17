@@ -237,6 +237,8 @@ void AppItem::paintEvent(QPaintEvent *e)
 
 void AppItem::mousePressEvent(QMouseEvent *e)
 {
+    DockItem::hidePopup();
+
     m_updateIconGeometryTimer->stop();
     m_dragActiveTimer->stop();
 
