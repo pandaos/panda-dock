@@ -36,6 +36,7 @@ AppItem::AppItem(DockEntry *entry, QWidget *parent)
       m_entry(entry),
       m_updateIconGeometryTimer(new QTimer(this)),
       m_dragActiveTimer(new QTimer(this)),
+      m_appNameAction(new QAction("")),
       m_openAction(new QAction(tr("Open"))),
       m_closeAction(new QAction(tr("Close All"))),
       m_dockAction(new QAction(""))
@@ -46,6 +47,7 @@ AppItem::AppItem(DockEntry *entry, QWidget *parent)
     m_dragActiveTimer->setInterval(350);
     m_dragActiveTimer->setSingleShot(true);
 
+    m_contextMenu.addAction(m_appNameAction);
     m_contextMenu.addAction(m_openAction);
     m_contextMenu.addAction(m_dockAction);
     m_contextMenu.addAction(m_closeAction);
@@ -59,6 +61,7 @@ AppItem::AppItem(DockEntry *entry, QWidget *parent)
     connect(KWindowSystem::self(), &KWindowSystem::activeWindowChanged, this, &AppItem::initStates);
     connect(m_updateIconGeometryTimer, &QTimer::timeout, this, &AppItem::updateIconGeometry, Qt::QueuedConnection);
     connect(m_dragActiveTimer, &QTimer::timeout, this, &AppItem::startDrag);
+    connect(m_appNameAction, &QAction::triggered, this, &AppItem::open);
     connect(m_openAction, &QAction::triggered, this, &AppItem::open);
     connect(m_closeAction, &QAction::triggered, this, &AppItem::close);
     connect(m_dockAction, &QAction::triggered, this, &AppItem::dockActionTriggered);
@@ -105,6 +108,7 @@ void AppItem::setBlockMouseRelease(bool enable)
 
 void AppItem::initDockAction()
 {
+    m_appNameAction->setVisible(!m_entry->WIdList.isEmpty());
     m_openAction->setVisible(m_entry->WIdList.isEmpty());
     m_closeAction->setVisible(!m_entry->WIdList.isEmpty());
 
@@ -113,6 +117,8 @@ void AppItem::initDockAction()
     } else {
         m_dockAction->setText(tr("Dock"));
     }
+
+    m_appNameAction->setText(m_entry->visibleName);
 }
 
 void AppItem::dockActionTriggered()
@@ -199,7 +205,7 @@ void AppItem::paintEvent(QPaintEvent *e)
 
     // draw background
     const QRectF itemRect = rect();
-    const int lineWidth = itemRect.width() * 0.3;
+    const int lineWidth = itemRect.width() * 0.2;
     const int lineHeight = 2;
 
     if (!m_entry->WIdList.isEmpty()) {

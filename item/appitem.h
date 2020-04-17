@@ -69,7 +69,9 @@ protected:
 private:
     QPixmap m_iconPixmap;
     DockEntry *m_entry;
+
     QMenu m_contextMenu;
+    QAction *m_appNameAction;
     QAction *m_openAction;
     QAction *m_closeAction;
     QAction *m_dockAction;
