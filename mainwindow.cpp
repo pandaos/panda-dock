@@ -100,23 +100,24 @@ void MainWindow::updateStrutPartial()
     KWindowSystem::setState(m_fakeWidget->winId(), NET::SkipSwitcher);
 
     const auto ratio = devicePixelRatioF();
-    const int margin = 10;
+    // const int margin = 10;
+    const int margin = 2;
 
     NETExtendedStrut strut;
 
     switch (m_settings->position()) {
     case DockSettings::Left:
-        strut.left_width = width() + margin * 2;
+        strut.left_width = width() + margin;
         strut.left_start = y();
         strut.left_end = y() + height() - 1;
         break;
     case DockSettings::Right:
-        strut.right_width = width() + margin * 2;
+        strut.right_width = width() + margin;
         strut.right_start = y();
         strut.right_end = y() + height() - 1;
         break;
     case DockSettings::Bottom:
-        strut.bottom_width = height() + margin * 2;
+        strut.bottom_width = height() + margin;
         strut.bottom_start = x();
         strut.bottom_end = x() + width();
         break;
@@ -144,15 +145,36 @@ void MainWindow::onPositionChanged()
 
 void MainWindow::updateBlurRegion()
 {
-    const qreal radius = std::min(rect().width(), rect().height()) / 3.0;
-    QPainterPath path;
-    path.addRoundedRect(this->rect(), radius, radius);
+    // const qreal radius = std::min(rect().width(), rect().height()) / 3.0;
+    // QPainterPath path;
+    // path.addRoundedRect(this->rect(), radius, radius);
+    // KWindowEffects::enableBlurBehind(winId(), true, path.toFillPolygon().toPolygon());
+
+    QPainterPath path = getCornerPath();
     KWindowEffects::enableBlurBehind(winId(), true, path.toFillPolygon().toPolygon());
 }
 
 void MainWindow::delayUpdateBlurRegion()
 {
-    QTimer::singleShot(100, this, &MainWindow::updateBlurRegion);
+    QTimer::singleShot(0, this, &MainWindow::updateBlurRegion);
+}
+
+QPainterPath MainWindow::getCornerPath()
+{
+    const QRect r = this->rect();
+    QPainterPath path;
+
+    path.setFillRule(Qt::WindingFill);
+
+    if (m_settings->position() == DockSettings::Left) {
+        path.addRoundedRect(0, 0, r.width(), r.height(), m_frameRadius, m_frameRadius);
+        path.addRect(QRect(0, 0, r.width() / 2, r.height()));
+    } else {
+        path.addRoundedRect(0, 0, r.width(), r.height(), m_frameRadius, m_frameRadius);
+        path.addRect(QRect(0, r.height() / 2, r.width(), r.height()));
+    }
+
+    return path.simplified();
 }
 
 bool MainWindow::eventFilter(QObject *obj, QEvent *e)
@@ -185,9 +207,10 @@ void MainWindow::paintEvent(QPaintEvent *e)
     painter.setRenderHint(QPainter::Antialiasing, true);
     painter.setRenderHint(QPainter::SmoothPixmapTransform, true);
     painter.setPen(Qt::NoPen);
-    painter.setBrush(QColor(241, 241, 241, 150));
-    const qreal radius = std::min(rect().width(), rect().height()) / 3.0;
-    painter.drawRoundedRect(rect(), radius, radius);
+    painter.setBrush(QColor(255, 255, 255, 150));
+    //const qreal radius = std::min(rect().width(), rect().height()) / 3.0;
+    // painter.drawRoundedRect(rect(), radius, radius);
+    painter.drawPath(getCornerPath());
 }
 
 void MainWindow::mousePressEvent(QMouseEvent *e)

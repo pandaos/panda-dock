@@ -159,9 +159,11 @@ const QRect DockSettings::windowRect() const
     const int offsetX = (primaryRect.width() - panelSize.width()) / 2;
     const int offsetY = (primaryRect.height() - panelSize.height()) / 2;
     if (m_position == Bottom) {
-        p = QPoint(offsetX, primaryRect.height() - panelSize.height() - margin);
+        // p = QPoint(offsetX, primaryRect.height() - panelSize.height() - margin);
+        p = QPoint(offsetX, primaryRect.height() - panelSize.height());
     } else {
-        p = QPoint(margin, offsetY + TOPBARHEIGHT / 2);
+        // p = QPoint(margin, offsetY + TOPBARHEIGHT / 2);
+        p = QPoint(0, offsetY + TOPBARHEIGHT / 2);
     }
 
     return QRect(primaryRect.topLeft() + p, panelSize);

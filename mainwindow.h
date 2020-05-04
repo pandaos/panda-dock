@@ -41,6 +41,8 @@ private:
     void updateBlurRegion();
     void delayUpdateBlurRegion();
 
+    QPainterPath getCornerPath();
+
     bool eventFilter(QObject *obj, QEvent *e) override;
     void resizeEvent(QResizeEvent *e) override;
     void showEvent(QShowEvent *e) override;
@@ -52,6 +54,8 @@ private:
     DockItemManager *m_itemManager;
     DockSettings *m_settings;
     QWidget *m_fakeWidget;
+
+    int m_frameRadius = 9;
 };
 
 #endif // MAINWINDOW_H

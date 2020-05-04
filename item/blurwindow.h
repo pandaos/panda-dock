@@ -40,6 +40,7 @@ private:
 
 private:
     QLabel *m_textLabel;
+    int m_radius = 9;
 };
 
 #endif // BLURWINDOW_H
