@@ -65,10 +65,14 @@ AppItem::AppItem(DockEntry *entry, QWidget *parent)
     connect(m_openAction, &QAction::triggered, this, &AppItem::open);
     connect(m_closeAction, &QAction::triggered, this, &AppItem::close);
     connect(m_dockAction, &QAction::triggered, this, &AppItem::dockActionTriggered);
+
+    connect(DockSettings::instance(), &DockSettings::positionChanged, this, &AppItem::delayUpdateIconGeomerty);
+    connect(DockSettings::instance(), &DockSettings::iconSizeChanged, this, &AppItem::delayUpdateIconGeomerty);
 }
 
 AppItem::~AppItem()
 {
+    disconnect(DockSettings::instance());
 }
 
 QString AppItem::popupText()
@@ -104,6 +108,34 @@ void AppItem::update()
 void AppItem::setBlockMouseRelease(bool enable)
 {
     m_blockMouseRelease = enable;
+}
+
+void AppItem::delayUpdateIconGeomerty()
+{
+    if (m_updateIconGeometryTimer->isActive())
+        m_updateIconGeometryTimer->stop();
+
+    m_updateIconGeometryTimer->start();
+}
+
+void AppItem::updateIconGeometry()
+{
+    QRect rect = geometry();
+    rect.moveTo(mapToGlobal(QPoint(0, 0)));
+
+    for (quint64 id : m_entry->WIdList) {
+         NETWinInfo info(QX11Info::connection(),
+                         id,
+                         (WId) QX11Info::appRootWindow(),
+                         NET::WMIconGeometry,
+                         0);
+         NETRect nrect;
+         nrect.pos.x = rect.x();
+         nrect.pos.y = rect.y();
+         nrect.size.height = rect.height();
+         nrect.size.width = rect.width();
+         info.setIconGeometry(nrect);
+    }
 }
 
 void AppItem::initDockAction()
@@ -143,26 +175,6 @@ void AppItem::updateIcon()
     QWidget::update();
 
     m_updateIconGeometryTimer->start();
-}
-
-void AppItem::updateIconGeometry()
-{
-    QRect rect = geometry();
-    rect.moveTo(mapToGlobal(QPoint(0, 0)));
-
-    for (quint64 id : m_entry->WIdList) {
-         NETWinInfo info(QX11Info::connection(),
-                         id,
-                         (WId) QX11Info::appRootWindow(),
-                         NET::WMIconGeometry,
-                         0);
-         NETRect nrect;
-         nrect.pos.x = rect.x();
-         nrect.pos.y = rect.y();
-         nrect.size.height = rect.height();
-         nrect.size.width = rect.width();
-         info.setIconGeometry(nrect);
-    }
 }
 
 void AppItem::initStates()

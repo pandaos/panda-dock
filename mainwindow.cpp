@@ -141,6 +141,8 @@ void MainWindow::updateStrutPartial()
 void MainWindow::onPositionChanged()
 {
     updateSize();
+
+    // Need to update the geometry of the appitem.
 }
 
 void MainWindow::updateBlurRegion()

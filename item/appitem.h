@@ -45,15 +45,16 @@ public:
     void update();
 
     void setBlockMouseRelease(bool enable);
+    void delayUpdateIconGeomerty();
 
 signals:
     void dragStarted();
 
 private:
+    void updateIconGeometry();
     void initDockAction();
     void dockActionTriggered();
     void updateIcon();
-    void updateIconGeometry();
     void initStates();
     void startDrag();
 
