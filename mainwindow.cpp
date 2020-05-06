@@ -101,7 +101,7 @@ void MainWindow::updateStrutPartial()
 
     const auto ratio = devicePixelRatioF();
     // const int margin = 10;
-    const int margin = 0;
+    const int margin = 1;
 
     NETExtendedStrut strut;
 

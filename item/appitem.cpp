@@ -217,48 +217,48 @@ void AppItem::paintEvent(QPaintEvent *e)
 
     if (!m_entry->WIdList.isEmpty()) {
         const QRectF itemRect = rect();
-        const int lineWidth = itemRect.width() * 0.2;
-        const int lineHeight = 2;
-        // const qreal roundSize = 3 * devicePixelRatioF();
-        QRect activeRect;
+//        const int lineWidth = itemRect.width() * 0.2;
+//        const int lineHeight = 2;
+         const qreal roundSize = 4;
+//        QRect activeRect;
 
-        if (DockSettings::instance()->position() == DockSettings::Left) {
-            activeRect = QRect(1,
-                               (itemRect.height() - lineWidth) / 2,
-                               lineHeight, lineWidth);
-        } else {
-            activeRect = QRect((itemRect.width() - lineWidth) / 2,
-                               itemRect.height() - lineHeight - 2,
-                               lineWidth, lineHeight);
-        }
-
-        if (m_entry->isActive) {
-            painter.setBrush(QColor("#1974FF"));
-            painter.drawRect(activeRect);
-        } else {
-            painter.setBrush(QColor("#0F0F0F"));
-            painter.drawRect(activeRect);
-        }
-
-        // 圆点
-//        QPainterPath path;
 //        if (DockSettings::instance()->position() == DockSettings::Left) {
-//            path.addRoundedRect(QRectF(2,
-//                                      (itemRect.height() - roundSize) / 2,
-//                                      roundSize, roundSize), roundSize, roundSize);
+//            activeRect = QRect(1,
+//                               (itemRect.height() - lineWidth) / 2,
+//                               lineHeight, lineWidth);
 //        } else {
-//            path.addRoundedRect(QRectF((itemRect.width() - roundSize) / 2,
-//                                      itemRect.height() - roundSize - 2,
-//                                      roundSize, roundSize), roundSize, roundSize);
+//            activeRect = QRect((itemRect.width() - lineWidth) / 2,
+//                               itemRect.height() - lineHeight - 2,
+//                               lineWidth, lineHeight);
 //        }
 
 //        if (m_entry->isActive) {
-//            painter.setBrush(QColor(84, 150, 255));
+//            painter.setBrush(QColor("#1974FF"));
+//            painter.drawRect(activeRect);
 //        } else {
-//            painter.setBrush(Qt::black);
+//            painter.setBrush(QColor("#0F0F0F"));
+//            painter.drawRect(activeRect);
 //        }
 
-//        painter.drawPath(path);
+        // 圆点
+        QPainterPath path;
+        if (DockSettings::instance()->position() == DockSettings::Left) {
+            path.addRoundedRect(QRectF(2,
+                                      (itemRect.height() - roundSize) / 2,
+                                      roundSize, roundSize), roundSize, roundSize);
+        } else {
+            path.addRoundedRect(QRectF((itemRect.width() - roundSize) / 2,
+                                      itemRect.height() - roundSize - 2,
+                                      roundSize, roundSize), roundSize, roundSize);
+        }
+
+        if (m_entry->isActive) {
+            painter.setBrush(QColor(84, 150, 255));
+        } else {
+            painter.setBrush(Qt::black);
+        }
+
+        painter.drawPath(path);
     }
 
     const auto ratio = devicePixelRatioF();
