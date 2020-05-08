@@ -66,6 +66,7 @@ MainWindow::MainWindow(QWidget *parent)
     // KWindowEffects::slideWindow(winId(), KWindowEffects::BottomEdge);
 
     connect(m_settings, &DockSettings::positionChanged, this, &MainWindow::onPositionChanged);
+    connect(m_settings, &DockSettings::styleChanged, this, &MainWindow::updateSize);
     connect(m_settings, &DockSettings::iconSizeChanged, this, &MainWindow::updateSize);
     connect(m_mainPanel, &MainPanel::requestResized, this, &MainWindow::updateSize);
 
@@ -100,8 +101,7 @@ void MainWindow::updateStrutPartial()
     KWindowSystem::setState(m_fakeWidget->winId(), NET::SkipSwitcher);
 
     const auto ratio = devicePixelRatioF();
-    // const int margin = 10;
-    const int margin = 1;
+    const int margin = (m_settings->style() == DockSettings::PC) ? 1 : 20;
 
     NETExtendedStrut strut;
 
@@ -136,6 +136,8 @@ void MainWindow::updateStrutPartial()
                                      strut.bottom_width,
                                      strut.bottom_start,
                                      strut.bottom_end);
+
+    QWidget::update();
 }
 
 void MainWindow::onPositionChanged()
@@ -152,7 +154,15 @@ void MainWindow::updateBlurRegion()
     // path.addRoundedRect(this->rect(), radius, radius);
     // KWindowEffects::enableBlurBehind(winId(), true, path.toFillPolygon().toPolygon());
 
-    QPainterPath path = getCornerPath();
+    QPainterPath path;
+
+    if (m_settings->style() == DockSettings::PC) {
+        path = getCornerPath();
+    } else {
+        const qreal radius = std::min(rect().width(), rect().height()) / 3.0;
+        path.addRoundedRect(this->rect(), radius, radius);
+    }
+
     KWindowEffects::enableBlurBehind(winId(), true, path.toFillPolygon().toPolygon());
 }
 
@@ -210,9 +220,13 @@ void MainWindow::paintEvent(QPaintEvent *e)
     painter.setRenderHint(QPainter::SmoothPixmapTransform, true);
     painter.setPen(Qt::NoPen);
     painter.setBrush(QColor(255, 255, 255, 150));
-    //const qreal radius = std::min(rect().width(), rect().height()) / 3.0;
-    // painter.drawRoundedRect(rect(), radius, radius);
-    painter.drawPath(getCornerPath());
+
+    if (m_settings->style() == DockSettings::PC) {
+        painter.drawPath(getCornerPath());
+    } else {
+        const qreal radius = std::min(rect().width(), rect().height()) / 3.0;
+        painter.drawRoundedRect(rect(), radius, radius);
+    }
 }
 
 void MainWindow::mousePressEvent(QMouseEvent *e)

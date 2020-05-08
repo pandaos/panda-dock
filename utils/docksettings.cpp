@@ -44,17 +44,12 @@ DockSettings::DockSettings(QObject *parent)
       m_bottomPosAction(new QAction(tr("Bottom"), this)),
       m_smallSizeAction(new QAction(tr("Small"), this)),
       m_mediumSizeAction(new QAction(tr("Medium"), this)),
-      m_largeSizeAction(new QAction(tr("Large"), this))
+      m_largeSizeAction(new QAction(tr("Large"), this)),
+      m_pcStyleAction(new QAction(tr("PC"), this)),
+      m_padStyleAction(new QAction(tr("Pad"), this))
 {
-    if (!m_settings->contains("icon_size")) {
-        m_settings->setValue("icon_size", 64);
-    }
-
-    if (!m_settings->contains("position")) {
-        m_settings->setValue("position", Bottom);
-    }
-
-    m_position = static_cast<Position>(m_settings->value("position").toInt());
+    m_position = static_cast<Position>(m_settings->value("position", Bottom).toInt());
+    m_style = static_cast<Style>(m_settings->value("style", PC).toInt());
 
     m_leftPosAction->setCheckable(true);
     m_bottomPosAction->setCheckable(true);
@@ -62,6 +57,9 @@ DockSettings::DockSettings(QObject *parent)
     m_smallSizeAction->setCheckable(true);
     m_mediumSizeAction->setCheckable(true);
     m_largeSizeAction->setCheckable(true);
+
+    m_pcStyleAction->setCheckable(true);
+    m_padStyleAction->setCheckable(true);
 
     QMenu *sizeSubMenu = new QMenu(m_settingsMenu);
     sizeSubMenu->addAction(m_smallSizeAction);
@@ -72,7 +70,14 @@ DockSettings::DockSettings(QObject *parent)
     sizeSubAction->setMenu(sizeSubMenu);
     m_settingsMenu->addAction(sizeSubAction);
 
-    initSizeAction();
+    QMenu *styleMenu = new QMenu(m_settingsMenu);
+    styleMenu->addAction(m_pcStyleAction);
+    styleMenu->addAction(m_padStyleAction);
+    QAction *styleSubAction = new QAction(tr("Style"), this);
+    styleSubAction->setMenu(styleMenu);
+    m_settingsMenu->addAction(styleSubAction);
+
+    initAction();
 
     connect(m_smallSizeAction, &QAction::triggered, this, [=] {
         setIconSize(64);
@@ -108,6 +113,14 @@ DockSettings::DockSettings(QObject *parent)
         setValue("position", Bottom);
         emit positionChanged();
     });
+
+    connect(m_pcStyleAction, &QAction::triggered, this, [=] {
+        setStyle(PC);
+    });
+
+    connect(m_padStyleAction, &QAction::triggered, this, [=] {
+        setStyle(Pad);
+    });
 }
 
 QRect DockSettings::primaryRawRect()
@@ -119,7 +132,7 @@ const QRect DockSettings::windowRect() const
 {
     QRect primaryRect = qApp->primaryScreen()->geometry();
     qreal scale = qApp->primaryScreen()->devicePixelRatio();
-    const int iconSize = m_settings->value("icon_size").toInt();
+    const int iconSize = this->iconSize();
     const int iconCount = DockItemManager::instance()->itemList().count() - 1;
     const int margin = 10;
     QSize panelSize;
@@ -159,11 +172,17 @@ const QRect DockSettings::windowRect() const
     const int offsetX = (primaryRect.width() - panelSize.width()) / 2;
     const int offsetY = (primaryRect.height() - panelSize.height()) / 2;
     if (m_position == Bottom) {
-        // p = QPoint(offsetX, primaryRect.height() - panelSize.height() - margin);
-        p = QPoint(offsetX, primaryRect.height() - panelSize.height());
+        if (m_style == PC) {
+            p = QPoint(offsetX, primaryRect.height() - panelSize.height());
+        } else {
+            p = QPoint(offsetX, primaryRect.height() - panelSize.height() - margin);
+        }
     } else {
-        // p = QPoint(margin, offsetY + TOPBARHEIGHT / 2);
-        p = QPoint(0, offsetY + TOPBARHEIGHT / 2);
+        if (m_style == PC) {
+            p = QPoint(0, offsetY + TOPBARHEIGHT / 2);
+        } else {
+            p = QPoint(margin, offsetY + TOPBARHEIGHT / 2);
+        }
     }
 
     return QRect(primaryRect.topLeft() + p, panelSize);
@@ -177,14 +196,23 @@ void DockSettings::setValue(const QString &key, const QVariant &variant)
 void DockSettings::setIconSize(int size)
 {
     m_settings->setValue("icon_size", size);
-    initSizeAction();
+    initAction();
 
     emit iconSizeChanged();
 }
 
 int DockSettings::iconSize() const
 {
-    return m_settings->value("icon_size").toInt();
+    return m_settings->value("icon_size", 64).toInt();
+}
+
+void DockSettings::setStyle(DockSettings::Style style)
+{
+    m_style = style;
+    setValue("style", style);
+    initAction();
+
+    emit styleChanged();
 }
 
 void DockSettings::showSettingsMenu()
@@ -195,7 +223,7 @@ void DockSettings::showSettingsMenu()
     m_settingsMenu->exec(QCursor::pos());
 }
 
-void DockSettings::initSizeAction()
+void DockSettings::initAction()
 {
     const int size = iconSize();
 
@@ -212,4 +240,7 @@ void DockSettings::initSizeAction()
         m_mediumSizeAction->setChecked(false);
         m_largeSizeAction->setChecked(true);
     }
+
+    m_pcStyleAction->setChecked(m_style == PC);
+    m_padStyleAction->setChecked(m_style == Pad);
 }

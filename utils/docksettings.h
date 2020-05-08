@@ -37,6 +37,10 @@ public:
         Bottom = 0, Left = 1, Right = 2
     };
 
+    enum Style {
+        PC = 0, Pad
+    };
+
     const int PADDING = 10;
     const int MARGIN = 10;
 
@@ -51,20 +55,25 @@ public:
     void setIconSize(int size);
     int iconSize() const;
 
+    void setStyle(Style style);
+
     void showSettingsMenu();
 
     inline Position position() { return m_position; };
+    inline Style style() { return m_style; };
 
 private:
-    void initSizeAction();
+    void initAction();
 
 signals:
     void positionChanged();
     void iconSizeChanged();
+    void styleChanged();
 
 private:
     QSettings *m_settings;
     Position m_position;
+    Style m_style;
     QMenu *m_settingsMenu;
     QAction *m_leftPosAction;
     QAction *m_bottomPosAction;
@@ -72,6 +81,9 @@ private:
     QAction *m_smallSizeAction;
     QAction *m_mediumSizeAction;
     QAction *m_largeSizeAction;
+
+    QAction *m_pcStyleAction;
+    QAction *m_padStyleAction;
 
     QFileSystemWatcher *m_setWatcher;
 };
