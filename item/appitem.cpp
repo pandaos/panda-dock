@@ -216,6 +216,12 @@ void AppItem::paintEvent(QPaintEvent *e)
     painter.setPen(Qt::NoPen);
 
     if (!m_entry->WIdList.isEmpty()) {
+        if (m_entry->isActive) {
+            painter.setBrush(QColor(0, 98, 255));
+        } else {
+            painter.setBrush(Qt::black);
+        }
+
          if (DockSettings::instance()->style() == DockSettings::PC) {
              // 圆点
              const qreal roundSize = 4;
@@ -228,12 +234,6 @@ void AppItem::paintEvent(QPaintEvent *e)
                  path.addRoundedRect(QRectF((rect().width() - roundSize) / 2,
                                            rect().height() - roundSize - 2,
                                            roundSize, roundSize), roundSize, roundSize);
-             }
-
-             if (m_entry->isActive) {
-                 painter.setBrush(QColor(84, 150, 255));
-             } else {
-                 painter.setBrush(Qt::black);
              }
 
              painter.drawPath(path);
@@ -252,10 +252,8 @@ void AppItem::paintEvent(QPaintEvent *e)
              }
 
              if (m_entry->isActive) {
-                 painter.setBrush(QColor("#1974FF"));
                  painter.drawRect(activeRect);
              } else {
-                 painter.setBrush(QColor("#0F0F0F"));
                  painter.drawRect(activeRect);
              }
          }
