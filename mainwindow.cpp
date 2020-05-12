@@ -28,11 +28,6 @@
 
 #include <KF5/KWindowSystem/KWindowEffects>
 
-#define MAINWINDOW_MAX_SIZE       100
-#define MAINWINDOW_MIN_SIZE       (45)
-#define MAINWINDOW_PADDING (0)
-#define DRAG_AREA_SIZE (5)
-
 MainWindow::MainWindow(QWidget *parent)
     : QWidget(parent),
       m_mainPanel(new MainPanel),
@@ -149,11 +144,6 @@ void MainWindow::onPositionChanged()
 
 void MainWindow::updateBlurRegion()
 {
-    // const qreal radius = std::min(rect().width(), rect().height()) / 3.0;
-    // QPainterPath path;
-    // path.addRoundedRect(this->rect(), radius, radius);
-    // KWindowEffects::enableBlurBehind(winId(), true, path.toFillPolygon().toPolygon());
-
     QPainterPath path;
 
     if (m_settings->style() == DockSettings::PC) {

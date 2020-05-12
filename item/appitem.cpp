@@ -167,10 +167,15 @@ void AppItem::dockActionTriggered()
 
 void AppItem::updateIcon()
 {
-    const qreal iconSize = qMin(width(), height());
+    const int iconSize = static_cast<int>(qMin(width(), height()) * 0.7);
     const QString iconName = m_entry->iconName;
 
-    m_iconPixmap = Utils::getIcon(iconName, iconSize * 0.7);
+    m_iconPixmap = Utils::getIcon(iconName, iconSize);
+    if (m_iconPixmap.isNull()) {
+        if (!m_entry->WIdList.isEmpty()) {
+            m_iconPixmap = KWindowSystem::icon(m_entry->WIdList.first(), iconSize, iconSize, true);
+        }
+    }
 
     QWidget::update();
 
