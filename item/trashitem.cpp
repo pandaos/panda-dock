@@ -89,9 +89,11 @@ void TrashItem::openTrashFold()
 
 void TrashItem::emptyTrash()
 {
-    QDBusConnection dbus = QDBusConnection::sessionBus();
-    QDBusInterface iface(QLatin1String("org.panda.files"), QStringLiteral("/Files"), QLatin1String("org.panda.Files"), dbus, this);
-    iface.call(QStringLiteral("emptyTrash"));
+    if (m_count) {
+        QDBusConnection dbus = QDBusConnection::sessionBus();
+        QDBusInterface iface(QLatin1String("org.panda.files"), QStringLiteral("/Files"), QLatin1String("org.panda.Files"), dbus, this);
+        iface.call(QStringLiteral("emptyTrash"));
+    }
 }
 
 void TrashItem::paintEvent(QPaintEvent *e)
