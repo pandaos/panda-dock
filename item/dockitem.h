@@ -23,9 +23,9 @@
 #include <QWidget>
 #include <QPointer>
 #include <QMenu>
-#include <QVariantAnimation>
 
 #include "blurwindow.h"
+#include "highlighteffect.h"
 
 class DockItem : public QWidget
 {
@@ -51,7 +51,6 @@ public:
 
 private:
     void showPopup();
-    void onHoverValueChanged(const QVariant &value);
     const QPoint topleftPoint() const;
 
 protected:
@@ -62,11 +61,10 @@ protected:
     void mouseReleaseEvent(QMouseEvent *e) override;
 
 private:
-    QVariantAnimation *m_hoverAnimation;
     QTimer *m_popupDelayTimer;
     QMenu m_contextMenu;
-    qreal m_hoverSize;
 
+    HighlightEffect *m_highlightEffect;
     BlurWindow *m_popupWidget;
 };
 

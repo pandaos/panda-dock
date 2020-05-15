@@ -28,18 +28,16 @@
 
 DockItem::DockItem(QWidget *parent)
     : QWidget(parent),
-      m_hoverAnimation(new QVariantAnimation(this)),
       m_popupDelayTimer(new QTimer(this)),
-      m_hoverSize(0),
+      m_highlightEffect(new HighlightEffect),
       m_popupWidget(new BlurWindow)
 {
-    m_hoverAnimation->setDuration(250);
     m_popupDelayTimer->setInterval(150);
     m_popupDelayTimer->setSingleShot(true);
 
+    setGraphicsEffect(m_highlightEffect);
     setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
-    connect(m_hoverAnimation, &QVariantAnimation::valueChanged, this, &DockItem::onHoverValueChanged);
     connect(m_popupDelayTimer, &QTimer::timeout, this, &DockItem::showPopup);
 }
 
@@ -90,13 +88,6 @@ void DockItem::showPopup()
     m_popupWidget->update();
 }
 
-void DockItem::onHoverValueChanged(const QVariant &value)
-{
-    m_hoverSize = value.toReal();
-
-    QWidget::update();
-}
-
 const QPoint DockItem::topleftPoint() const
 {
     QPoint p(0, 0);
@@ -117,16 +108,6 @@ void DockItem::hidePopup()
 void DockItem::paintEvent(QPaintEvent *e)
 {
     QWidget::paintEvent(e);
-
-    if (m_hoverSize) {
-        QPainter painter(this);
-        painter.setPen(Qt::NoPen);
-        painter.setBrush(QColor(0, 0, 0, 30));
-        QRect roundRect = QRect(0, 0, m_hoverSize, m_hoverSize);
-        roundRect.moveCenter(rect().center());
-        int radius = m_hoverSize * 0.4;
-        painter.drawRoundRect(roundRect, radius, radius);
-    }
 }
 
 void DockItem::enterEvent(QEvent *e)
@@ -136,12 +117,7 @@ void DockItem::enterEvent(QEvent *e)
 //        return;
 //    }
 
-    m_hoverAnimation->stop();
-    m_hoverAnimation->setEasingCurve(QEasingCurve::OutBack);
-    m_hoverAnimation->setStartValue(0.0);
-    m_hoverAnimation->setEndValue(rect().width() * 0.8);
-    m_hoverAnimation->start();
-
+    m_highlightEffect->setHighlighting(true);
     m_popupDelayTimer->start();
 
     QWidget::update();
@@ -153,12 +129,8 @@ void DockItem::leaveEvent(QEvent *e)
     QWidget::leaveEvent(e);
 
     hidePopup();
+    m_highlightEffect->setHighlighting(false);
     m_popupDelayTimer->stop();
-    m_hoverAnimation->stop();
-    m_hoverAnimation->setEasingCurve(QEasingCurve::InBack);
-    m_hoverAnimation->setStartValue(m_hoverSize);
-    m_hoverAnimation->setEndValue(0.0);
-    m_hoverAnimation->start();
 
     QWidget::update();
 }
