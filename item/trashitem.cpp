@@ -25,6 +25,9 @@
 #include <QDialog>
 #include <QDir>
 
+#include <QDBusConnection>
+#include <QDBusInterface>
+
 const QString TrashDir = QDir::homePath() + "/.local/share/Trash";
 const QDir::Filters ItemsShouldCount = QDir::AllEntries | QDir::Hidden | QDir::System | QDir::NoDotAndDotDot;
 
@@ -86,9 +89,9 @@ void TrashItem::openTrashFold()
 
 void TrashItem::emptyTrash()
 {
-//    QDialog *dialog = new QDialog;
-//    dialog->setWindowTitle(tr("Empty Trash"));
-//    dialog->show();
+    QDBusConnection dbus = QDBusConnection::sessionBus();
+    QDBusInterface iface(QLatin1String("org.panda.files"), QStringLiteral("/Files"), QLatin1String("org.panda.Files"), dbus, this);
+    iface.call(QStringLiteral("emptyTrash"));
 }
 
 void TrashItem::paintEvent(QPaintEvent *e)
