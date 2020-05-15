@@ -54,11 +54,12 @@ MainWindow::MainWindow(QWidget *parent)
     setAttribute(Qt::WA_NoSystemBackground, false);
     setAttribute(Qt::WA_TranslucentBackground);
     setWindowFlags(Qt::FramelessWindowHint | Qt::WindowDoesNotAcceptFocus);
-    updateSize();
-
+    
     KWindowSystem::setOnDesktop(winId(), NET::OnAllDesktops);
     KWindowSystem::setType(winId(), NET::Dock);
     // KWindowEffects::slideWindow(winId(), KWindowEffects::BottomEdge);
+          
+    updateSize();
 
     connect(m_settings, &DockSettings::positionChanged, this, &MainWindow::onPositionChanged);
     connect(m_settings, &DockSettings::styleChanged, this, &MainWindow::updateSize);
