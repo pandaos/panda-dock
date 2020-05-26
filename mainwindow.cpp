@@ -54,11 +54,11 @@ MainWindow::MainWindow(QWidget *parent)
     setAttribute(Qt::WA_NoSystemBackground, false);
     setAttribute(Qt::WA_TranslucentBackground);
     setWindowFlags(Qt::FramelessWindowHint | Qt::WindowDoesNotAcceptFocus);
-    
+
     KWindowSystem::setOnDesktop(winId(), NET::OnAllDesktops);
     KWindowSystem::setType(winId(), NET::Dock);
     // KWindowEffects::slideWindow(winId(), KWindowEffects::BottomEdge);
-          
+
     updateSize();
 
     connect(m_settings, &DockSettings::positionChanged, this, &MainWindow::onPositionChanged);
@@ -87,14 +87,12 @@ void MainWindow::updateSize()
 
 void MainWindow::updateStrutPartial()
 {
-    // 不清真的作法，kwin设置blur后设置程序支撑导致模糊无效
+    // blur后设置程序支撑导致模糊无效
     QRect rect(geometry());
     rect.setHeight(1);
     rect.setWidth(1);
     m_fakeWidget->setGeometry(rect);
     m_fakeWidget->setVisible(true);
-    KWindowSystem::setState(m_fakeWidget->winId(), NET::SkipTaskbar);
-    KWindowSystem::setState(m_fakeWidget->winId(), NET::SkipSwitcher);
 
     const auto ratio = devicePixelRatioF();
     const int margin = (m_settings->style() == DockSettings::PC) ? 1 : 20;
@@ -132,6 +130,9 @@ void MainWindow::updateStrutPartial()
                                      strut.bottom_width,
                                      strut.bottom_start,
                                      strut.bottom_end);
+
+    KWindowSystem::setState(m_fakeWidget->winId(), NET::SkipTaskbar);
+    KWindowSystem::setState(m_fakeWidget->winId(), NET::SkipSwitcher);
 
     QWidget::update();
 }
