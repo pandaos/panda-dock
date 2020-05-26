@@ -52,7 +52,7 @@ bool DesktopProperties::load(const QString &fileName, const QString &group)
     // specified, groupFound is always true
     bool groupFound = group.isEmpty();
 
-    // Read propeties
+    // Read properties
     QTextStream in(&file);
     while (!in.atEnd()) {
 
