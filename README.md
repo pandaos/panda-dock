@@ -5,41 +5,16 @@ Dock for PandaOS.
 ## Dependencies
 
 ```shell
-sudo apt install cmake extra-cmake-modules g++ qt5-default qttools5-dev-tools libqt5x11extras5-dev libqt5svg5-dev libkf5windowsystem-dev
+sudo pacman -S extra-cmake-modules qt5-base qt5-svg qt5-tools qt5-x11extras kwindowsystem
 ```
 
 ## Build
-
-### Build with qmake
-
-```shell
-mkdir build
-cd build
-qmake ..
-make
-```
-
-### Build with cmake
-
-- install dependencies
-
-```shell
-sudo apt install extra-cmake-modules
-```
-
-- make
 
 ```shell
 mkdir build
 cd build
 cmake ..
 make
-```
-
-## Build a deb package
-
-```shell
-dpkg-buildpackage -b
 ```
 
 ## License
