@@ -19,6 +19,7 @@
 
 #include "blurwindow.h"
 #include <QPainter>
+#include <QPainterPath>
 #include <KWindowEffects>
 #include <QDebug>
 #include <QTimer>

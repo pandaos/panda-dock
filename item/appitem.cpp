@@ -23,6 +23,7 @@
 #include "utils/docksettings.h"
 
 #include <QPainter>
+#include <QPainterPath>
 #include <QMouseEvent>
 #include <QMimeData>
 #include <QDebug>

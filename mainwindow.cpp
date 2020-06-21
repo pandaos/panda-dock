@@ -23,6 +23,7 @@
 #include <QHBoxLayout>
 #include <QScreen>
 #include <QPainter>
+#include <QPainterPath>
 #include <QMouseEvent>
 #include <QTimer>
 
