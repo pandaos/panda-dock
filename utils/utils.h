@@ -43,7 +43,7 @@ namespace Utils
         return pixmap;
     }
 
-    static const QPixmap getIcon(const QString iconName, const qreal size, quint64 wid = 0)
+    static const QPixmap getIcon(const QString iconName, const qreal size)
     {
         const qreal ratio = qApp->devicePixelRatio();
         QPixmap pixmap;

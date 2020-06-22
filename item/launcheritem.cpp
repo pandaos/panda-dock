@@ -70,5 +70,5 @@ void LauncherItem::mouseReleaseEvent(QMouseEvent *e)
 {
     DockItem::mouseReleaseEvent(e);
 
-    QProcess::startDetached("panda-launcher");
+    QProcess::startDetached("panda-launcher", QStringList());
 }

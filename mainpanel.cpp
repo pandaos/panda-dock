@@ -71,6 +71,8 @@ void MainPanel::removeFixedAreaItem(QWidget *wdg)
 
 void MainPanel::insertItem(const int index, DockItem *item)
 {
+    Q_UNUSED(index);
+
     item->installEventFilter(this);
 
     switch (item->itemType()) {
@@ -129,6 +131,8 @@ void MainPanel::updateLayout()
         m_appArea->layout()->setDirection(QBoxLayout::LeftToRight);
         m_mainLayout->setContentsMargins(0, 0, 0, 0);
         break;
+    default:
+        break;
     }
 
     resizeDockIcon();
@@ -139,7 +143,7 @@ void MainPanel::updateLayout()
 void MainPanel::resizeDockIcon()
 {
     const int iconSize = m_settings->iconSize();
-    const int padding = 10;
+    // const int padding = 10;
 
     m_appArea->setRange(iconSize);
     m_appArea->setIconSize(iconSize);

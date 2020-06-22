@@ -131,7 +131,7 @@ QRect DockSettings::primaryRawRect()
 const QRect DockSettings::windowRect() const
 {
     QRect primaryRect = qApp->primaryScreen()->geometry();
-    qreal scale = qApp->primaryScreen()->devicePixelRatio();
+    // qreal scale = qApp->primaryScreen()->devicePixelRatio();
     const int iconSize = this->iconSize();
     const int iconCount = DockItemManager::instance()->itemList().count() - 1;
     const int margin = 10;

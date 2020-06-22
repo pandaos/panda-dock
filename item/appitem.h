@@ -37,7 +37,7 @@ public:
     ~AppItem();
 
     inline ItemType itemType() const override { return DockItem::App; }
-    QString popupText();
+    QString popupText() override;
     DockEntry *entry();
 
     void open();

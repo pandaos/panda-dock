@@ -35,12 +35,13 @@
 AppItem::AppItem(DockEntry *entry, QWidget *parent)
     : DockItem(parent),
       m_entry(entry),
-      m_updateIconGeometryTimer(new QTimer(this)),
-      m_dragActiveTimer(new QTimer(this)),
       m_appNameAction(new QAction("")),
       m_openAction(new QAction(tr("Open"))),
       m_closeAction(new QAction(tr("Close All"))),
-      m_dockAction(new QAction(""))
+      m_dockAction(new QAction("")),
+      m_updateIconGeometryTimer(new QTimer(this)),
+      m_dragActiveTimer(new QTimer(this)),
+      m_drag(nullptr)
 {
     m_updateIconGeometryTimer->setInterval(200);
     m_updateIconGeometryTimer->setSingleShot(true);
@@ -129,7 +130,7 @@ void AppItem::updateIconGeometry()
                          id,
                          (WId) QX11Info::appRootWindow(),
                          NET::WMIconGeometry,
-                         0);
+                         QFlags<NET::Property2>(1));
          NETRect nrect;
          nrect.pos.x = rect.x();
          nrect.pos.y = rect.y();
@@ -246,6 +247,7 @@ void AppItem::paintEvent(QPaintEvent *e)
          } else {
              const int lineWidth = rect().width() * 0.2;
              const int lineHeight = 2;
+
              QRect activeRect;
              if (DockSettings::instance()->position() == DockSettings::Left) {
                  activeRect = QRect(1,

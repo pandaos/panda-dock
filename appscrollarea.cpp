@@ -30,8 +30,8 @@
 AppScrollArea::AppScrollArea(QWidget *parent)
     : QScrollArea(parent),
       m_draggingItem(nullptr),
-      m_mainLayout(new QBoxLayout(QBoxLayout::LeftToRight)),
       m_mainWidget(new QWidget),
+      m_mainLayout(new QBoxLayout(QBoxLayout::LeftToRight)),
       m_range(10),
       m_iconSize(0)
 {
@@ -156,7 +156,7 @@ AppItem *AppScrollArea::itemAt(const QPoint &point)
 
 void AppScrollArea::wheelEvent(QWheelEvent *e)
 {
-    const int offset = -e->delta() / 120;
+    const int offset = -e->angleDelta().y() / 120;
 
     if (m_mainLayout->direction() == QBoxLayout::LeftToRight) {
         horizontalScrollBar()->setValue(horizontalScrollBar()->value() + offset * m_range);
@@ -213,6 +213,8 @@ void AppScrollArea::dragMoveEvent(QDragMoveEvent *e)
 
 void AppScrollArea::dropEvent(QDropEvent *e)
 {
+    Q_UNUSED(e)
+
     m_draggingItem = nullptr;
     m_dragging = false;
 

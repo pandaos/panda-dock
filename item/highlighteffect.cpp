@@ -15,7 +15,7 @@ static QPixmap lighterEffect(const QPixmap pixmap, const int delta)
         for (int j = 0; j != width; ++j) {
             QRgb &rgba = *(QRgb*)scanLine;
             if (qAlpha(rgba) == 0xff) {
-                rgba = QColor::fromRgba(rgba).light(delta).rgba();
+                rgba = QColor::fromRgba(rgba).lighter(delta).rgba();
             }
             scanLine += bytesPerPixel;
         }

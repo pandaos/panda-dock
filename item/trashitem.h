@@ -31,7 +31,7 @@ public:
     explicit TrashItem(QWidget *parent = nullptr);
 
     inline ItemType itemType() const override { return DockItem::Fixed; }
-    QString popupText();
+    QString popupText() override;
 
 private:
     void refreshIcon();

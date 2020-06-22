@@ -19,7 +19,6 @@
 
 #include "dockitemmanager.h"
 #include "item/launcheritem.h"
-#include "item/showdesktopitem.h"
 #include <QDebug>
 
 DockItemManager *DockItemManager::INSTANCE = nullptr;
@@ -98,6 +97,8 @@ void DockItemManager::appItemRemoved(DockEntry *entry)
 
 void DockItemManager::appItemActiveChanged(DockEntry *entry)
 {
+    Q_UNUSED(entry);
+
     for (DockItem *item : m_itemList) {
         if (item->itemType() != DockItem::App)
             continue;

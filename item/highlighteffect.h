@@ -13,7 +13,7 @@ public:
     void setHighlighting(const bool highlighting) { m_highlighting = highlighting; }
 
 protected:
-    void draw(QPainter *painter);
+    void draw(QPainter *painter) override;
 
 private:
     bool m_highlighting;

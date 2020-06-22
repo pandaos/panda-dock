@@ -82,9 +82,10 @@ DockEntry *AppWindowManager::findByClassName(const QString &className)
     return nullptr;
 }
 
-int AppWindowManager::getPid(quint64 winId)
+int AppWindowManager::getPid(quint64 /*winId*/)
 {
-    return NETWinInfo(QX11Info::connection(), winId, QX11Info::appRootWindow(), NET::WMPid).pid();
+    // return NETWinInfo(QX11Info::connection(), winId, QX11Info::appRootWindow(), NET::WMPid).pid();
+    return 0;
 }
 
 bool AppWindowManager::classNameContains(const QString &className)
@@ -179,7 +180,7 @@ void AppWindowManager::closeWindow(quint64 id)
 
 void AppWindowManager::openApp(const QString &appName)
 {
-    QProcess::startDetached(appName);
+    QProcess::startDetached(appName, QStringList());
 }
 
 void AppWindowManager::clicked(DockEntry *entry)
@@ -549,9 +550,4 @@ void AppWindowManager::onWindowRemoved(quint64 id)
             }
         }
     }
-}
-
-void AppWindowManager::onWindowChanged(WId id, NET::Properties properties, NET::Properties2 properties2)
-{
-
 }

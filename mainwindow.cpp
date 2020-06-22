@@ -95,7 +95,7 @@ void MainWindow::updateStrutPartial()
     m_fakeWidget->setGeometry(rect);
     m_fakeWidget->setVisible(true);
 
-    const auto ratio = devicePixelRatioF();
+    // const auto ratio = devicePixelRatioF();
     const int margin = (m_settings->style() == DockSettings::PC) ? 1 : 20;
 
     NETExtendedStrut strut;
@@ -184,6 +184,8 @@ QPainterPath MainWindow::getCornerPath()
 
 bool MainWindow::eventFilter(QObject *obj, QEvent *e)
 {
+    Q_UNUSED(obj);
+
     switch (e->type()) {
     case QEvent::UpdateRequest:
     case QEvent::LayoutRequest:
