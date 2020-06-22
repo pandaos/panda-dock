@@ -141,7 +141,6 @@ AppItem *AppScrollArea::itemAt(const QPoint &point)
 
     for (int i = 0; i < m_mainLayout->count(); ++i) {
         AppItem *item = static_cast<AppItem *>(m_mainLayout->itemAt(i)->widget());
-
         QRect rect;
         rect.setSize(item->size());
         rect.setTopLeft(mapToParent(item->pos()));
@@ -151,7 +150,8 @@ AppItem *AppScrollArea::itemAt(const QPoint &point)
         }
     }
 
-    return nullptr;
+    return static_cast<AppItem *>(m_mainLayout->itemAt(0)->widget());
+    // return nullptr;
 }
 
 void AppScrollArea::wheelEvent(QWheelEvent *e)
