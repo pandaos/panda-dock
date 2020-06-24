@@ -45,13 +45,13 @@ DockSettings::DockSettings(QObject *parent)
       m_smallSizeAction(new QAction(tr("Small"), this)),
       m_mediumSizeAction(new QAction(tr("Medium"), this)),
       m_largeSizeAction(new QAction(tr("Large"), this)),
-      m_pcStyleAction(new QAction(tr("PC"), this)),
-      m_padStyleAction(new QAction(tr("Pad"), this)),
+      m_pcStyleAction(new QAction(tr("Classic"), this)),
+      m_padStyleAction(new QAction(tr("Fashion"), this)),
       m_keepShowingAction(new QAction(tr("Keep Showing"), this)),
       m_keepHiddenAction(new QAction(tr("Keep Hidden"), this))
 {
     m_position = static_cast<Position>(m_settings->value("position", Bottom).toInt());
-    m_style = static_cast<Style>(m_settings->value("style", PC).toInt());
+    m_style = static_cast<Style>(m_settings->value("style", Classic).toInt());
     m_hideMode = static_cast<HideMode>(m_settings->value("hide_mode", KeepShowing).toInt());
 
     m_leftPosAction->setCheckable(true);
@@ -116,11 +116,11 @@ DockSettings::DockSettings(QObject *parent)
     });
 
     connect(m_pcStyleAction, &QAction::triggered, this, [=] {
-        setStyle(PC);
+        setStyle(Classic);
     });
 
     connect(m_padStyleAction, &QAction::triggered, this, [=] {
-        setStyle(Pad);
+        setStyle(Fashion);
     });
 
     // ****************
@@ -152,12 +152,15 @@ const QRect DockSettings::windowRect() const
     QRect primaryRect = qApp->primaryScreen()->geometry();
     // qreal scale = qApp->primaryScreen()->devicePixelRatio();
     const int iconSize = this->iconSize();
-    const int iconCount = DockItemManager::instance()->itemList().count() - 1;
-    const int margin = 10;
+    const int iconCount = DockItemManager::instance()->itemList().count();
+    const int expandedSize = (m_style == Fashion) ? 8 : 0;
+    const qreal radius = (iconSize / 3.5) / 2;
+    const int margin = 5;
     QSize panelSize;
     QPoint p;
 
-    if (m_position == Bottom) {
+    switch (m_position) {
+    case Bottom: {
         int maxWidth = primaryRect.width() - margin * 2;
         int calcWidth = iconSize * 2;
         for (int i = 1; i <= iconCount; ++i) {
@@ -168,9 +171,12 @@ const QRect DockSettings::windowRect() const
                 break;
             }
         }
-        panelSize.setHeight(iconSize);
-        panelSize.setWidth(calcWidth);
-    } else {
+        panelSize.setHeight(iconSize + expandedSize);
+        panelSize.setWidth(calcWidth + radius);
+        break;
+    }
+
+    case Left: {
         primaryRect.setHeight(primaryRect.height() - TOPBARHEIGHT);
         primaryRect.setY(TOPBARHEIGHT);
 
@@ -184,24 +190,37 @@ const QRect DockSettings::windowRect() const
                 break;
             }
         }
-        panelSize.setHeight(calcHeight);
-        panelSize.setWidth(iconSize);
+        panelSize.setHeight(calcHeight + radius);
+        panelSize.setWidth(iconSize + expandedSize);
+        break;
+    }
+
+    default:
+        break;
     }
 
     const int offsetX = (primaryRect.width() - panelSize.width()) / 2;
     const int offsetY = (primaryRect.height() - panelSize.height()) / 2;
-    if (m_position == Bottom) {
-        if (m_style == PC) {
+
+    switch (m_position) {
+    case Bottom: {
+        if (m_style == Classic) {
             p = QPoint(offsetX, primaryRect.height() - panelSize.height());
         } else {
             p = QPoint(offsetX, primaryRect.height() - panelSize.height() - margin);
         }
-    } else {
-        if (m_style == PC) {
+        break;
+    }
+    case Left: {
+        if (m_style == Classic) {
             p = QPoint(0, offsetY + TOPBARHEIGHT / 2);
         } else {
             p = QPoint(margin, offsetY + TOPBARHEIGHT / 2);
         }
+        break;
+    }
+    default:
+        break;
     }
 
     return QRect(primaryRect.topLeft() + p, panelSize);
@@ -271,6 +290,6 @@ void DockSettings::initAction()
         m_largeSizeAction->setChecked(true);
     }
 
-    m_pcStyleAction->setChecked(m_style == PC);
-    m_padStyleAction->setChecked(m_style == Pad);
+    m_pcStyleAction->setChecked(m_style == Classic);
+    m_padStyleAction->setChecked(m_style == Fashion);
 }

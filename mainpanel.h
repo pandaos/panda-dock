@@ -27,6 +27,7 @@
 #include "utils/docksettings.h"
 #include "utils/dockitemmanager.h"
 
+class LauncherItem;
 class TrashItem;
 class MainPanel : public QWidget
 {
@@ -34,9 +35,6 @@ class MainPanel : public QWidget
 
 public:
     explicit MainPanel(QWidget *parent = nullptr);
-
-    void addFixedAreaItem(int index, QWidget *wdg);
-    void removeFixedAreaItem(QWidget *wdg);
 
 signals:
     void requestResized();
@@ -57,10 +55,8 @@ protected:
 
 private:
     QBoxLayout *m_mainLayout;
-    QBoxLayout *m_fixedAreaLayout;
-
-    QWidget *m_fixedAreaWidget;
     AppScrollArea *m_appArea;
+    LauncherItem *m_launcherItem;
     TrashItem *m_trashItem;
 
     DockItemManager *m_dockItemmanager;

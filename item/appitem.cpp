@@ -229,42 +229,56 @@ void AppItem::paintEvent(QPaintEvent *e)
             painter.setBrush(Qt::black);
         }
 
-         if (DockSettings::instance()->style() == DockSettings::PC) {
-             // 圆点
-             const qreal roundSize = 4;
-             QPainterPath path;
-             if (DockSettings::instance()->position() == DockSettings::Left) {
-                 path.addRoundedRect(QRectF(2,
-                                           (rect().height() - roundSize) / 2,
-                                           roundSize, roundSize), roundSize, roundSize);
-             } else {
-                 path.addRoundedRect(QRectF((rect().width() - roundSize) / 2,
-                                           rect().height() - roundSize - 2,
-                                           roundSize, roundSize), roundSize, roundSize);
-             }
+        const qreal roundSize = 4;
+        QPainterPath path;
+        if (DockSettings::instance()->position() == DockSettings::Left) {
+            path.addRoundedRect(QRectF(2,
+                                    (rect().height() - roundSize) / 2,
+                                    roundSize, roundSize), roundSize, roundSize);
+        } else {
+            path.addRoundedRect(QRectF((rect().width() - roundSize) / 2,
+                                    rect().height() - roundSize - 2,
+                                    roundSize, roundSize), roundSize, roundSize);
+        }
 
-             painter.drawPath(path);
-         } else {
-             const int lineWidth = rect().width() * 0.2;
-             const int lineHeight = 2;
+        painter.drawPath(path);
 
-             QRect activeRect;
-             if (DockSettings::instance()->position() == DockSettings::Left) {
-                 activeRect = QRect(1,
-                                    (rect().height() - lineWidth) / 2,
-                                    lineHeight, lineWidth);
-             } else {
-                 activeRect = QRect((rect().width() - lineWidth) / 2,
-                                    rect().height() - lineHeight - 2,
-                                    lineWidth, lineHeight);
-             }
+        //  if (DockSettings::instance()->style() == DockSettings::Classic) {
+        //      // 圆点
+        //      const qreal roundSize = 4;
+        //      QPainterPath path;
+        //      if (DockSettings::instance()->position() == DockSettings::Left) {
+        //          path.addRoundedRect(QRectF(2,
+        //                                    (rect().height() - roundSize) / 2,
+        //                                    roundSize, roundSize), roundSize, roundSize);
+        //      } else {
+        //          path.addRoundedRect(QRectF((rect().width() - roundSize) / 2,
+        //                                    rect().height() - roundSize - 2,
+        //                                    roundSize, roundSize), roundSize, roundSize);
+        //      }
 
-             if (m_entry->isActive) {
-                 painter.drawRect(activeRect);
-             } else {
-                 painter.drawRect(activeRect);
-             }
-         }
+        //      painter.drawPath(path);
+        //  } else {
+        //      const int lineWidth = rect().width() * 0.2;
+        //      const int lineHeight = 2;
+
+        //      QRect activeRect;
+        //      if (DockSettings::instance()->position() == DockSettings::Left) {
+        //          activeRect = QRect(1,
+        //                             (rect().height() - lineWidth) / 2,
+        //                             lineHeight, lineWidth);
+        //      } else {
+        //          activeRect = QRect((rect().width() - lineWidth) / 2,
+        //                             rect().height() - lineHeight - 2,
+        //                             lineWidth, lineHeight);
+        //      }
+
+        //      if (m_entry->isActive) {
+        //          painter.drawRect(activeRect);
+        //      } else {
+        //          painter.drawRect(activeRect);
+        //      }
+        //  }
     }
 
     const auto ratio = devicePixelRatioF();

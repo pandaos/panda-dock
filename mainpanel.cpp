@@ -19,6 +19,7 @@
 
 #include "mainpanel.h"
 #include "item/trashitem.h"
+#include "item/launcheritem.h"
 #include <QPainter>
 #include <QLabel>
 #include <QDebug>
@@ -26,27 +27,19 @@
 MainPanel::MainPanel(QWidget *parent)
     : QWidget(parent),
       m_mainLayout(new QBoxLayout(QBoxLayout::LeftToRight)),
-      m_fixedAreaLayout(new QBoxLayout(QBoxLayout::LeftToRight)),
-      m_fixedAreaWidget(new QWidget),
       m_appArea(new AppScrollArea),
+      m_launcherItem(new LauncherItem),
       m_trashItem(new TrashItem),
       m_dockItemmanager(DockItemManager::instance()),
       m_settings(DockSettings::instance())
 {
-    m_mainLayout->addStretch();
-    m_mainLayout->addWidget(m_fixedAreaWidget);
+    m_mainLayout->addWidget(m_launcherItem);
     m_mainLayout->addWidget(m_appArea);
     m_mainLayout->addWidget(m_trashItem);
-    m_mainLayout->addStretch();
 
     m_mainLayout->setMargin(0);
     m_mainLayout->setContentsMargins(0, 0, 0, 0);
     m_mainLayout->setSpacing(0);
-
-    m_fixedAreaWidget->setLayout(m_fixedAreaLayout);
-    m_fixedAreaLayout->setMargin(0);
-    m_fixedAreaLayout->setContentsMargins(0, 0, 0, 0);
-    m_fixedAreaLayout->setSpacing(0);
 
     setAttribute(Qt::WA_TranslucentBackground);
     setLayout(m_mainLayout);
@@ -58,48 +51,24 @@ MainPanel::MainPanel(QWidget *parent)
     connect(m_settings, &DockSettings::positionChanged, this, &MainPanel::onPositionChanged);
 }
 
-void MainPanel::addFixedAreaItem(int index, QWidget *wdg)
-{
-    m_fixedAreaLayout->insertWidget(index, wdg);
-    resizeDockIcon();
-}
-
-void MainPanel::removeFixedAreaItem(QWidget *wdg)
-{
-    m_fixedAreaLayout->removeWidget(wdg);
-}
-
 void MainPanel::insertItem(const int index, DockItem *item)
 {
     Q_UNUSED(index);
 
-    item->installEventFilter(this);
-
-    switch (item->itemType()) {
-    case DockItem::Fixed:
-        addFixedAreaItem(0, item);
-        break;
-    case DockItem::App:
-        m_appArea->addItem(static_cast<AppItem *>(item));
+    AppItem *appItem = static_cast<AppItem *>(item);
+    if (appItem) {
+        appItem->installEventFilter(this);
+        m_appArea->addItem(appItem);
         resizeDockIcon();
-        break;
-    default:
-        break;
     }
 }
 
 void MainPanel::removeItem(DockItem *item)
 {
-    switch (item->itemType()) {
-    case DockItem::Fixed:
-        removeFixedAreaItem(item);
-        break;
-    case DockItem::App:
-        m_appArea->removeItem(static_cast<AppItem *>(item));
+    AppItem *appItem = static_cast<AppItem *>(item);
+    if (appItem) {
+        m_appArea->removeItem(appItem);
         resizeDockIcon();
-        break;
-    default:
-        break;
     }
 }
 
@@ -113,20 +82,16 @@ void MainPanel::updateLayout()
 {
     switch (m_settings->position()) {
     case DockSettings::Left:
-        m_fixedAreaWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
 //        m_appAreaWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
         m_mainLayout->setDirection(QBoxLayout::TopToBottom);
-        m_fixedAreaLayout->setDirection(QBoxLayout::TopToBottom);
 //        m_appAreaLayout->setDirection(QBoxLayout::TopToBottom);
         m_appArea->layout()->setDirection(QBoxLayout::TopToBottom);
         m_mainLayout->setContentsMargins(0, 0, 0, 0);
         break;
     case DockSettings::Bottom:
-        m_fixedAreaWidget->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Expanding);
 //        m_appAreaWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
         // m_appArea->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
         m_mainLayout->setDirection(QBoxLayout::LeftToRight);
-        m_fixedAreaLayout->setDirection(QBoxLayout::LeftToRight);
 //        m_appAreaLayout->setDirection(QBoxLayout::LeftToRight);
         m_appArea->layout()->setDirection(QBoxLayout::LeftToRight);
         m_mainLayout->setContentsMargins(0, 0, 0, 0);
@@ -160,12 +125,6 @@ void MainPanel::resizeDockIcon()
         m_appArea->setFixedWidth(QWIDGETSIZE_MAX);
         m_appArea->setFixedHeight(canDisplayAppCount * iconSize);
     }
-
-    for (int i = 0; i < m_fixedAreaLayout->count(); ++i) {
-        m_fixedAreaLayout->itemAt(i)->widget()->setFixedSize(iconSize, iconSize);
-    }
-
-    m_trashItem->setFixedSize(iconSize, iconSize);
 
     emit requestResized();
 }

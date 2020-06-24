@@ -57,12 +57,12 @@ QString TrashItem::popupText()
 
 void TrashItem::refreshIcon()
 {
-    const int iconSize = qMin(width(), height());
+    const int iconSize = static_cast<int>(qMin(width(), height()) * 0.7);
 
     if (m_count) {
-        m_iconPixmap = Utils::renderSVG(":/resources/user-trash-full.svg", QSize(iconSize * 0.7, iconSize * 0.7));
+        m_iconPixmap = Utils::renderSVG(":/resources/user-trash-full.svg", QSize(iconSize, iconSize));
     } else {
-        m_iconPixmap = Utils::renderSVG(":/resources/user-trash.svg", QSize(iconSize * 0.7, iconSize * 0.7));
+        m_iconPixmap = Utils::renderSVG(":/resources/user-trash.svg", QSize(iconSize, iconSize));
     }
 
     QWidget::update();

@@ -115,7 +115,7 @@ void MainWindow::updateStrutPartial()
     }
 
     // const auto ratio = devicePixelRatioF();
-    const int margin = (m_settings->style() == DockSettings::PC) ? 1 : 20;
+    const int margin = (m_settings->style() == DockSettings::Classic) ? 1 : 10;
 
     NETExtendedStrut strut;
 
@@ -203,10 +203,10 @@ void MainWindow::updateBlurRegion()
 {
     QPainterPath path;
 
-    if (m_settings->style() == DockSettings::PC) {
+    if (m_settings->style() == DockSettings::Classic) {
         path = getCornerPath();
     } else {
-        const qreal radius = std::min(rect().width(), rect().height()) / 3.0;
+        const qreal radius = std::min(rect().width(), rect().height()) / 3.5;
         path.addRoundedRect(this->rect(), radius, radius);
     }
 
@@ -270,10 +270,10 @@ void MainWindow::paintEvent(QPaintEvent *e)
     painter.setPen(Qt::NoPen);
     painter.setBrush(QColor(255, 255, 255, 100));
 
-    if (m_settings->style() == DockSettings::PC) {
+    if (m_settings->style() == DockSettings::Classic) {
         painter.drawPath(getCornerPath());
     } else {
-        const qreal radius = std::min(rect().width(), rect().height()) / 3.0;
+        const qreal radius = std::min(rect().width(), rect().height()) / 3.5;
         painter.drawRoundedRect(rect(), radius, radius);
     }
 }

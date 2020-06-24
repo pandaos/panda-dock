@@ -37,9 +37,9 @@ QString LauncherItem::popupText()
 
 void LauncherItem::refreshIcon()
 {
-    const int iconSize = qMin(width(), height());
+    const int iconSize = static_cast<int>(qMin(width(), height()) * 0.7);
 
-    m_iconPixmap = Utils::renderSVG(":/resources/launcher.svg", QSize(iconSize * 0.7, iconSize * 0.7));
+    m_iconPixmap = Utils::renderSVG(":/resources/launcher.svg", QSize(iconSize, iconSize));
 
     QWidget::update();
 }

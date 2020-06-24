@@ -96,7 +96,11 @@ void AppScrollArea::setIconSize(int size)
     m_iconSize = size;
 
     for (int i = 0; i < layout()->count(); ++i) {
-        layout()->itemAt(i)->widget()->setFixedSize(size, size);
+        if (m_mainLayout->direction() == QBoxLayout::LeftToRight) {
+            layout()->itemAt(i)->widget()->setFixedSize(size, QWIDGETSIZE_MAX);
+        } else {
+            layout()->itemAt(i)->widget()->setFixedSize(QWIDGETSIZE_MAX, size);
+        }
     }
 }
 

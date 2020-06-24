@@ -40,8 +40,8 @@ public:
     };
 
     enum Style {
-        PC = 0,
-        Pad
+        Classic = 0,
+        Fashion
     };
 
     enum HideMode {
