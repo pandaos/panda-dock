@@ -34,11 +34,19 @@ class DockSettings : public QObject
 
 public:
     enum Position {
-        Bottom = 0, Left = 1, Right = 2
+        Bottom = 0,
+        Left = 1,
+        Right = 2
     };
 
     enum Style {
-        PC = 0, Pad
+        PC = 0,
+        Pad
+    };
+
+    enum HideMode {
+        KeepShowing = 0,
+        KeepHidden = 1
     };
 
     const int PADDING = 10;
@@ -56,11 +64,13 @@ public:
     int iconSize() const;
 
     void setStyle(Style style);
+    void setHideMode(HideMode mode);
 
     void showSettingsMenu();
 
     inline Position position() { return m_position; };
     inline Style style() { return m_style; };
+    inline HideMode hideMode() { return m_hideMode; };
 
 private:
     void initAction();
@@ -69,11 +79,13 @@ signals:
     void positionChanged();
     void iconSizeChanged();
     void styleChanged();
+    void hideModeChanged();
 
 private:
     QSettings *m_settings;
     Position m_position;
     Style m_style;
+    HideMode m_hideMode;
     QMenu *m_settingsMenu;
     QAction *m_leftPosAction;
     QAction *m_bottomPosAction;
@@ -84,6 +96,9 @@ private:
 
     QAction *m_pcStyleAction;
     QAction *m_padStyleAction;
+
+    QAction *m_keepShowingAction;
+    QAction *m_keepHiddenAction;
 
     QFileSystemWatcher *m_setWatcher;
 };

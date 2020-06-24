@@ -25,6 +25,7 @@
 #include "utils/dockitemmanager.h"
 #include "utils/docksettings.h"
 
+class EventMonitor;
 class MainWindow : public QWidget
 {
     Q_OBJECT
@@ -36,8 +37,11 @@ public:
     void updateSize();
 
 private:
+    void initSlideWindow();
     void updateStrutPartial();
     void onPositionChanged();
+    void onHideModeChanged();
+    void onMouseMove(int x, int y);
     void updateBlurRegion();
     void delayUpdateBlurRegion();
 
@@ -54,6 +58,7 @@ private:
     DockItemManager *m_itemManager;
     DockSettings *m_settings;
     QWidget *m_fakeWidget;
+    EventMonitor *m_eventMonitor;
 
     int m_frameRadius = 9;
 };

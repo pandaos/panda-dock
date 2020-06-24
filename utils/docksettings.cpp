@@ -46,20 +46,23 @@ DockSettings::DockSettings(QObject *parent)
       m_mediumSizeAction(new QAction(tr("Medium"), this)),
       m_largeSizeAction(new QAction(tr("Large"), this)),
       m_pcStyleAction(new QAction(tr("PC"), this)),
-      m_padStyleAction(new QAction(tr("Pad"), this))
+      m_padStyleAction(new QAction(tr("Pad"), this)),
+      m_keepShowingAction(new QAction(tr("Keep Showing"), this)),
+      m_keepHiddenAction(new QAction(tr("Keep Hidden"), this))
 {
     m_position = static_cast<Position>(m_settings->value("position", Bottom).toInt());
     m_style = static_cast<Style>(m_settings->value("style", PC).toInt());
+    m_hideMode = static_cast<HideMode>(m_settings->value("hide_mode", KeepShowing).toInt());
 
     m_leftPosAction->setCheckable(true);
     m_bottomPosAction->setCheckable(true);
-
     m_smallSizeAction->setCheckable(true);
     m_mediumSizeAction->setCheckable(true);
     m_largeSizeAction->setCheckable(true);
-
     m_pcStyleAction->setCheckable(true);
     m_padStyleAction->setCheckable(true);
+    m_keepShowingAction->setCheckable(true);
+    m_keepHiddenAction->setCheckable(true);
 
     QMenu *sizeSubMenu = new QMenu(m_settingsMenu);
     sizeSubMenu->addAction(m_smallSizeAction);
@@ -76,8 +79,6 @@ DockSettings::DockSettings(QObject *parent)
     QAction *styleSubAction = new QAction(tr("Style"), this);
     styleSubAction->setMenu(styleMenu);
     m_settingsMenu->addAction(styleSubAction);
-
-    initAction();
 
     connect(m_smallSizeAction, &QAction::triggered, this, [=] {
         setIconSize(64);
@@ -121,6 +122,24 @@ DockSettings::DockSettings(QObject *parent)
     connect(m_padStyleAction, &QAction::triggered, this, [=] {
         setStyle(Pad);
     });
+
+    // ****************
+    QMenu *displayMenu = new QMenu(m_settingsMenu);
+    displayMenu->addAction(m_keepShowingAction);
+    displayMenu->addAction(m_keepHiddenAction);
+    QAction *displaySubAction = new QAction(tr("Display mode"), this);
+    displaySubAction->setMenu(displayMenu);
+    m_settingsMenu->addAction(displaySubAction);
+
+    connect(m_keepShowingAction, &QAction::triggered, this, [=] {
+        setHideMode(KeepShowing);
+    });
+
+    connect(m_keepHiddenAction, &QAction::triggered, this, [=] {
+        setHideMode(KeepHidden);
+    });
+
+    initAction();
 }
 
 QRect DockSettings::primaryRawRect()
@@ -215,10 +234,21 @@ void DockSettings::setStyle(DockSettings::Style style)
     emit styleChanged();
 }
 
+void DockSettings::setHideMode(HideMode mode)
+{
+    m_hideMode = mode;
+    setValue("hide_mode", mode);
+    initAction();
+
+    emit hideModeChanged();
+}
+
 void DockSettings::showSettingsMenu()
 {
     m_leftPosAction->setChecked(m_position == Left);
     m_bottomPosAction->setChecked(m_position == Bottom);
+    m_keepShowingAction->setChecked(m_hideMode == KeepShowing);
+    m_keepHiddenAction->setChecked(m_hideMode == KeepHidden);
 
     m_settingsMenu->exec(QCursor::pos());
 }

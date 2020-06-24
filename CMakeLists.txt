@@ -21,6 +21,7 @@ set(RESOURCES resources.qrc)
 set(QT Core Gui Widgets DBus Svg X11Extras)
 find_package(Qt5 REQUIRED ${QT})
 find_package(PkgConfig REQUIRED)
+find_package(X11 REQUIRED)
 
 find_package(ECM REQUIRED NO_MODULE)
 set(CMAKE_MODULE_PATH ${ECM_MODULE_PATH} ${ECM_KDE_MODULE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
@@ -40,6 +41,13 @@ target_link_libraries(${TARGET}
         Qt5::Svg
         Qt5::X11Extras
         KF5::WindowSystem
+        ${X11_LIBRARIES}
+        ${XCOMPOSITE_LDFLAGS}
+        ${XDAMAGE_LIBRARIES}
+        ${XRENDER_LIBRARIES}
+        -lxcb
+        -lX11
+        -lXtst
 )
 
 install(TARGETS ${TARGET} DESTINATION /usr/bin)

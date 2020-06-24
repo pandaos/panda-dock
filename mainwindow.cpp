@@ -29,12 +29,15 @@
 
 #include <KF5/KWindowSystem/KWindowEffects>
 
+#include "utils/eventmonitor.h"
+
 MainWindow::MainWindow(QWidget *parent)
     : QWidget(parent),
       m_mainPanel(new MainPanel),
       m_itemManager(DockItemManager::instance()),
       m_settings(DockSettings::instance()),
-      m_fakeWidget(new QWidget(nullptr))
+      m_fakeWidget(new QWidget(nullptr)),
+      m_eventMonitor(new EventMonitor)
 {
     QHBoxLayout *layout = new QHBoxLayout;
     layout->setMargin(0);
@@ -60,14 +63,16 @@ MainWindow::MainWindow(QWidget *parent)
     KWindowSystem::setType(winId(), NET::Dock);
     // KWindowEffects::slideWindow(winId(), KWindowEffects::BottomEdge);
 
+    initSlideWindow();
     updateSize();
 
     connect(m_settings, &DockSettings::positionChanged, this, &MainWindow::onPositionChanged);
+    connect(m_settings, &DockSettings::hideModeChanged, this, &MainWindow::onHideModeChanged);
     connect(m_settings, &DockSettings::styleChanged, this, &MainWindow::updateSize);
     connect(m_settings, &DockSettings::iconSizeChanged, this, &MainWindow::updateSize);
     connect(m_mainPanel, &MainPanel::requestResized, this, &MainWindow::updateSize);
-
     connect(qApp->primaryScreen(), &QScreen::geometryChanged, this, &MainWindow::updateSize, Qt::QueuedConnection);
+    connect(m_eventMonitor, &EventMonitor::mouseMove, this, &MainWindow::onMouseMove);
 }
 
 MainWindow::~MainWindow()
@@ -86,6 +91,15 @@ void MainWindow::updateSize()
     updateStrutPartial();
 }
 
+void MainWindow::initSlideWindow()
+{
+    if (m_settings->position() == DockSettings::Left) {
+        KWindowEffects::slideWindow(winId(), KWindowEffects::LeftEdge);
+    } else if (m_settings->position() == DockSettings::Bottom) {
+        KWindowEffects::slideWindow(winId(), KWindowEffects::BottomEdge);
+    }
+}
+
 void MainWindow::updateStrutPartial()
 {
     // blur后设置程序支撑导致模糊无效
@@ -94,6 +108,11 @@ void MainWindow::updateStrutPartial()
     rect.setWidth(1);
     m_fakeWidget->setGeometry(rect);
     m_fakeWidget->setVisible(true);
+
+    if (m_settings->hideMode() != DockSettings::KeepShowing) {
+        KWindowSystem::setExtendedStrut(m_fakeWidget->winId(), 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+        return;
+    }
 
     // const auto ratio = devicePixelRatioF();
     const int margin = (m_settings->style() == DockSettings::PC) ? 1 : 20;
@@ -143,6 +162,41 @@ void MainWindow::onPositionChanged()
     updateSize();
 
     // Need to update the geometry of the appitem.
+}
+
+void MainWindow::onHideModeChanged()
+{
+    if (m_settings->hideMode() == DockSettings::KeepShowing)
+        setVisible(true);
+    else {
+        m_eventMonitor->start();
+        setVisible(false);
+    }
+
+    updateStrutPartial();
+}
+
+inline bool onScreenEdge(const QPoint &point) {
+//    for (QScreen *screen : qApp->screens()) {
+//        const QRect r { screen->geometry() };
+//        QRect rect { r.topLeft(), r.size() * screen->devicePixelRatio() };
+//        if ( point.y() == screen->geometry().y()+screen->geometry().height()
+//                || point.x() == screen->geometry().x()+screen->geometry().width()) {
+//            return true;
+//        }
+//    }
+
+    return false;
+}
+
+void MainWindow::onMouseMove(int x, int y)
+{
+    if (!onScreenEdge(QPoint(x, y))) {
+        return;
+    } else {
+    }
+
+    setVisible(true);
 }
 
 void MainWindow::updateBlurRegion()
@@ -214,7 +268,7 @@ void MainWindow::paintEvent(QPaintEvent *e)
     painter.setRenderHint(QPainter::Antialiasing, true);
     painter.setRenderHint(QPainter::SmoothPixmapTransform, true);
     painter.setPen(Qt::NoPen);
-    painter.setBrush(QColor(255, 255, 255, 150));
+    painter.setBrush(QColor(255, 255, 255, 100));
 
     if (m_settings->style() == DockSettings::PC) {
         painter.drawPath(getCornerPath());
