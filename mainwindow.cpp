@@ -206,7 +206,7 @@ void MainWindow::updateBlurRegion()
     if (m_settings->style() == DockSettings::Classic) {
         path = getCornerPath();
     } else {
-        const qreal radius = std::min(rect().width(), rect().height()) / 3.5;
+        const qreal radius = std::min(rect().width(), rect().height()) / m_settings->radiusRatio();
         path.addRoundedRect(this->rect(), radius, radius);
     }
 
@@ -273,7 +273,7 @@ void MainWindow::paintEvent(QPaintEvent *e)
     if (m_settings->style() == DockSettings::Classic) {
         painter.drawPath(getCornerPath());
     } else {
-        const qreal radius = std::min(rect().width(), rect().height()) / 3.5;
+        const qreal radius = std::min(rect().width(), rect().height()) / m_settings->radiusRatio();
         painter.drawRoundedRect(rect(), radius, radius);
     }
 }

@@ -147,14 +147,14 @@ QRect DockSettings::primaryRawRect()
     return qApp->primaryScreen()->geometry();
 }
 
-const QRect DockSettings::windowRect() const
+QRect DockSettings::windowRect()
 {
     QRect primaryRect = qApp->primaryScreen()->geometry();
     // qreal scale = qApp->primaryScreen()->devicePixelRatio();
     const int iconSize = this->iconSize();
     const int iconCount = DockItemManager::instance()->itemList().count();
     const int expandedSize = (m_style == Fashion) ? 8 : 0;
-    const qreal radius = (iconSize / 3.5) / 2;
+    const qreal radius = iconSize / radiusRatio();
     const int margin = 5;
     QSize panelSize;
     QPoint p;

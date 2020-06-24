@@ -56,7 +56,7 @@ public:
     explicit DockSettings(QObject *parent = nullptr);
 
     QRect primaryRawRect();
-    const QRect windowRect() const;
+    QRect windowRect();
 
     void setValue(const QString &key, const QVariant &variant);
 
@@ -71,6 +71,7 @@ public:
     inline Position position() { return m_position; };
     inline Style style() { return m_style; };
     inline HideMode hideMode() { return m_hideMode; };
+    inline qreal radiusRatio() { return 3.2; };
 
 private:
     void initAction();
