@@ -36,7 +36,7 @@ MainWindow::MainWindow(QWidget *parent)
       m_mainPanel(new MainPanel),
       m_itemManager(DockItemManager::instance()),
       m_settings(DockSettings::instance()),
-      m_fakeWidget(new QWidget(nullptr)),
+      //m_fakeWidget(new QWidget(nullptr)),
       m_eventMonitor(new EventMonitor)
 {
     QHBoxLayout *layout = new QHBoxLayout;
@@ -45,10 +45,10 @@ MainWindow::MainWindow(QWidget *parent)
     layout->addWidget(m_mainPanel);
     setLayout(layout);
 
-    m_fakeWidget->setFocusPolicy(Qt::NoFocus);
-    m_fakeWidget->setWindowFlags(Qt::FramelessWindowHint);
-    m_fakeWidget->setAttribute(Qt::WA_TranslucentBackground);
-    m_fakeWidget->setVisible(false);
+//    m_fakeWidget->setFocusPolicy(Qt::NoFocus);
+//    m_fakeWidget->setWindowFlags(Qt::FramelessWindowHint);
+//    m_fakeWidget->setAttribute(Qt::WA_TranslucentBackground);
+//    m_fakeWidget->setVisible(false);
 
     for (auto item : m_itemManager->itemList())
         m_mainPanel->insertItem(-1, item);
@@ -103,14 +103,14 @@ void MainWindow::initSlideWindow()
 void MainWindow::updateStrutPartial()
 {
     // blur后设置程序支撑导致模糊无效
-    QRect rect(geometry());
-    rect.setHeight(1);
-    rect.setWidth(1);
-    m_fakeWidget->setGeometry(rect);
-    m_fakeWidget->setVisible(true);
+//    QRect rect(geometry());
+//    rect.setHeight(1);
+//    rect.setWidth(1);
+//    m_fakeWidget->setGeometry(rect);
+//    m_fakeWidget->setVisible(true);
 
     if (m_settings->hideMode() != DockSettings::KeepShowing) {
-        KWindowSystem::setExtendedStrut(m_fakeWidget->winId(), 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+        KWindowSystem::setExtendedStrut(winId(), 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
         return;
     }
 
@@ -137,7 +137,7 @@ void MainWindow::updateStrutPartial()
         break;
     }
 
-    KWindowSystem::setExtendedStrut(m_fakeWidget->winId(),
+    KWindowSystem::setExtendedStrut(winId(),
                                      strut.left_width,
                                      strut.left_start,
                                      strut.left_end,
@@ -151,8 +151,8 @@ void MainWindow::updateStrutPartial()
                                      strut.bottom_start,
                                      strut.bottom_end);
 
-    KWindowSystem::setState(m_fakeWidget->winId(), NET::SkipTaskbar);
-    KWindowSystem::setState(m_fakeWidget->winId(), NET::SkipSwitcher);
+//    KWindowSystem::setState(m_fakeWidget->winId(), NET::SkipTaskbar);
+//    KWindowSystem::setState(m_fakeWidget->winId(), NET::SkipSwitcher);
 
     QWidget::update();
 }

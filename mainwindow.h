@@ -57,7 +57,7 @@ private:
     MainPanel *m_mainPanel;
     DockItemManager *m_itemManager;
     DockSettings *m_settings;
-    QWidget *m_fakeWidget;
+    //QWidget *m_fakeWidget;
     EventMonitor *m_eventMonitor;
 
     int m_frameRadius = 9;
