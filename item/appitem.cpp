@@ -229,7 +229,7 @@ void AppItem::paintEvent(QPaintEvent *e)
             painter.setBrush(Qt::black);
         }
 
-        const qreal roundSize = 4;
+        const qreal roundSize = std::min(rect().width(), rect().height()) * 0.06;
         QPainterPath path;
         if (DockSettings::instance()->position() == DockSettings::Left) {
             path.addRoundedRect(QRectF(2,

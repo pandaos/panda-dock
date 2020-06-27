@@ -111,10 +111,6 @@ bool AppWindowManager::isAcceptWindow(quint64 id) const
 
     KWindowInfo info(id, NET::WMWindowType | NET::WMState, NET::WM2TransientFor | NET::WM2WindowClass);
 
-    // 过滤自身
-    if (info.windowClassClass().toLower() == "panda-dock")
-        return false;
-
     if (!info.valid())
         return false;
 
