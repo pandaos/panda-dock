@@ -8,12 +8,7 @@ set(CMAKE_AUTORCC ON)
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-file (GLOB_RECURSE SRCS
-  "${panda-dock_SOURCE_DIR}/item/*.cpp"
-  "${panda-dock_SOURCE_DIR}/utils/*.cpp"
-)
-
-set(NEW_SOURCE main.cpp
+set(SRCS main.cpp
                mainwindow.cpp
                mainpanel.cpp
                appscrollarea.cpp
@@ -31,8 +26,6 @@ set(NEW_SOURCE main.cpp
                utils/utils.h
 )
 
-set(SOURCES main.cpp mainpanel.cpp mainwindow.cpp appscrollarea.cpp ${SRCS})
-set(HEADERS mainpanel.h mainwindow.h appscrollarea.h)
 set(FORMS "")
 set(RESOURCES resources.qrc)
 
@@ -50,10 +43,7 @@ include(KDECompilerSettings)
 include(FeatureSummary)
 find_package(KF5 REQUIRED COMPONENTS WindowSystem)
 
-
-# add_executable(${TARGET} ${SOURCES} ${HEADERS} ${FORMS} ${RESOURCES})
-add_executable(${TARGET} ${NEW_SOURCE})
-
+add_executable(${TARGET} ${SRCS} ${FORMS} ${RESOURCES})
 target_link_libraries(${TARGET}
         Qt5::Core
         Qt5::Gui
