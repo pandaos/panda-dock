@@ -176,25 +176,15 @@ void MainWindow::onHideModeChanged()
     updateStrutPartial();
 }
 
-inline bool onScreenEdge(const QPoint &point) {
-//    for (QScreen *screen : qApp->screens()) {
-//        const QRect r { screen->geometry() };
-//        QRect rect { r.topLeft(), r.size() * screen->devicePixelRatio() };
-//        if ( point.y() == screen->geometry().y()+screen->geometry().height()
-//                || point.x() == screen->geometry().x()+screen->geometry().width()) {
-//            return true;
-//        }
-//    }
-
-    return false;
-}
-
 void MainWindow::onMouseMove(int x, int y)
 {
-    if (!onScreenEdge(QPoint(x, y))) {
-        return;
-    } else {
-    }
+    Q_UNUSED(x);
+    Q_UNUSED(y);
+
+    // if (!onScreenEdge(QPoint(x, y))) {
+    //     return;
+    // } else {
+    // }
 
     setVisible(true);
 }

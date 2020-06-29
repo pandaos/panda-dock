@@ -58,7 +58,7 @@ protected:
     bool filterWheelEvent(int detail);
     static void callback(XPointer trash, XRecordInterceptData* data);
     void handleRecordEvent(XRecordInterceptData *);
-    void run();
+    void run() override;
 
 private:
     bool isPress;

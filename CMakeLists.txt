@@ -13,6 +13,24 @@ file (GLOB_RECURSE SRCS
   "${panda-dock_SOURCE_DIR}/utils/*.cpp"
 )
 
+set(NEW_SOURCE main.cpp
+               mainwindow.cpp
+               mainpanel.cpp
+               appscrollarea.cpp
+               item/appitem.cpp
+               item/blurwindow.cpp
+               item/dockitem.cpp
+               item/highlighteffect.cpp
+               item/launcheritem.cpp
+               item/trashitem.cpp
+               utils/appwindowmanager.cpp
+               utils/desktopproperties.cpp
+               utils/dockitemmanager.cpp
+               utils/docksettings.cpp
+               utils/eventmonitor.cpp
+               utils/utils.h
+)
+
 set(SOURCES main.cpp mainpanel.cpp mainwindow.cpp appscrollarea.cpp ${SRCS})
 set(HEADERS mainpanel.h mainwindow.h appscrollarea.h)
 set(FORMS "")
@@ -32,7 +50,10 @@ include(KDECompilerSettings)
 include(FeatureSummary)
 find_package(KF5 REQUIRED COMPONENTS WindowSystem)
 
-add_executable(${TARGET} ${SOURCES} ${HEADERS} ${FORMS} ${RESOURCES})
+
+# add_executable(${TARGET} ${SOURCES} ${HEADERS} ${FORMS} ${RESOURCES})
+add_executable(${TARGET} ${NEW_SOURCE})
+
 target_link_libraries(${TARGET}
         Qt5::Core
         Qt5::Gui
