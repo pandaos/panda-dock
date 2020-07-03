@@ -19,6 +19,7 @@
 
 #include "launcheritem.h"
 #include "utils/utils.h"
+#include "utils/docksettings.h"
 #include <QPainter>
 #include <QProcess>
 #include <QDebug>
@@ -37,7 +38,7 @@ QString LauncherItem::popupText()
 
 void LauncherItem::refreshIcon()
 {
-    const int iconSize = static_cast<int>(qMin(width(), height()) * 0.7);
+    const int iconSize = static_cast<int>(qMin(width(), height()) * 0.8);
 
     m_iconPixmap = Utils::renderSVG(":/resources/launcher.svg", QSize(iconSize, iconSize));
 
@@ -52,11 +53,16 @@ void LauncherItem::paintEvent(QPaintEvent *e)
     painter.setRenderHint(QPainter::Antialiasing, true);
     painter.setRenderHint(QPainter::SmoothPixmapTransform, true);
 
+    DockSettings::Position position = DockSettings::instance()->position();
+    qreal offset = std::min(rect().width(), rect().height()) * 0.02;
+    qreal offsetX = (position == DockSettings::Left) ? offset : 0.0;
+    qreal offsetY = (position == DockSettings::Bottom) ? offset : 0.0;
+
     const auto ratio = devicePixelRatioF();
     const int iconX = rect().center().x() - m_iconPixmap.rect().center().x() / ratio;
     const int iconY = rect().center().y() - m_iconPixmap.rect().center().y() / ratio;
 
-    painter.drawPixmap(iconX, iconY, m_iconPixmap);
+    painter.drawPixmap(iconX + offsetX, iconY - offsetY, m_iconPixmap);
 }
 
 void LauncherItem::resizeEvent(QResizeEvent *e)

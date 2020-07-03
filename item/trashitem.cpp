@@ -19,6 +19,7 @@
 
 #include "trashitem.h"
 #include "utils/utils.h"
+#include "utils/docksettings.h"
 #include <QMouseEvent>
 #include <QProcess>
 #include <QPainter>
@@ -57,7 +58,7 @@ QString TrashItem::popupText()
 
 void TrashItem::refreshIcon()
 {
-    const int iconSize = static_cast<int>(qMin(width(), height()) * 0.7);
+    const int iconSize = static_cast<int>(qMin(width(), height()) * 0.8);
 
     if (m_count) {
         m_iconPixmap = Utils::renderSVG(":/resources/user-trash-full.svg", QSize(iconSize, iconSize));
@@ -104,11 +105,17 @@ void TrashItem::paintEvent(QPaintEvent *e)
     painter.setRenderHint(QPainter::Antialiasing, true);
     painter.setRenderHint(QPainter::SmoothPixmapTransform, true);
 
+    const qreal roundSize = std::min(rect().width(), rect().height()) * 0.06;
+    DockSettings::Position position = DockSettings::instance()->position();
+    qreal offset = std::min(rect().width(), rect().height()) * 0.02;
+    qreal offsetX = (position == DockSettings::Left) ? offset : 0.0;
+    qreal offsetY = (position == DockSettings::Bottom) ? offset : 0.0;
+
     const auto ratio = devicePixelRatioF();
     const int iconX = rect().center().x() - m_iconPixmap.rect().center().x() / ratio;
     const int iconY = rect().center().y() - m_iconPixmap.rect().center().y() / ratio;
 
-    painter.drawPixmap(iconX, iconY, m_iconPixmap);
+    painter.drawPixmap(iconX + offsetX, iconY - offsetY, m_iconPixmap);
 }
 
 void TrashItem::resizeEvent(QResizeEvent *e)

@@ -169,7 +169,7 @@ void AppItem::dockActionTriggered()
 
 void AppItem::updateIcon()
 {
-    const int iconSize = static_cast<int>(qMin(width(), height()) * 0.7);
+    const int iconSize = static_cast<int>(qMin(width(), height()) * 0.8);
     const QString iconName = m_entry->iconName;
 
     m_iconPixmap = Utils::getIcon(iconName, iconSize);
@@ -222,6 +222,12 @@ void AppItem::paintEvent(QPaintEvent *e)
     painter.setRenderHint(QPainter::SmoothPixmapTransform, true);
     painter.setPen(Qt::NoPen);
 
+    const qreal roundSize = std::min(rect().width(), rect().height()) * 0.06;
+    DockSettings::Position position = DockSettings::instance()->position();
+    qreal offset = std::min(rect().width(), rect().height()) * 0.02;
+    qreal offsetX = (position == DockSettings::Left) ? offset : 0.0;
+    qreal offsetY = (position == DockSettings::Bottom) ? offset : 0.0;
+
     if (!m_entry->WIdList.isEmpty()) {
         if (m_entry->isActive) {
             painter.setBrush(QColor(0, 98, 255));
@@ -229,9 +235,8 @@ void AppItem::paintEvent(QPaintEvent *e)
             painter.setBrush(Qt::black);
         }
 
-        const qreal roundSize = std::min(rect().width(), rect().height()) * 0.06;
         QPainterPath path;
-        if (DockSettings::instance()->position() == DockSettings::Left) {
+        if (position == DockSettings::Left) {
             path.addRoundedRect(QRectF(2,
                                     (rect().height() - roundSize) / 2,
                                     roundSize, roundSize), roundSize, roundSize);
@@ -284,7 +289,7 @@ void AppItem::paintEvent(QPaintEvent *e)
     const auto ratio = devicePixelRatioF();
     const qreal iconX = rect().center().x() - m_iconPixmap.rect().center().x() / ratio;
     const qreal iconY = rect().center().y() - m_iconPixmap.rect().center().y() / ratio;
-    painter.drawPixmap(iconX, iconY, m_iconPixmap);
+    painter.drawPixmap(iconX + offsetX, iconY - offsetY, m_iconPixmap);
 }
 
 void AppItem::mousePressEvent(QMouseEvent *e)
