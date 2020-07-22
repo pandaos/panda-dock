@@ -61,14 +61,14 @@ namespace Utils
             // 把 size 改为小于size的最大偶数
             const int s = int(size * ratio) & ~1;
             const int fakeSize = std::max(48, s); // cannot use 16x16, cause 16x16 is label icon
-            // const QIcon icon = QIcon::fromTheme(iconName, QIcon::fromTheme("application-x-desktop"));
-            // pixmap = icon.pixmap(QSize(fakeSize, fakeSize));
+            const QIcon icon = QIcon::fromTheme(iconName, QIcon::fromTheme("application-x-desktop"));
+            pixmap = icon.pixmap(QSize(fakeSize, fakeSize));
 
             // 如果找不到需要返回空的pixmap
-            const QIcon icon = QIcon::fromTheme(iconName, QIcon());
-            if (!icon.isNull()) {
-                pixmap = icon.pixmap(QSize(fakeSize, fakeSize));
-            }
+            /* const QIcon icon = QIcon::fromTheme(iconName, QIcon()); */
+            /* if (!icon.isNull()) { */
+            /*     pixmap = icon.pixmap(QSize(fakeSize, fakeSize)); */
+            /* } */
         }
 
         pixmap.setDevicePixelRatio(ratio);

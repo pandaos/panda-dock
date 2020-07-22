@@ -173,11 +173,11 @@ void AppItem::updateIcon()
     const QString iconName = m_entry->iconName;
 
     m_iconPixmap = Utils::getIcon(iconName, iconSize);
-    if (m_iconPixmap.isNull()) {
-        if (!m_entry->WIdList.isEmpty()) {
-            m_iconPixmap = KWindowSystem::icon(m_entry->WIdList.first(), iconSize, iconSize, true);
-        }
-    }
+    // if (m_iconPixmap.isNull()) {
+    //     if (!m_entry->WIdList.isEmpty()) {
+    //         m_iconPixmap = KWindowSystem::icon(m_entry->WIdList.first(), iconSize, iconSize, true);
+    //     }
+    // }
 
     QWidget::update();
 
