@@ -37,6 +37,8 @@ private:
     void paintEvent(QPaintEvent *e) override;
     void showEvent(QShowEvent *event) override;
     void hideEvent(QHideEvent *event) override;
+    bool eventFilter(QObject *obj, QEvent *e) override;
+    void updateBlurRegion();
 
 private:
     QLabel *m_textLabel;

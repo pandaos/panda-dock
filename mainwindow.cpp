@@ -200,7 +200,9 @@ void MainWindow::updateBlurRegion()
         path.addRoundedRect(this->rect(), radius, radius);
     }
 
-    KWindowEffects::enableBlurBehind(winId(), true, path.toFillPolygon().toPolygon());
+    QPolygon polygon = path.toFillPolygon().toPolygon();
+    // QWidget::setMask(polygon);
+    KWindowEffects::enableBlurBehind(winId(), true, polygon);
 }
 
 void MainWindow::delayUpdateBlurRegion()

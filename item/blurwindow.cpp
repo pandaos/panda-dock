@@ -18,13 +18,15 @@
  */
 
 #include "blurwindow.h"
-#include <QPainter>
-#include <QPainterPath>
 #include <KWindowEffects>
+
+#include <QHBoxLayout>
+#include <QPainterPath>
+#include <QPainter>
 #include <QDebug>
 #include <QTimer>
 #include <QLabel>
-#include <QHBoxLayout>
+#include <QEvent>
 
 BlurWindow::BlurWindow(QWidget *parent)
     : QWidget(parent),
@@ -34,6 +36,7 @@ BlurWindow::BlurWindow(QWidget *parent)
     layout->addWidget(m_textLabel);
     setLayout(layout);
 
+    installEventFilter(this);
     setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint | Qt::WindowDoesNotAcceptFocus | Qt::ToolTip);
     setAttribute(Qt::WA_TranslucentBackground);
     setVisible(false);
@@ -52,23 +55,18 @@ void BlurWindow::update()
 void BlurWindow::paintEvent(QPaintEvent *e)
 {
     QWidget::paintEvent(e);
+
     QPainter painter(this);
     painter.setRenderHint(QPainter::Antialiasing, true);
-    painter.setRenderHint(QPainter::SmoothPixmapTransform, true);
     painter.setPen(QColor(0, 0, 0, 20));
-    painter.setBrush(QColor(241, 241, 241, 200));
-    const qreal radius = std::min(rect().height(), rect().width()) / 2 - 2;
+    painter.setBrush(QColor(241, 241, 241, 160));
+    const qreal radius = 5.0; //std::min(rect().height(), rect().width()) / 2 - 2;
     painter.drawRoundedRect(rect(), radius, radius);
 }
 
 void BlurWindow::showEvent(QShowEvent *e)
 {
     QWidget::showEvent(e);
-
-    const qreal radius = std::min(rect().height(), rect().width()) / 2 - 2;
-    QPainterPath path;
-    path.addRoundedRect(this->rect(), radius, radius);
-    KWindowEffects::enableBlurBehind(winId(), true, path.toFillPolygon().toPolygon());
 }
 
 void BlurWindow::hideEvent(QHideEvent *e)
@@ -76,4 +74,29 @@ void BlurWindow::hideEvent(QHideEvent *e)
     QWidget::hideEvent(e);
 
     KWindowEffects::enableBlurBehind(winId(), false);
+}
+
+bool BlurWindow::eventFilter(QObject *obj, QEvent *e)
+{
+    Q_UNUSED(obj);
+
+    switch (e->type()) {
+    case QEvent::UpdateRequest:
+    case QEvent::LayoutRequest:
+        updateBlurRegion();
+        break;
+    default: break;
+    }
+
+    return false;
+}
+
+void BlurWindow::updateBlurRegion()
+{
+    const qreal radius = 5.0; // std::min(rect().height(), rect().width()) / 2 - 2;
+    QPainterPath path;
+    path.addRoundedRect(this->rect(), radius, radius);
+    QPolygon polygon = path.toFillPolygon().toPolygon();
+    // QWidget::setMask(polygon);
+    KWindowEffects::enableBlurBehind(winId(), true, polygon);
 }
