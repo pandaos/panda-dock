@@ -19,6 +19,7 @@ set(SRCS main.cpp
                item/launcheritem.cpp
                item/trashitem.cpp
                utils/appwindowmanager.cpp
+               utils/apprunthread.cpp
                utils/desktopproperties.cpp
                utils/dockitemmanager.cpp
                utils/docksettings.cpp

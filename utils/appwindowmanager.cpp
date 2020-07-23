@@ -19,6 +19,8 @@
 
 #include "appwindowmanager.h"
 #include "desktopproperties.h"
+#include "apprunthread.h"
+
 #include <QRegularExpression>
 #include <QStandardPaths>
 #include <QApplication>
@@ -176,7 +178,10 @@ void AppWindowManager::closeWindow(quint64 id)
 
 void AppWindowManager::openApp(const QString &appName)
 {
-    QProcess::startDetached(appName, QStringList());
+    // QProcess::startDetached(appName, QStringList());
+
+    AppRunThread *thread = new AppRunThread(appName);
+    thread->start();
 }
 
 void AppWindowManager::clicked(DockEntry *entry)
