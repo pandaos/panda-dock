@@ -21,6 +21,7 @@
 #include <KWindowEffects>
 
 #include <QHBoxLayout>
+#include <QApplication>
 #include <QPainterPath>
 #include <QPainter>
 #include <QDebug>
@@ -35,6 +36,8 @@ BlurWindow::BlurWindow(QWidget *parent)
     QHBoxLayout *layout = new QHBoxLayout;
     layout->addWidget(m_textLabel);
     setLayout(layout);
+
+    m_textLabel->setPalette(qApp->palette());
 
     installEventFilter(this);
     setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint | Qt::WindowDoesNotAcceptFocus | Qt::ToolTip);
@@ -58,8 +61,11 @@ void BlurWindow::paintEvent(QPaintEvent *e)
 
     QPainter painter(this);
     painter.setRenderHint(QPainter::Antialiasing, true);
-    painter.setPen(QColor(0, 0, 0, 20));
-    painter.setBrush(QColor(241, 241, 241, 160));
+    const QPalette &palette = qApp->palette();
+    QColor backgroundColor = palette.color(QPalette::Window);
+    backgroundColor.setAlpha(100);
+    painter.setPen(Qt::NoPen);
+    painter.setBrush(backgroundColor);
     const qreal radius = 5.0; //std::min(rect().height(), rect().width()) / 2 - 2;
     painter.drawRoundedRect(rect(), radius, radius);
 }

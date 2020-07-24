@@ -31,9 +31,30 @@
 
 #include "utils/eventmonitor.h"
 
+//static QRegion roundedRect(const QRect& rect, int radius)
+//{
+//    QRegion region;
+//    // middle and borders
+//    region += rect.adjusted(radius, 0, -radius, 0);
+//    region += rect.adjusted(0, radius, 0, -radius);
+//    // top left
+//    QRect corner(rect.topLeft(), QSize(radius * 2, radius * 2));
+//    region += QRegion(corner, QRegion::Ellipse);
+//    // top right
+//    corner.moveTopRight(rect.topRight());
+//    region += QRegion(corner, QRegion::Ellipse);
+//    // bottom left
+//    corner.moveBottomLeft(rect.bottomLeft());
+//    region += QRegion(corner, QRegion::Ellipse);
+//    // bottom right
+//    corner.moveBottomRight(rect.bottomRight());
+//    region += QRegion(corner, QRegion::Ellipse);
+//    return region;
+//}
+
 MainWindow::MainWindow(QWidget *parent)
     : QWidget(parent),
-      m_mainPanel(new MainPanel),
+      m_mainPanel(new MainPanel(this)),
       m_itemManager(DockItemManager::instance()),
       m_settings(DockSettings::instance()),
       //m_fakeWidget(new QWidget(nullptr)),
@@ -55,7 +76,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     // blur
     installEventFilter(this);
-    setAttribute(Qt::WA_NoSystemBackground, false);
+    // setAttribute(Qt::WA_NoSystemBackground, false);
     setAttribute(Qt::WA_TranslucentBackground);
     setWindowFlags(Qt::FramelessWindowHint | Qt::WindowDoesNotAcceptFocus);
 
@@ -200,9 +221,8 @@ void MainWindow::updateBlurRegion()
         path.addRoundedRect(this->rect(), radius, radius);
     }
 
-    QPolygon polygon = path.toFillPolygon().toPolygon();
-    // QWidget::setMask(polygon);
-    KWindowEffects::enableBlurBehind(winId(), true, polygon);
+   QPolygon polygon = path.toFillPolygon().toPolygon();
+   KWindowEffects::enableBlurBehind(winId(), true, polygon);
 }
 
 void MainWindow::delayUpdateBlurRegion()
@@ -257,16 +277,31 @@ void MainWindow::paintEvent(QPaintEvent *e)
 {
     QWidget::paintEvent(e);
     QPainter painter(this);
-    painter.setRenderHint(QPainter::Antialiasing, true);
-    painter.setRenderHint(QPainter::SmoothPixmapTransform, true);
-    painter.setPen(Qt::NoPen);
+    painter.setRenderHint(QPainter::Antialiasing);
+    painter.setPen(QColor(255, 255, 255, 150));
     painter.setBrush(QColor(255, 255, 255, 100));
+
+    const QPalette &palette = this->palette();
+    QColor backgroundColor = palette.color(QPalette::Window);
+    const bool light = backgroundColor.lightness() > 128;
+    // QColor outlineColor = light ? QColor(0, 0, 0, 60) : QColor(255, 255, 255, 140);
+    backgroundColor.setAlpha(100);
+
+    // painter.setPen(outlineColor);
+    painter.setBrush(backgroundColor);
 
     if (m_settings->style() == DockSettings::Classic) {
         painter.drawPath(getCornerPath());
     } else {
         const qreal radius = std::min(rect().width(), rect().height()) * m_settings->radiusRatio();
-        painter.drawRoundedRect(rect(), radius, radius);
+        // painter.drawRoundedRect(rect(), radius, radius);
+
+        QPainterPath path;
+        path.addRoundedRect(rect(), radius, radius);
+        painter.setClipPath(path);
+        painter.setCompositionMode(QPainter::CompositionMode_Source);
+        painter.fillPath(path, backgroundColor);
+        // painter.strokePath(path, outlineColor);
     }
 }
 

@@ -23,6 +23,7 @@
 #include "utils/docksettings.h"
 
 #include <QPainter>
+#include <QApplication>
 #include <QPainterPath>
 #include <QMouseEvent>
 #include <QMimeData>
@@ -229,10 +230,16 @@ void AppItem::paintEvent(QPaintEvent *e)
     qreal offsetY = (position == DockSettings::Bottom) ? offset : 0.0;
 
     if (!m_entry->WIdList.isEmpty()) {
+        const QPalette &palette = qApp->palette();
+        QColor backgroundColor = palette.color(QPalette::Window);
+        bool light = backgroundColor.lightness() > 128;
+        QColor dotColor = light ? Qt::black : QColor(255, 255, 255, 180);
+        QColor activeDotColor = light ? QColor(0, 98, 255) : QColor(87, 154, 255);
+
         if (m_entry->isActive) {
-            painter.setBrush(QColor(0, 98, 255));
+            painter.setBrush(activeDotColor);
         } else {
-            painter.setBrush(Qt::black);
+            painter.setBrush(dotColor);
         }
 
         QPainterPath path;
