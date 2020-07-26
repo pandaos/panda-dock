@@ -78,18 +78,14 @@ MainWindow::MainWindow(QWidget *parent)
     for (auto item : m_itemManager->itemList())
         m_mainPanel->insertItem(-1, item);
 
-    // blur
-    installEventFilter(this);
-    // setAttribute(Qt::WA_NoSystemBackground, false);
     setAttribute(Qt::WA_TranslucentBackground);
     setWindowFlags(Qt::FramelessWindowHint | Qt::WindowDoesNotAcceptFocus);
     setProperty(netWMForceShadow, true);
 
     KWindowSystem::setOnDesktop(winId(), NET::OnAllDesktops);
     KWindowSystem::setType(winId(), NET::Dock);
-    // KWindowEffects::slideWindow(winId(), KWindowEffects::BottomEdge);
 
-    initSlideWindow();
+    // initSlideWindow();
     updateSize();
 
     connect(m_settings, &DockSettings::positionChanged, this, &MainWindow::onPositionChanged);
@@ -114,6 +110,7 @@ void MainWindow::updateSize()
     QWidget::move(windowRect.left(), windowRect.top());
     QWidget::setFixedSize(windowRect.size());
 
+    delayUpdateBlurRegion();
     updateStrutPartial();
 }
 
@@ -256,21 +253,6 @@ QPainterPath MainWindow::getCornerPath()
     }
 
     return path.simplified();
-}
-
-bool MainWindow::eventFilter(QObject *obj, QEvent *e)
-{
-    Q_UNUSED(obj);
-
-    switch (e->type()) {
-    case QEvent::UpdateRequest:
-    case QEvent::LayoutRequest:
-        delayUpdateBlurRegion();
-        break;
-    default: break;
-    }
-
-    return false;
 }
 
 void MainWindow::resizeEvent(QResizeEvent *e)
