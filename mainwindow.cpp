@@ -26,10 +26,14 @@
 #include <QPainterPath>
 #include <QMouseEvent>
 #include <QTimer>
+#include <QEvent>
 
 #include <KF5/KWindowSystem/KWindowEffects>
 
 #include "utils/eventmonitor.h"
+
+const char netWMForceShadow[] = "_PANDA_NET_WM_FORCE_SHADOW";
+const char netWMFrameRadius[] = "_PANDA_NET_WM_FRAME_RADIUS";
 
 //static QRegion roundedRect(const QRect& rect, int radius)
 //{
@@ -79,6 +83,7 @@ MainWindow::MainWindow(QWidget *parent)
     // setAttribute(Qt::WA_NoSystemBackground, false);
     setAttribute(Qt::WA_TranslucentBackground);
     setWindowFlags(Qt::FramelessWindowHint | Qt::WindowDoesNotAcceptFocus);
+    setProperty(netWMForceShadow, true);
 
     KWindowSystem::setOnDesktop(winId(), NET::OnAllDesktops);
     KWindowSystem::setType(winId(), NET::Dock);
@@ -216,13 +221,18 @@ void MainWindow::updateBlurRegion()
 
     if (m_settings->style() == DockSettings::Classic) {
         path = getCornerPath();
+        setProperty(netWMFrameRadius, m_frameRadius);
     } else {
         const qreal radius = std::min(rect().width(), rect().height()) * m_settings->radiusRatio();
         path.addRoundedRect(this->rect(), radius, radius);
+        setProperty(netWMFrameRadius, radius);
     }
 
-   QPolygon polygon = path.toFillPolygon().toPolygon();
-   KWindowEffects::enableBlurBehind(winId(), true, polygon);
+    QPolygon polygon = path.toFillPolygon().toPolygon();
+    KWindowEffects::enableBlurBehind(winId(), true, polygon);
+
+    // update shadow
+    qApp->postEvent(this, new QEvent(QEvent::WinIdChange));
 }
 
 void MainWindow::delayUpdateBlurRegion()
