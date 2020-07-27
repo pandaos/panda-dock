@@ -32,13 +32,21 @@ DockItem::DockItem(QWidget *parent)
       m_highlightEffect(new HighlightEffect),
       m_popupWidget(new BlurWindow)
 {
-    m_popupDelayTimer->setInterval(150);
+    m_popupDelayTimer->setInterval(300);
     m_popupDelayTimer->setSingleShot(true);
 
     setGraphicsEffect(m_highlightEffect);
     setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
     connect(m_popupDelayTimer, &QTimer::timeout, this, &DockItem::showPopup);
+}
+
+DockItem::~DockItem()
+{
+    if (m_popupWidget) {
+        m_popupWidget->hide();
+        m_popupWidget->deleteLater();
+    }
 }
 
 QSize DockItem::sizeHint() const

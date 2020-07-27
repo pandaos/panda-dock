@@ -38,6 +38,7 @@ public:
     };
 
     explicit DockItem(QWidget *parent = nullptr);
+    ~DockItem();
 
     inline virtual ItemType itemType() const { Q_UNREACHABLE(); return App; }
     inline virtual QString popupText() { return QString(); };
