@@ -276,24 +276,21 @@ void MainWindow::paintEvent(QPaintEvent *e)
     const QPalette &palette = this->palette();
     QColor backgroundColor = palette.color(QPalette::Window);
     const bool light = backgroundColor.lightness() > 128;
-    // QColor outlineColor = light ? QColor(0, 0, 0, 60) : QColor(255, 255, 255, 140);
+    QColor outlineColor = light ? QColor(0, 0, 0, 150) : QColor(255, 255, 255, 70);
     backgroundColor.setAlpha(100);
 
-    // painter.setPen(outlineColor);
+    painter.setPen(Qt::NoPen);
     painter.setBrush(backgroundColor);
 
     if (m_settings->style() == DockSettings::Classic) {
         painter.drawPath(getCornerPath());
     } else {
         const qreal radius = std::min(rect().width(), rect().height()) * m_settings->radiusRatio();
-        // painter.drawRoundedRect(rect(), radius, radius);
-
-        QPainterPath path;
-        path.addRoundedRect(rect(), radius, radius);
-        painter.setClipPath(path);
-        painter.setCompositionMode(QPainter::CompositionMode_Source);
-        painter.fillPath(path, backgroundColor);
-        // painter.strokePath(path, outlineColor);
+        QPen pen;
+        pen.setColor(outlineColor);
+        pen.setWidthF(0.5);
+        painter.setPen(pen);
+        painter.drawRoundedRect(QRectF(rect()).adjusted(0.5, 0.5, -0.5, -0.5), radius, radius);
     }
 }
 
