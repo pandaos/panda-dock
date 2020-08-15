@@ -37,8 +37,6 @@ BlurWindow::BlurWindow(QWidget *parent)
     layout->addWidget(m_textLabel);
     setLayout(layout);
 
-    m_textLabel->setPalette(qApp->palette());
-
     installEventFilter(this);
     setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint | Qt::WindowDoesNotAcceptFocus | Qt::ToolTip);
     setAttribute(Qt::WA_TranslucentBackground);
