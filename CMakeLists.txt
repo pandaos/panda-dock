@@ -32,17 +32,8 @@ set(RESOURCES resources.qrc)
 
 set(QT Core Gui Widgets DBus Svg X11Extras)
 find_package(Qt5 REQUIRED ${QT})
-find_package(PkgConfig REQUIRED)
+find_package(KF5WindowSystem)
 find_package(X11 REQUIRED)
-
-find_package(ECM REQUIRED NO_MODULE)
-set(CMAKE_MODULE_PATH ${ECM_MODULE_PATH} ${ECM_KDE_MODULE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
-
-include(KDEInstallDirs)
-include(KDECMakeSettings)
-include(KDECompilerSettings)
-include(FeatureSummary)
-find_package(KF5 REQUIRED COMPONENTS WindowSystem)
 
 add_executable(${TARGET} ${SRCS} ${FORMS} ${RESOURCES})
 target_link_libraries(${TARGET}

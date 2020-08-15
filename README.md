@@ -5,7 +5,7 @@ Dock for PandaOS.
 ## Dependencies
 
 ```shell
-sudo pacman -S extra-cmake-modules qt5-base qt5-svg qt5-tools qt5-x11extras kwindowsystem pkgconfig
+sudo pacman -S cmake qt5-base qt5-svg qt5-tools qt5-x11extras kwindowsystem
 ```
 
 ## Build
